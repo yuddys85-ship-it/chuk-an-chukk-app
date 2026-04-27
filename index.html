@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chuk an Chukk</title>
+
+  <!-- Pi SDK -->
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script>
+    Pi.init({ version: "2.0" });
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #6b2cff;
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .app {
+      padding: 40px 20px;
+    }
+
+    .logo {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: white;
+      color: #6b2cff;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <h1>Chuk an Chukk</h1>
+    <p>Live Social App for Pi Community</p>
+
+    <button onclick="login()">Login with Pi</button>
+
+    <!-- USER AREA -->
+    <div id="userArea" class="hidden">
+
+      <div class="card">
+        <h3>Welcome</h3>
+        <p id="username"></p>
+      </div>
+
+      <div class="card">
+        <h3>Wallet</h3>
+        <p>Unlocked Chuk: <span id="unlocked">10000</span></p>
+        <p>Locked Chuk: <span id="locked">5000</span></p>
+      </div>
+
+      <div class="card">
+        <h3>Test Exchange</h3>
+        <button onclick="exchange()">Exchange 10,000 Chuk → 1 Pi</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let currentUser = null;
+
+    function login() {
+      Pi.authenticate(["username"], function(auth) {
+        currentUser = auth.user;
+
+        document.getElementById("username").innerText = currentUser.username;
+        document.getElementById("userArea").classList.remove("hidden");
+
+        alert("Welcome " + currentUser.username);
+      }, function(error) {
+        console.error(error);
+        alert("Login gagal");
+      });
+    }
+
+    function exchange() {
+      let unlocked = parseInt(document.getElementById("unlocked").innerText);
+
+      if (unlocked < 10000) {
+        alert("Saldo tidak cukup");
+        return;
+      }
+
+      if (confirm("Tukar 10,000 Chuk menjadi 1 Pi?")) {
+        unlocked -= 10000;
+        document.getElementById("unlocked").innerText = unlocked;
+
+        alert("Exchange berhasil (Simulasi Testnet)");
+      }
+    }
+  </script>
+</body>
+</html>
