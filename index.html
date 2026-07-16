@@ -1,278 +1,78 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Chuk an Chukk</title>
 
-<meta name="theme-color" content="#12cfc8">
-
-<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,Helvetica,sans-serif;
-}
-
-body{
-
-background:#12cfc8;
-color:white;
-
-}
-
-header{
-
-padding:20px;
-text-align:center;
-
-}
-
-.logo{
-
-width:90px;
-height:90px;
-margin:auto;
-border-radius:50%;
-background:linear-gradient(135deg,#ffd700,#ffb700);
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-font-size:42px;
-font-weight:bold;
-color:#12cfc8;
-
-box-shadow:0 0 25px gold;
-
-}
-
-h1{
-
-margin-top:15px;
-
-}
-
-.subtitle{
-
-margin-top:5px;
-opacity:.8;
-
-}
-
-.login-box{
-
-margin:40px auto;
-width:90%;
-max-width:420px;
-
-background:white;
-color:#333;
-
-padding:25px;
-
-border-radius:20px;
-
-}
-
-.login-btn{
-
-width:100%;
-
-padding:15px;
-
-background:#6b2cff;
-
-color:white;
-
-border:none;
-
-border-radius:12px;
-
-font-size:18px;
-
-cursor:pointer;
-
-}
-
-#app{
-
-display:none;
-
-}
-
-.feed{
-
-height:60vh;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:22px;
-
-}
-
-.bottom{
-
-position:fixed;
-
-bottom:0;
-
-left:0;
-
-width:100%;
-
-height:70px;
-
-background:white;
-
-display:flex;
-
-justify-content:space-around;
-
-align-items:center;
-
-border-top:1px solid #ddd;
-
-}
-
-.bottom button{
-
-background:none;
-
-border:none;
-
-font-size:26px;
-
-cursor:pointer;
-
-}
-
-</style>
+<script>
+Pi.init({
+  version: "2.0",
+  sandbox: true
+});
+</script>
 
 </head>
 
 <body>
 
-<div id="loginPage">
+<div class="container">
 
-<header>
+    <div class="logo">
+        <img src="assets/logo.png" alt="Chuk an Chukk">
+    </div>
 
-<div class="logo">
+    <h1>CHUK AN CHUKK</h1>
 
-C
+    <h3>LIVE SOCIAL APP</h3>
 
-</div>
+    <p class="subtitle">FOR PI COMMUNITY</p>
 
-<h1>Chuk an Chukk</h1>
+    <div class="status-card">
 
-<p class="subtitle">
+        <div class="status-title">
+            🛡 Terhubung ke Pi Network
+        </div>
 
-Live Social App for Pi Community
+        <div class="status-online">
+            🟢 Sandbox Mode Aktif
+        </div>
 
-</p>
+    </div>
 
-</header>
+    <button class="login-btn" onclick="loginPi()">
+        Ⓟ LOGIN DENGAN PI NETWORK
+    </button>
 
-<div class="login-box">
+    <div class="about-card">
 
-<h2>Login</h2>
+        <h2>Tentang Chuk an Chukk</h2>
 
-<br>
+        <p>
+        Platform sosial untuk komunitas Pi berbagi,
+        berinteraksi, membuat konten,
+        chat realtime, dan bertumbuh bersama.
+        </p>
 
-<button class="login-btn" onclick="loginPi()">
+    </div>
 
-Login with Pi
+    <div class="dots">
 
-</button>
+        <span class="active"></span>
+        <span></span>
+        <span></span>
+        <span></span>
 
-</div>
-
-</div>
-
-<div id="app">
-
-<header>
-
-<h2 id="username">
-
-Welcome
-
-</h2>
-
-</header>
-
-<div class="feed">
-
-📹 Feed akan tampil di sini
+    </div>
 
 </div>
 
-<div class="bottom">
-
-<button>🏠</button>
-
-<button>🔍</button>
-
-<button>➕</button>
-
-<button>💬</button>
-
-<button>👤</button>
-
-</div>
-
-</div>
-
-<script>
-
-Pi.init({
-version:"2.0",
-sandbox:true
-});
-
-function loginPi(){
-
-Pi.authenticate(
-
-["username"],
-
-function(auth){
-
-document.getElementById("loginPage").style.display="none";
-
-document.getElementById("app").style.display="block";
-
-document.getElementById("username").innerHTML=
-
-"Welcome "+auth.user.username;
-
-},
-
-function(error){
-
-alert("Login gagal");
-
-console.log(error);
-
-}
-
-);
-
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
