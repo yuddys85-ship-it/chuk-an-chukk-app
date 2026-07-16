@@ -1,128 +1,78 @@
-// ==========================
-// GLOBAL STATE
-// ==========================
+// ======================================
+// CHUK AN CHUKK
+// Pi Network Script
+// ======================================
+
+// Inisialisasi Pi SDK
+Pi.init({
+    version: "2.0",
+    sandbox: true
+});
+
 let currentUser = null;
-let unlockedChuk = 10000;
-let lockedChuk = 5000;
 
-// ==========================
-// LOGIN PI
-// ==========================
-function login() {
-  Pi.authenticate(["username"], function(auth) {
-    currentUser = auth.user;
+// Login dengan Pi
+async function loginPi() {
 
-    document.getElementById("username").innerText = currentUser.username;
-    document.getElementById("userArea").classList.remove("hidden");
+    try {
 
-    showNotif("Login berhasil: " + currentUser.username);
+        const scopes = ["username"];
 
-    loadWallet();
-  }, function(error) {
-    console.error(error);
-    alert("Login gagal");
-  });
+        const auth = await Pi.authenticate(scopes);
+
+        currentUser = auth.user;
+
+        console.log("Login berhasil:", currentUser);
+
+        document.querySelector(".login-btn").style.display = "none";
+
+        document.getElementById("profile").innerHTML = `
+            <div class="about-card">
+                <h3>👋 Selamat Datang</h3>
+                <p><strong>${currentUser.username}</strong></p>
+                <p>Login berhasil ke Pi Network.</p>
+
+                <br>
+
+                <button class="login-btn" onclick="logoutPi()">
+                    Logout
+                </button>
+            </div>
+        `;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert("Login dibatalkan atau gagal.");
+
+    }
+
 }
 
-// ==========================
-// LOAD WALLET
-// ==========================
-function loadWallet() {
-  document.getElementById("unlocked").innerText = unlockedChuk;
-  document.getElementById("locked").innerText = lockedChuk;
+// Logout
+function logoutPi(){
+
+    location.reload();
+
 }
 
-// ==========================
-// EXCHANGE CHUK → PI
-// ==========================
-function exchange() {
-  if (unlockedChuk < 10000) {
-    alert("Saldo tidak cukup");
-    return;
-  }
+// Exchange Demo
+function exchange(){
 
-  let confirmTx = confirm("Tukar 10,000 Chuk → 1 Pi ?");
+    alert("Fitur Exchange masih dalam pengembangan.");
 
-  if (!confirmTx) return;
-
-  unlockedChuk -= 10000;
-  updateWallet();
-
-  addHistory("Exchange 10,000 Chuk → 1 Pi");
-
-  showNotif("Exchange berhasil (Testnet)");
 }
 
-// ==========================
-// UPDATE WALLET
-// ==========================
-function updateWallet() {
-  document.getElementById("unlocked").innerText = unlockedChuk;
-  document.getElementById("locked").innerText = lockedChuk;
-}
+// Cek Browser Pi
+window.onload = function(){
 
-// ==========================
-// HISTORY TRANSACTION
-// ==========================
-function addHistory(text) {
-  let history = JSON.parse(localStorage.getItem("history")) || [];
+    if(typeof Pi === "undefined"){
 
-  history.push({
-    text: text,
-    time: new Date().toLocaleString()
-  });
+        alert("Silakan buka aplikasi ini melalui Pi Browser.");
 
-  localStorage.setItem("history", JSON.stringify(history));
+    }
 
-  renderHistory();
-}
-
-function renderHistory() {
-  let history = JSON.parse(localStorage.getItem("history")) || [];
-  let container = document.getElementById("history");
-
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  history.reverse().forEach(item => {
-    let div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <p>${item.text}</p>
-      <small>${item.time}</small>
-    `;
-    container.appendChild(div);
-  });
-}
-
-// ==========================
-// NOTIFICATION SYSTEM
-// ==========================
-function showNotif(message) {
-  let notif = document.createElement("div");
-  notif.innerText = message;
-
-  notif.style.position = "fixed";
-  notif.style.bottom = "20px";
-  notif.style.left = "50%";
-  notif.style.transform = "translateX(-50%)";
-  notif.style.background = "#000";
-  notif.style.color = "#fff";
-  notif.style.padding = "10px 20px";
-  notif.style.borderRadius = "8px";
-  notif.style.zIndex = "999";
-
-  document.body.appendChild(notif);
-
-  setTimeout(() => {
-    notif.remove();
-  }, 3000);
-}
-
-// ==========================
-// AUTO LOAD
-// ==========================
-window.onload = function() {
-  renderHistory();
 };
