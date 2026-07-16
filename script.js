@@ -1,17 +1,32 @@
-// ======================================
+// =======================================
 // CHUK AN CHUKK
-// Pi Network Script
-// ======================================
+// script.js
+// =======================================
 
 // Inisialisasi Pi SDK
-Pi.init({
-    version: "2.0",
-    sandbox: true
+document.addEventListener("DOMContentLoaded", () => {
+
+    if (typeof Pi === "undefined") {
+
+        alert("Silakan buka aplikasi melalui Pi Browser.");
+
+        return;
+
+    }
+
+    Pi.init({
+
+        version: "2.0",
+
+        sandbox: true
+
+    });
+
 });
 
 let currentUser = null;
 
-// Login dengan Pi
+// LOGIN PI
 async function loginPi() {
 
     try {
@@ -22,29 +37,34 @@ async function loginPi() {
 
         currentUser = auth.user;
 
-        console.log("Login berhasil:", currentUser);
+        document.getElementById("profile").innerHTML = `
+
+        <div class="card">
+
+            <h3>👋 Selamat Datang</h3>
+
+            <p><strong>${currentUser.username}</strong></p>
+
+            <p>Login Pi Network berhasil.</p>
+
+            <button class="exchange-btn"
+                    onclick="logoutPi()">
+
+                Logout
+
+            </button>
+
+        </div>
+
+        `;
 
         document.querySelector(".login-btn").style.display = "none";
-
-        document.getElementById("profile").innerHTML = `
-            <div class="about-card">
-                <h3>👋 Selamat Datang</h3>
-                <p><strong>${currentUser.username}</strong></p>
-                <p>Login berhasil ke Pi Network.</p>
-
-                <br>
-
-                <button class="login-btn" onclick="logoutPi()">
-                    Logout
-                </button>
-            </div>
-        `;
 
     }
 
     catch(error){
 
-        console.error(error);
+        console.log(error);
 
         alert("Login dibatalkan atau gagal.");
 
@@ -52,27 +72,27 @@ async function loginPi() {
 
 }
 
-// Logout
+// LOGOUT
 function logoutPi(){
 
     location.reload();
 
 }
 
-// Exchange Demo
+// EXCHANGE DEMO
 function exchange(){
 
-    alert("Fitur Exchange masih dalam pengembangan.");
+    alert(
+        "Fitur Exchange Chuk → Pi akan tersedia pada versi berikutnya."
+    );
 
 }
 
-// Cek Browser Pi
-window.onload = function(){
+// NOTIFIKASI
+function showMessage(message){
 
-    if(typeof Pi === "undefined"){
+    alert(message);
 
-        alert("Silakan buka aplikasi ini melalui Pi Browser.");
+}
 
-    }
-
-};
+//
