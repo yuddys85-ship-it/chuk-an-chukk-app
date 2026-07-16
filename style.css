@@ -1,153 +1,271 @@
-/* RESET */
+/* ===========================
+   CHUK AN CHUKK
+   Responsive Mobile Style
+=========================== */
+
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
+    overflow-x:hidden;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-font-family:Arial,Helvetica,sans-serif;
-background:linear-gradient(180deg,#0b6c70,#084b4f);
-color:#fff;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
+
+    background:#0e8f8f;
+
+    background:linear-gradient(
+        180deg,
+        #18b8b8 0%,
+        #117b7b 100%
+    );
+
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
 }
 
-.container{
-width:100%;
-max-width:420px;
-padding:25px;
-text-align:center;
+/* APP */
+
+.app{
+
+    width:100%;
+    max-width:480px;
+
+    min-height:100vh;
+
+    padding:30px 20px 40px;
+
+    text-align:center;
 }
 
-.logo img{
-width:140px;
-height:140px;
-object-fit:contain;
-margin-bottom:10px;
-filter:drop-shadow(0 0 15px rgba(255,215,0,.5));
+/* LOGO */
+
+.logo{
+
+    width:140px;
+    height:140px;
+
+    object-fit:contain;
+
+    display:block;
+
+    margin:0 auto 18px;
 }
+
+/* TITLE */
 
 h1{
-font-size:38px;
-font-weight:700;
-color:#f6c54d;
-letter-spacing:2px;
-margin-top:10px;
-}
 
-h3{
-font-size:22px;
-margin-top:10px;
-font-weight:700;
-color:#ffffff;
+    color:#FFD700;
+
+    font-size:40px;
+
+    font-weight:bold;
+
+    margin-bottom:10px;
 }
 
 .subtitle{
-font-size:18px;
-color:#e9e9e9;
-margin-bottom:25px;
+
+    color:#ffffff;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    margin-bottom:6px;
 }
 
-.status-card{
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(10px);
-padding:18px;
-border-radius:18px;
-margin-bottom:25px;
-text-align:left;
+.community{
+
+    color:white;
+
+    font-size:18px;
+
+    margin-bottom:25px;
 }
 
-.status-title{
-font-size:18px;
-font-weight:bold;
-margin-bottom:10px;
+/* STATUS */
+
+.status{
+
+    background:rgba(0,0,0,.18);
+
+    border-radius:18px;
+
+    padding:18px;
+
+    margin-bottom:28px;
+
+    color:white;
+
+    text-align:left;
 }
 
-.status-online{
-font-size:16px;
-color:#6cff7b;
+.status p{
+
+    margin:8px 0;
+
+    font-size:17px;
 }
+
+/* LOGIN */
 
 .login-btn{
-width:100%;
-padding:18px;
-border:none;
-border-radius:18px;
-font-size:22px;
-font-weight:bold;
-cursor:pointer;
-background:linear-gradient(135deg,#7b2cff,#9b3cff);
-color:#fff;
-box-shadow:0 8px 25px rgba(0,0,0,.35);
-transition:.3s;
+
+    width:100%;
+
+    height:65px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:#6b2cff;
+
+    color:white;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.30);
+
+    transition:.3s;
 }
 
 .login-btn:hover{
-transform:translateY(-2px);
+
+    transform:translateY(-2px);
+
+    background:#5c20f5;
 }
 
-.about-card{
-margin-top:30px;
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(10px);
-padding:25px;
-border-radius:18px;
+/* CARD */
+
+.card{
+
+    margin-top:30px;
+
+    background:rgba(0,0,0,.15);
+
+    padding:25px;
+
+    border-radius:22px;
+
+    color:white;
 }
 
-.about-card h2{
-margin-bottom:15px;
-font-size:28px;
-color:#fff;
+.card h2{
+
+    font-size:28px;
+
+    margin-bottom:18px;
 }
 
-.about-card p{
-line-height:1.7;
-font-size:18px;
-color:#f1f1f1;
+.card p{
+
+    font-size:18px;
+
+    line-height:1.7;
 }
+
+/* DOTS */
 
 .dots{
-margin-top:30px;
-display:flex;
-justify-content:center;
-gap:12px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:12px;
+
+    margin-top:28px;
 }
 
-.dots span{
-width:14px;
-height:14px;
-border-radius:50%;
-background:#157d80;
+.dot{
+
+    width:14px;
+
+    height:14px;
+
+    border-radius:50%;
+
+    background:#0fa3a3;
 }
 
-.dots .active{
-background:#f6c54d;
+.dot.active{
+
+    background:#FFD700;
 }
+
+/* RESPONSIVE */
 
 @media(max-width:480px){
 
-.container{
-padding:20px;
-}
+.logo{
 
-.logo img{
 width:120px;
+
 height:120px;
+
 }
 
 h1{
-font-size:32px;
+
+font-size:34px;
+
 }
 
-.about-card h2{
-font-size:24px;
+.subtitle{
+
+font-size:20px;
+
+}
+
+.community{
+
+font-size:16px;
+
 }
 
 .login-btn{
+
+height:60px;
+
 font-size:20px;
+
+}
+
+.card h2{
+
+font-size:24px;
+
+}
+
+.card p{
+
+font-size:17px;
+
+}
+
+}
+
+@media(min-width:768px){
+
+.app{
+
+max-width:520px;
+
 }
 
 }
