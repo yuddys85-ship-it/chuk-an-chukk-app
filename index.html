@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
 
 <title>Chuk an Chukk</title>
 
@@ -12,13 +15,6 @@
 <!-- Pi SDK -->
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
-<script>
-Pi.init({
-    version:"2.0",
-    sandbox:true
-});
-</script>
-
 </head>
 
 <body>
@@ -26,56 +22,62 @@ Pi.init({
 <div class="container">
 
     <!-- LOGO -->
-    <img src="logo.png" class="logo" alt="Chuk an Chukk">
+
+    <div class="logo-container">
+
+        <img src="logo.png"
+             alt="Chuk an Chukk Logo"
+             class="logo">
+
+    </div>
 
     <!-- TITLE -->
+
     <h1>CHUK AN CHUKK</h1>
 
-    <h2>LIVE SOCIAL APP</h2>
-
     <p class="subtitle">
-        FOR PI COMMUNITY
+
+        LIVE SOCIAL APP FOR PI COMMUNITY
+
     </p>
 
     <!-- STATUS -->
+
     <div class="status-card">
 
         <div class="status-item">
-            🛡️ Terhubung ke Pi Network
+
+            🟢 Connected to Pi Network
+
         </div>
 
         <div class="status-item">
-            🟢 Sandbox Mode Aktif
+
+            🧪 Sandbox Mode
+
         </div>
 
     </div>
 
     <!-- LOGIN -->
-    <button class="login-btn" onclick="loginPi()">
+
+    <button
+        class="login-btn"
+        onclick="loginPi()">
+
         Ⓟ LOGIN DENGAN PI NETWORK
+
     </button>
 
     <!-- PROFILE -->
+
     <div id="profile"></div>
 
-    <!-- ABOUT -->
-    <div class="about-card">
-
-        <h3>Tentang Chuk an Chukk</h3>
-
-        <p>
-            Platform sosial berbasis Pi Network
-            untuk berbagi postingan, chat realtime,
-            wallet digital, marketplace,
-            dan komunitas Pioneer.
-        </p>
-
-    </div>
-
     <!-- WALLET -->
-    <div class="about-card">
 
-        <h3>💰 Wallet Chuk</h3>
+    <div class="card">
+
+        <h3>💰 Wallet</h3>
 
         <p>
             Unlocked Chuk :
@@ -88,7 +90,7 @@ Pi.init({
         </p>
 
         <button
-            class="login-btn"
+            class="exchange-btn"
             onclick="exchange()">
 
             Exchange Chuk → Pi
@@ -97,10 +99,32 @@ Pi.init({
 
     </div>
 
+    <!-- ABOUT -->
+
+    <div class="card">
+
+        <h3>Tentang Chuk an Chukk</h3>
+
+        <p>
+
+        Chuk an Chukk adalah Live Social App
+        untuk komunitas Pi Network.
+
+        Berbagi postingan,
+        chat realtime,
+        wallet digital,
+        marketplace,
+        dan exchange dalam
+        satu aplikasi.
+
+        </p>
+
+    </div>
+
 </div>
 
-<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
+
 </html>
