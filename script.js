@@ -1,4 +1,3 @@
-
 // ===========================
 // CHUK AN CHUKK
 // Splash Screen Script
