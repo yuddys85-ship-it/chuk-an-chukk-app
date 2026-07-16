@@ -1,122 +1,278 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chuk an Chukk</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Pi SDK -->
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-  <script>
-    Pi.init({ version: "2.0" });
-  </script>
+<title>Chuk an Chukk</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #6b2cff;
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
+<meta name="theme-color" content="#12cfc8">
 
-    .app {
-      padding: 40px 20px;
-    }
+<link rel="manifest" href="manifest.json">
 
-    .logo {
-      width: 120px;
-      margin-bottom: 20px;
-    }
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: white;
-      color: #6b2cff;
-      font-weight: bold;
-      margin-top: 20px;
-    }
+<style>
 
-    .card {
-      background: rgba(255,255,255,0.1);
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
 
-    .hidden {
-      display: none;
-    }
-  </style>
+body{
+
+background:#12cfc8;
+color:white;
+
+}
+
+header{
+
+padding:20px;
+text-align:center;
+
+}
+
+.logo{
+
+width:90px;
+height:90px;
+margin:auto;
+border-radius:50%;
+background:linear-gradient(135deg,#ffd700,#ffb700);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:42px;
+font-weight:bold;
+color:#12cfc8;
+
+box-shadow:0 0 25px gold;
+
+}
+
+h1{
+
+margin-top:15px;
+
+}
+
+.subtitle{
+
+margin-top:5px;
+opacity:.8;
+
+}
+
+.login-box{
+
+margin:40px auto;
+width:90%;
+max-width:420px;
+
+background:white;
+color:#333;
+
+padding:25px;
+
+border-radius:20px;
+
+}
+
+.login-btn{
+
+width:100%;
+
+padding:15px;
+
+background:#6b2cff;
+
+color:white;
+
+border:none;
+
+border-radius:12px;
+
+font-size:18px;
+
+cursor:pointer;
+
+}
+
+#app{
+
+display:none;
+
+}
+
+.feed{
+
+height:60vh;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:22px;
+
+}
+
+.bottom{
+
+position:fixed;
+
+bottom:0;
+
+left:0;
+
+width:100%;
+
+height:70px;
+
+background:white;
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+border-top:1px solid #ddd;
+
+}
+
+.bottom button{
+
+background:none;
+
+border:none;
+
+font-size:26px;
+
+cursor:pointer;
+
+}
+
+</style>
+
 </head>
 
 <body>
-  <div class="app">
 
-    <h1>Chuk an Chukk</h1>
-    <p>Live Social App for Pi Community</p>
+<div id="loginPage">
 
-    <button onclick="login()">Login with Pi</button>
+<header>
 
-    <!-- USER AREA -->
-    <div id="userArea" class="hidden">
+<div class="logo">
 
-      <div class="card">
-        <h3>Welcome</h3>
-        <p id="username"></p>
-      </div>
+C
 
-      <div class="card">
-        <h3>Wallet</h3>
-        <p>Unlocked Chuk: <span id="unlocked">10000</span></p>
-        <p>Locked Chuk: <span id="locked">5000</span></p>
-      </div>
+</div>
 
-      <div class="card">
-        <h3>Test Exchange</h3>
-        <button onclick="exchange()">Exchange 10,000 Chuk → 1 Pi</button>
-      </div>
+<h1>Chuk an Chukk</h1>
 
-    </div>
+<p class="subtitle">
 
-  </div>
+Live Social App for Pi Community
 
-  <script>
-    let currentUser = null;
+</p>
 
-    function login() {
-      Pi.authenticate(["username"], function(auth) {
-        currentUser = auth.user;
+</header>
 
-        document.getElementById("username").innerText = currentUser.username;
-        document.getElementById("userArea").classList.remove("hidden");
+<div class="login-box">
 
-        alert("Welcome " + currentUser.username);
-      }, function(error) {
-        console.error(error);
-        alert("Login gagal");
-      });
-    }
+<h2>Login</h2>
 
-    function exchange() {
-      let unlocked = parseInt(document.getElementById("unlocked").innerText);
+<br>
 
-      if (unlocked < 10000) {
-        alert("Saldo tidak cukup");
-        return;
-      }
+<button class="login-btn" onclick="loginPi()">
 
-      if (confirm("Tukar 10,000 Chuk menjadi 1 Pi?")) {
-        unlocked -= 10000;
-        document.getElementById("unlocked").innerText = unlocked;
+Login with Pi
 
-        alert("Exchange berhasil (Simulasi Testnet)");
-      }
-    }
-  </script>
+</button>
+
+</div>
+
+</div>
+
+<div id="app">
+
+<header>
+
+<h2 id="username">
+
+Welcome
+
+</h2>
+
+</header>
+
+<div class="feed">
+
+📹 Feed akan tampil di sini
+
+</div>
+
+<div class="bottom">
+
+<button>🏠</button>
+
+<button>🔍</button>
+
+<button>➕</button>
+
+<button>💬</button>
+
+<button>👤</button>
+
+</div>
+
+</div>
+
+<script>
+
+Pi.init({
+version:"2.0",
+sandbox:true
+});
+
+function loginPi(){
+
+Pi.authenticate(
+
+["username"],
+
+function(auth){
+
+document.getElementById("loginPage").style.display="none";
+
+document.getElementById("app").style.display="block";
+
+document.getElementById("username").innerHTML=
+
+"Welcome "+auth.user.username;
+
+},
+
+function(error){
+
+alert("Login gagal");
+
+console.log(error);
+
+}
+
+);
+
+}
+
+</script>
+
 </body>
 </html>
