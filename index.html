@@ -1,62 +1,72 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Chuk an Chukk</title>
+    <title>Chuk an Chukk</title>
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
-<script>
-Pi.init({
-    version:"2.0",
-    sandbox:true
-});
-</script>
+    <!-- Pi SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
+    <script>
+        Pi.init({
+            version: "2.0",
+            sandbox: true
+        });
+    </script>
 </head>
 
 <body>
 
-<div class="phone">
+<div class="app">
 
-    <div class="header">
+    <!-- Logo -->
+    <img src="assets/logo.png" class="logo" alt="Chuk an Chukk">
 
-        <img src="assets/logo.png" class="logo" alt="Chuk an Chukk">
+    <!-- Judul -->
+    <h1>CHUK AN CHUKK</h1>
 
-        <h1>CHUK AN CHUKK</h1>
+    <h2>LIVE SOCIAL APP</h2>
 
-        <h2>LIVE SOCIAL APP</h2>
+    <p class="subtitle">
+        FOR PI COMMUNITY
+    </p>
 
-        <p>FOR PI COMMUNITY</p>
-
-    </div>
-
+    <!-- Status -->
     <div class="status-card">
 
-        <div>🛡️ Terhubung ke Pi Network</div>
+        <p>🛡️ Terhubung ke Pi Network</p>
 
-        <div class="online">🟢 Sandbox Mode Aktif</div>
+        <p class="online">
+            🟢 Sandbox Mode Aktif
+        </p>
 
     </div>
 
+    <!-- Login -->
     <button class="login-btn" onclick="login()">
 
         Ⓟ LOGIN DENGAN PI NETWORK
 
     </button>
 
-    <div class="about">
+    <!-- Tentang -->
+    <div class="about-card">
 
         <h3>Tentang Chuk an Chukk</h3>
 
         <p>
-        Platform sosial untuk komunitas Pi berbagi,
-        berinteraksi, membuat konten,
-        chat realtime,
-        dan bertumbuh bersama.
+
+Platform sosial untuk komunitas Pi berbagi,
+berinteraksi,
+membuat konten,
+chat realtime,
+dan bertumbuh bersama.
+
         </p>
 
     </div>
@@ -72,7 +82,7 @@ Pi.authenticate(
 
 function(auth){
 
-alert("Selamat datang "+auth.user.username);
+alert("Selamat datang " + auth.user.username);
 
 },
 
@@ -80,13 +90,14 @@ function(error){
 
 alert("Login gagal");
 
-}
+console.log(error);
 
-);
+});
 
 }
 
 </script>
 
 </body>
+
 </html>
