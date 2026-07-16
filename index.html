@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>Chuk an Chukk</title>
 
 <link rel="stylesheet" href="style.css">
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
 <script>
 Pi.init({
-  version: "2.0",
-  sandbox: true
+    version:"2.0",
+    sandbox:true
 });
 </script>
 
@@ -21,58 +20,73 @@ Pi.init({
 
 <body>
 
-<div class="container">
+<div class="phone">
 
-    <div class="logo">
-        <img src="assets/logo.png" alt="Chuk an Chukk">
+    <div class="header">
+
+        <img src="assets/logo.png" class="logo" alt="Chuk an Chukk">
+
+        <h1>CHUK AN CHUKK</h1>
+
+        <h2>LIVE SOCIAL APP</h2>
+
+        <p>FOR PI COMMUNITY</p>
+
     </div>
-
-    <h1>CHUK AN CHUKK</h1>
-
-    <h3>LIVE SOCIAL APP</h3>
-
-    <p class="subtitle">FOR PI COMMUNITY</p>
 
     <div class="status-card">
 
-        <div class="status-title">
-            🛡 Terhubung ke Pi Network
-        </div>
+        <div>🛡️ Terhubung ke Pi Network</div>
 
-        <div class="status-online">
-            🟢 Sandbox Mode Aktif
-        </div>
+        <div class="online">🟢 Sandbox Mode Aktif</div>
 
     </div>
 
-    <button class="login-btn" onclick="loginPi()">
+    <button class="login-btn" onclick="login()">
+
         Ⓟ LOGIN DENGAN PI NETWORK
+
     </button>
 
-    <div class="about-card">
+    <div class="about">
 
-        <h2>Tentang Chuk an Chukk</h2>
+        <h3>Tentang Chuk an Chukk</h3>
 
         <p>
         Platform sosial untuk komunitas Pi berbagi,
         berinteraksi, membuat konten,
-        chat realtime, dan bertumbuh bersama.
+        chat realtime,
+        dan bertumbuh bersama.
         </p>
-
-    </div>
-
-    <div class="dots">
-
-        <span class="active"></span>
-        <span></span>
-        <span></span>
-        <span></span>
 
     </div>
 
 </div>
 
-<script src="script.js"></script>
+<script>
+
+function login(){
+
+Pi.authenticate(
+["username"],
+
+function(auth){
+
+alert("Selamat datang "+auth.user.username);
+
+},
+
+function(error){
+
+alert("Login gagal");
+
+}
+
+);
+
+}
+
+</script>
 
 </body>
 </html>
