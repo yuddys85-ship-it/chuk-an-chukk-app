@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Chuk an Chukk</title>
+<title>Buat Postingan - Chuk an Chukk</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -13,94 +13,56 @@
 
 <body>
 
-<div class="app">
+<div class="upload-page">
 
-    <!-- HEADER -->
-    <header class="header">
+    <header class="upload-header">
 
-        <div class="logo-title">
+        <button class="back-btn"
+                onclick="history.back()">
 
-            <img src="logo.png" alt="Chuk an Chukk" class="logo">
+            ←
 
-            <span>CHUK AN CHUKK</span>
+        </button>
 
-        </div>
+        <h2>Buat Postingan</h2>
 
-        <div class="header-icons">
+        <button class="publish-btn"
+                onclick="uploadPost()">
 
-            <button class="icon-btn" onclick="searchPost()">🔍</button>
+            Posting
 
-            <button class="icon-btn" onclick="showNotifications()">🔔</button>
-
-        </div>
+        </button>
 
     </header>
 
-    <!-- FEED -->
-    <main class="feed">
+    <div class="upload-content">
 
-        <div class="post">
+        <div class="preview-box">
 
-            <img src="post.jpg"
-                 class="post-image"
-                 alt="Postingan">
-
-            <div class="gradient"></div>
-
-            <div class="post-overlay">
-
-                <div class="post-info">
-
-                    <h3>@username</h3>
-
-                    <p>
-                        Selamat datang di Chuk an Chukk 🚀
-                    </p>
-
-                </div>
-
-                <div class="post-actions">
-
-                    <button onclick="likePost()">❤️</button>
-
-                    <button onclick="commentPost()">💬</button>
-
-                    <button onclick="sharePost()">↗️</button>
-
-                    <button onclick="savePost()">🔖</button>
-
-                </div>
-
-            </div>
+            <img id="preview"
+                 src="logo.png"
+                 alt="Preview">
 
         </div>
 
-    </main>
+        <input
+            type="file"
+            id="mediaFile"
+            accept="image/*,video/*"
+            onchange="previewMedia(event)">
 
-    <!-- BOTTOM MENU -->
-    <nav class="bottom-nav">
+        <textarea
+            id="caption"
+            placeholder="Apa yang sedang kamu pikirkan?"></textarea>
 
-        <button onclick="goHome()">
-            🏠
-            <span>Home</span>
+        <button class="choose-btn"
+                onclick="document.getElementById('mediaFile').click()">
+
+            📷 Pilih Foto / Video
+
         </button>
 
-        <button onclick="goPost()">
-            ➕
-            <span>Post</span>
-        </button>
-
-        <button onclick="goChat()">
-            💬
-            <span>Chat</span>
-        </button>
-
-        <button onclick="goProfile()">
-            👤
-            <span>Profile</span>
-        </button>
-
-    </nav>
+    </div>
 
 </div>
 
