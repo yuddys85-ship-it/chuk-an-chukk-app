@@ -1,115 +1,156 @@
-// =====================================
+// ==========================================
 // CHUK AN CHUKK
-// script.js
-// =====================================
+// script.js v2.0
+// ==========================================
 
-// Jalankan saat halaman selesai dimuat
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("Chuk an Chukk Ready");
+    console.log("Chuk an Chukk berhasil dimuat");
 
 });
 
-// ======================
-// Pencarian
-// ======================
+// ==========================
+// HEADER
+// ==========================
 
-function searchPost() {
+function searchPost(){
 
-    alert("Fitur pencarian segera hadir.");
-
-}
-
-// ======================
-// Notifikasi
-// ======================
-
-function showNotifications() {
-
-    alert("Belum ada notifikasi.");
+    alert("🔍 Fitur pencarian segera hadir.");
 
 }
 
-// ======================
-// Like
-// ======================
+function showNotifications(){
 
-function likePost() {
-
-    alert("❤️ Postingan disukai.");
+    alert("🔔 Belum ada notifikasi.");
 
 }
 
-// ======================
-// Komentar
-// ======================
+// ==========================
+// POST ACTION
+// ==========================
 
-function commentPost() {
+let liked = false;
 
-    alert("💬 Fitur komentar segera hadir.");
+function likePost(){
 
-}
+    liked = !liked;
 
-// ======================
-// Bagikan
-// ======================
+    if(liked){
 
-function sharePost() {
+        alert("❤️ Kamu menyukai postingan ini.");
 
-    if (navigator.share) {
+    }else{
 
-        navigator.share({
-
-            title: "Chuk an Chukk",
-
-            text: "Lihat postingan ini.",
-
-            url: window.location.href
-
-        });
-
-    } else {
-
-        alert("Browser belum mendukung fitur Share.");
+        alert("🤍 Like dibatalkan.");
 
     }
 
 }
 
-// ======================
-// Simpan
-// ======================
+function commentPost(){
 
-function savePost() {
+    alert("💬 Fitur komentar segera hadir.");
+
+}
+
+function sharePost(){
+
+    if(navigator.share){
+
+        navigator.share({
+
+            title:"Chuk an Chukk",
+
+            text:"Lihat postingan ini.",
+
+            url:window.location.href
+
+        });
+
+    }else{
+
+        alert("↗️ Browser belum mendukung Share.");
+
+    }
+
+}
+
+function savePost(){
 
     alert("🔖 Postingan disimpan.");
 
 }
 
-// ======================
-// Bottom Navigation
-// ======================
+// ==========================
+// BOTTOM MENU
+// ==========================
 
-function goHome() {
+function goHome(){
 
-    alert("Home");
-
-}
-
-function goPost() {
-
-    alert("Halaman Upload akan dibuat.");
+    alert("🏠 Home");
 
 }
 
-function goChat() {
+function goPost(){
 
-    alert("Chat akan segera hadir.");
+    alert("➕ Halaman upload postingan akan dibuat.");
+
+}
+
+function goChat(){
+
+    alert("💬 Chat segera hadir.");
 
 }
 
-function goProfile() {
+function goProfile(){
 
-    alert("Profile akan segera hadir.");
+    alert("👤 Profile segera hadir.");
 
 }
+
+// ==========================
+// DOUBLE TAP LIKE
+// ==========================
+
+let lastTap = 0;
+
+document.addEventListener("touchend",function(){
+
+    let currentTime = new Date().getTime();
+
+    let tapLength = currentTime-lastTap;
+
+    if(tapLength<300 && tapLength>0){
+
+        likePost();
+
+    }
+
+    lastTap=currentTime;
+
+});
+
+// ==========================
+// SCROLL POST
+// ==========================
+
+window.addEventListener("wheel",(e)=>{
+
+    if(e.deltaY>0){
+
+        console.log("Next Post");
+
+    }else{
+
+        console.log("Previous Post");
+
+    }
+
+});
+
+// ==========================
+// APP READY
+// ==========================
+
+console.log("🚀 Chuk an Chukk Ready");
