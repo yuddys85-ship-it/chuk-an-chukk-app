@@ -1,7 +1,6 @@
-/* ===========================
-   CHUK AN CHUKK
-   POST PAGE
-=========================== */
+/* ===============================
+   CHUK AN CHUKK v1.0
+================================= */
 
 *{
     margin:0;
@@ -9,33 +8,53 @@
     box-sizing:border-box;
 }
 
-body{
+html,body{
 
-    background:#0f0f0f;
-
-    color:#fff;
+    width:100%;
+    height:100%;
 
     font-family:Arial,Helvetica,sans-serif;
 
+    background:#000;
+
+    color:#fff;
+
+    overflow:hidden;
+
 }
 
-.upload-page{
+/* APP */
+
+.app{
 
     width:100%;
-
     max-width:430px;
+
+    height:100vh;
 
     margin:auto;
 
-    min-height:100vh;
+    position:relative;
 
-    background:#111;
+    background:#000;
+
+    overflow:hidden;
 
 }
 
 /* HEADER */
 
-.upload-header{
+.header{
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    padding:15px;
 
     display:flex;
 
@@ -43,72 +62,93 @@ body{
 
     align-items:center;
 
-    padding:15px;
+    z-index:100;
 
-    background:#181818;
-
-    border-bottom:1px solid #333;
+    background:linear-gradient(to bottom,
+    rgba(0,0,0,.8),
+    transparent);
 
 }
 
-.upload-header h2{
+.logo-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.logo{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    box-shadow:0 0 15px gold;
+
+}
+
+.logo-title span{
 
     color:#FFD700;
 
     font-size:20px;
 
+    font-weight:bold;
+
 }
 
-.back-btn,
-.publish-btn{
+/* HEADER ICON */
+
+.header-icons{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+.icon-btn{
 
     background:none;
 
     border:none;
 
-    color:#FFD700;
+    color:white;
 
-    font-size:18px;
-
-    font-weight:bold;
+    font-size:24px;
 
     cursor:pointer;
 
 }
 
-/* CONTENT */
+/* FEED */
 
-.upload-content{
-
-    padding:20px;
-
-}
-
-/* PREVIEW */
-
-.preview-box{
+.feed{
 
     width:100%;
 
-    height:320px;
-
-    background:#222;
-
-    border-radius:15px;
-
-    overflow:hidden;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    margin-bottom:20px;
+    height:100%;
 
 }
 
-.preview-box img{
+.post{
+
+    position:relative;
+
+    width:100%;
+
+    height:100vh;
+
+}
+
+.post-image{
 
     width:100%;
 
@@ -118,63 +158,154 @@ body{
 
 }
 
-/* FILE */
+/* GRADIENT */
 
-input[type=file]{
+.gradient{
 
-    display:none;
+    position:absolute;
 
-}
+    left:0;
 
-/* BUTTON */
-
-.choose-btn{
+    bottom:0;
 
     width:100%;
 
-    padding:15px;
+    height:45%;
+
+    background:linear-gradient(
+        transparent,
+        rgba(0,0,0,.95)
+    );
+
+}
+
+/* POST INFO */
+
+.post-overlay{
+
+    position:absolute;
+
+    left:0;
+
+    bottom:85px;
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+    padding:20px;
+
+}
+
+.post-info{
+
+    width:70%;
+
+}
+
+.post-info h3{
+
+    margin-bottom:8px;
+
+    font-size:18px;
+
+}
+
+.post-info p{
+
+    font-size:15px;
+
+    line-height:1.5;
+
+}
+
+/* ACTION */
+
+.post-actions{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.post-actions button{
+
+    background:none;
 
     border:none;
 
-    border-radius:12px;
-
-    background:#00B8B8;
-
     color:white;
 
-    font-size:17px;
-
-    font-weight:bold;
+    font-size:30px;
 
     cursor:pointer;
 
-    margin-top:15px;
-
 }
 
-/* CAPTION */
+/* NAVIGATION */
 
-textarea{
+.bottom-nav{
+
+    position:absolute;
+
+    bottom:0;
+
+    left:0;
 
     width:100%;
 
-    height:120px;
+    height:72px;
 
-    margin-top:20px;
+    background:rgba(0,0,0,.95);
 
-    background:#1f1f1f;
+    display:flex;
+
+    justify-content:space-around;
+
+    align-items:center;
+
+    border-top:1px solid rgba(255,255,255,.15);
+
+}
+
+.bottom-nav button{
+
+    background:none;
+
+    border:none;
 
     color:white;
 
-    border:1px solid #333;
+    display:flex;
 
-    border-radius:12px;
+    flex-direction:column;
 
-    padding:15px;
+    align-items:center;
 
-    resize:none;
+    gap:4px;
 
-    font-size:16px;
+    font-size:22px;
+
+    cursor:pointer;
+
+}
+
+.bottom-nav span{
+
+    font-size:12px;
+
+}
+
+.bottom-nav button:hover{
+
+    color:#FFD700;
 
 }
 
@@ -182,15 +313,42 @@ textarea{
 
 @media(max-width:480px){
 
-.preview-box{
+.logo{
 
-height:260px;
+width:42px;
+
+height:42px;
 
 }
 
-.upload-header h2{
+.logo-title span{
 
 font-size:18px;
 
 }
 
+.icon-btn{
+
+font-size:20px;
+
+}
+
+.post-actions button{
+
+font-size:26px;
+
+}
+
+.post-info h3{
+
+font-size:16px;
+
+}
+
+.post-info p{
+
+font-size:14px;
+
+}
+
+}
