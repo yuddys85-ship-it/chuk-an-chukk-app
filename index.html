@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Buat Postingan - Chuk an Chukk</title>
+<title>Chuk an Chukk</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -13,56 +13,104 @@
 
 <body>
 
-<div class="upload-page">
+<div class="app">
 
-    <header class="upload-header">
+    <!-- HEADER -->
+    <header class="header">
 
-        <button class="back-btn"
-                onclick="history.back()">
+        <div class="logo-title">
 
-            ←
+            <img src="logo.png"
+                 class="logo"
+                 alt="Chuk an Chukk Logo">
 
-        </button>
-
-        <h2>Buat Postingan</h2>
-
-        <button class="publish-btn"
-                onclick="uploadPost()">
-
-            Posting
-
-        </button>
-
-    </header>
-
-    <div class="upload-content">
-
-        <div class="preview-box">
-
-            <img id="preview"
-                 src="logo.png"
-                 alt="Preview">
+            <span>CHUK AN CHUKK</span>
 
         </div>
 
-        <input
-            type="file"
-            id="mediaFile"
-            accept="image/*,video/*"
-            onchange="previewMedia(event)">
+        <div class="header-icons">
 
-        <textarea
-            id="caption"
-            placeholder="Apa yang sedang kamu pikirkan?"></textarea>
+            <button class="icon-btn"
+                    onclick="searchPost()">
+                🔍
+            </button>
 
-        <button class="choose-btn"
-                onclick="document.getElementById('mediaFile').click()">
+            <button class="icon-btn"
+                    onclick="showNotifications()">
+                🔔
+            </button>
 
-            📷 Pilih Foto / Video
+        </div>
 
+    </header>
+
+    <!-- FEED -->
+    <main class="feed">
+
+        <div class="post">
+
+            <img src="post.jpg"
+                 class="post-image"
+                 alt="Postingan">
+
+            <div class="gradient"></div>
+
+            <div class="post-overlay">
+
+                <div class="post-info">
+
+                    <h3>@ChukOfficial</h3>
+
+                    <p>
+                        Selamat datang di Chuk an Chukk.
+                        Live Social App for Pi Community 🚀
+                    </p>
+
+                </div>
+
+                <div class="post-actions">
+
+                    <button onclick="likePost()">❤️</button>
+
+                    <button onclick="commentPost()">💬</button>
+
+                    <button onclick="sharePost()">↗️</button>
+
+                    <button onclick="savePost()">🔖</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+
+    <nav class="bottom-nav">
+
+        <button onclick="goHome()">
+            🏠
+            <span>Home</span>
         </button>
 
-    </div>
+        <button onclick="window.location.href='post.html'">
+            ➕
+            <span>Post</span>
+        </button>
+
+        <button onclick="goChat()">
+            💬
+            <span>Chat</span>
+        </button>
+
+        <button onclick="goProfile()">
+            👤
+            <span>Profile</span>
+        </button>
+
+    </nav>
 
 </div>
 
