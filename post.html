@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Buat Postingan - Chuk an Chukk</title>
+
+<link rel="stylesheet" href="post.css">
+
+</head>
+
+<body>
+
+<div class="upload-page">
+
+    <!-- HEADER -->
+
+    <header class="upload-header">
+
+        <button class="back-btn"
+                onclick="window.location.href='index.html'">
+
+            ←
+
+        </button>
+
+        <h2>Buat Postingan</h2>
+
+        <button class="publish-btn"
+                onclick="uploadPost()">
+
+            Posting
+
+        </button>
+
+    </header>
+
+    <!-- PREVIEW -->
+
+    <div class="preview-box">
+
+        <img id="preview"
+             src="logo.png"
+             alt="Preview">
+
+    </div>
+
+    <!-- PILIH FILE -->
+
+    <input
+        type="file"
+        id="mediaFile"
+        accept="image/*,video/*"
+        onchange="previewMedia(event)"
+        hidden>
+
+    <button class="choose-btn"
+            onclick="document.getElementById('mediaFile').click()">
+
+        📷 Pilih Foto / Video
+
+    </button>
+
+    <!-- CAPTION -->
+
+    <textarea
+        id="caption"
+        placeholder="Tulis caption postingan..."></textarea>
+
+    <!-- LOKASI -->
+
+    <input
+        type="text"
+        id="location"
+        class="input-box"
+        placeholder="Lokasi (opsional)">
+
+    <!-- TAG -->
+
+    <input
+        type="text"
+        id="hashtags"
+        class="input-box"
+        placeholder="#hashtag">
+
+    <!-- STATUS -->
+
+    <select id="privacy" class="input-box">
+
+        <option value="public">
+            🌍 Publik
+        </option>
+
+        <option value="followers">
+            👥 Followers
+        </option>
+
+        <option value="private">
+            🔒 Private
+        </option>
+
+    </select>
+
+    <!-- TOMBOL -->
+
+    <button class="upload-btn"
+            onclick="uploadPost()">
+
+        🚀 Upload Postingan
+
+    </button>
+
+</div>
+
+<script src="post.js"></script>
+
+</body>
+</html>
