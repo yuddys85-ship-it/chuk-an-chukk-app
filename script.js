@@ -1,80 +1,166 @@
-// =====================================
-// CHUK AN CHUKK
-// POST SCRIPT
-// =====================================
+/* ===================================
+   CHUK AN CHUKK v1.0
+=================================== */
 
-let selectedFile = null;
+let likeCount = 125;
+let liked = false;
 
-// Preview Foto / Video
-function previewMedia(event){
+// ====================
+// APP READY
+// ====================
 
-    const file = event.target.files[0];
+document.addEventListener("DOMContentLoaded", () => {
 
-    if(!file) return;
+    console.log("CHUK AN CHUKK READY");
 
-    selectedFile = file;
+});
 
-    const preview = document.getElementById("preview");
+// ====================
+// HEADER
+// ====================
 
-    const url = URL.createObjectURL(file);
+function searchPost(){
 
-    if(file.type.startsWith("image")){
+    alert("🔍 Fitur pencarian akan segera hadir.");
 
-        preview.outerHTML = `
-            <img
-                id="preview"
-                src="${url}"
-                alt="Preview">
-        `;
+}
+
+function showNotifications(){
+
+    alert("🔔 Belum ada notifikasi.");
+
+}
+
+// ====================
+// LIKE
+// ====================
+
+function likePost(){
+
+    if(!liked){
+
+        liked = true;
+        likeCount++;
+
+        alert("❤️ Postingan disukai");
 
     }else{
 
-        preview.outerHTML = `
-            <video
-                id="preview"
-                src="${url}"
-                controls
-                autoplay
-                muted
-                style="width:100%;height:100%;object-fit:cover;border-radius:15px;">
-            </video>
-        `;
+        liked = false;
+        likeCount--;
+
+        alert("🤍 Like dibatalkan");
 
     }
 
 }
 
-// Upload Postingan
-function uploadPost(){
+// ====================
+// COMMENT
+// ====================
 
-    const caption =
-    document.getElementById("caption").value;
+function commentPost(){
 
-    if(!selectedFile){
+    alert("💬 Fitur komentar segera hadir.");
 
-        alert("Pilih foto atau video terlebih dahulu.");
+}
 
-        return;
+// ====================
+// SHARE
+// ====================
+
+function sharePost(){
+
+    if(navigator.share){
+
+        navigator.share({
+
+            title:"Chuk an Chukk",
+
+            text:"Lihat postingan ini.",
+
+            url:window.location.href
+
+        });
+
+    }else{
+
+        alert("Browser belum mendukung Share.");
 
     }
 
-    const post = {
+}
 
-        caption: caption,
+// ====================
+// SAVE
+// ====================
 
-        fileName: selectedFile.name,
+function savePost(){
 
-        date: new Date().toLocaleString()
+    alert("🔖 Postingan disimpan.");
 
-    };
+}
 
-    localStorage.setItem(
-        "lastPost",
-        JSON.stringify(post)
-    );
+// ====================
+// MENU
+// ====================
 
-    alert("Postingan berhasil dibuat.");
+function goHome(){
 
     window.location.href="index.html";
 
 }
+
+function goChat(){
+
+    alert("💬 Halaman Chat akan dibuat.");
+
+}
+
+function goProfile(){
+
+    alert("👤 Halaman Profile akan dibuat.");
+
+}
+
+// ====================
+// DOUBLE TAP LIKE
+// ====================
+
+let lastTap = 0;
+
+document.addEventListener("touchend",function(){
+
+    let currentTime = new Date().getTime();
+
+    let tapLength = currentTime-lastTap;
+
+    if(tapLength<300 && tapLength>0){
+
+        likePost();
+
+    }
+
+    lastTap=currentTime;
+
+});
+
+// ====================
+// SCROLL
+// ====================
+
+window.addEventListener("wheel",(e)=>{
+
+    if(e.deltaY>0){
+
+        console.log("Next Feed");
+
+    }else{
+
+        console.log("Previous Feed");
+
+    }
+
+});
+
+console.log("🚀 Chuk an Chukk v1.0 Loaded");
