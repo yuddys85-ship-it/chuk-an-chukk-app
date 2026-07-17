@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
 
 <meta charset="UTF-8">
@@ -17,12 +16,11 @@
 <div class="app">
 
     <!-- HEADER -->
-
     <header class="header">
 
         <div class="logo-title">
 
-            <img src="logo.png" class="logo" alt="Logo">
+            <img src="logo.png" alt="Chuk an Chukk" class="logo">
 
             <span>CHUK AN CHUKK</span>
 
@@ -30,21 +28,24 @@
 
         <div class="header-icons">
 
-            <button class="icon-btn">🔍</button>
+            <button class="icon-btn" onclick="searchPost()">🔍</button>
 
-            <button class="icon-btn">🔔</button>
+            <button class="icon-btn" onclick="showNotifications()">🔔</button>
 
         </div>
 
     </header>
 
     <!-- FEED -->
-
     <main class="feed">
 
         <div class="post">
 
-            <img src="post.jpg" class="post-image" alt="Postingan">
+            <img src="post.jpg"
+                 class="post-image"
+                 alt="Postingan">
+
+            <div class="gradient"></div>
 
             <div class="post-overlay">
 
@@ -52,19 +53,21 @@
 
                     <h3>@username</h3>
 
-                    <p>Selamat datang di Chuk an Chukk 🚀</p>
+                    <p>
+                        Selamat datang di Chuk an Chukk 🚀
+                    </p>
 
                 </div>
 
                 <div class="post-actions">
 
-                    <button>❤️</button>
+                    <button onclick="likePost()">❤️</button>
 
-                    <button>💬</button>
+                    <button onclick="commentPost()">💬</button>
 
-                    <button>↗️</button>
+                    <button onclick="sharePost()">↗️</button>
 
-                    <button>🔖</button>
+                    <button onclick="savePost()">🔖</button>
 
                 </div>
 
@@ -74,17 +77,28 @@
 
     </main>
 
-    <!-- BOTTOM NAVIGATION -->
-
+    <!-- BOTTOM MENU -->
     <nav class="bottom-nav">
 
-        <button>🏠<br>Home</button>
+        <button onclick="goHome()">
+            🏠
+            <span>Home</span>
+        </button>
 
-        <button>➕<br>Post</button>
+        <button onclick="goPost()">
+            ➕
+            <span>Post</span>
+        </button>
 
-        <button>💬<br>Chat</button>
+        <button onclick="goChat()">
+            💬
+            <span>Chat</span>
+        </button>
 
-        <button>👤<br>Profile</button>
+        <button onclick="goProfile()">
+            👤
+            <span>Profile</span>
+        </button>
 
     </nav>
 
@@ -93,5 +107,4 @@
 <script src="script.js"></script>
 
 </body>
-
 </html>
