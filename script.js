@@ -1,52 +1,107 @@
 /* ===================================
-   CHUK AN CHUKK v1.0
+   CHUK AN CHUKK v2.0
 =================================== */
 
 let likeCount = 125;
 let liked = false;
 
-// ====================
-// APP READY
-// ====================
+/* ===========================
+   APP READY
+=========================== */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("CHUK AN CHUKK READY");
+    loadPosts();
 
 });
 
-// ====================
-// HEADER
-// ====================
+/* ===========================
+   LOAD POST
+=========================== */
+
+function loadPosts(){
+
+    const feed = document.getElementById("feed");
+
+    if(!feed) return;
+
+    const savedPost = localStorage.getItem("lastPost");
+
+    if(savedPost){
+
+        const post = JSON.parse(savedPost);
+
+        feed.innerHTML = `
+        <div class="post">
+
+            <img src="assets/post.jpg"
+                 class="post-image">
+
+            <div class="gradient"></div>
+
+            <div class="post-overlay">
+
+                <div class="post-info">
+
+                    <h3>@ChukOfficial</h3>
+
+                    <p>${post.caption}</p>
+
+                </div>
+
+                <div class="post-actions">
+
+                    <button onclick="likePost()">❤️</button>
+
+                    <button onclick="commentPost()">💬</button>
+
+                    <button onclick="sharePost()">↗️</button>
+
+                    <button onclick="savePost()">🔖</button>
+
+                </div>
+
+            </div>
+
+        </div>
+        `;
+
+    }
+
+}
+
+/* ===========================
+   HEADER
+=========================== */
 
 function searchPost(){
 
-    alert("🔍 Fitur pencarian akan segera hadir.");
+    alert("🔍 Segera hadir");
 
 }
 
 function showNotifications(){
 
-    alert("🔔 Belum ada notifikasi.");
+    alert("🔔 Belum ada notifikasi");
 
 }
 
-// ====================
-// LIKE
-// ====================
+/* ===========================
+   LIKE
+=========================== */
 
 function likePost(){
 
-    if(!liked){
+    liked=!liked;
 
-        liked = true;
+    if(liked){
+
         likeCount++;
 
-        alert("❤️ Postingan disukai");
+        alert("❤️ Disukai");
 
     }else{
 
-        liked = false;
         likeCount--;
 
         alert("🤍 Like dibatalkan");
@@ -55,9 +110,9 @@ function likePost(){
 
 }
 
-// ====================
-// COMMENT
-// ====================
+/* ===========================
+   COMMENT
+=========================== */
 
 function commentPost(){
 
@@ -65,9 +120,9 @@ function commentPost(){
 
 }
 
-// ====================
-// SHARE
-// ====================
+/* ===========================
+   SHARE
+=========================== */
 
 function sharePost(){
 
@@ -77,90 +132,50 @@ function sharePost(){
 
             title:"Chuk an Chukk",
 
-            text:"Lihat postingan ini.",
+            text:"Lihat postingan ini",
 
-            url:window.location.href
+            url:location.href
 
         });
 
     }else{
 
-        alert("Browser belum mendukung Share.");
+        alert("Share tidak didukung.");
 
     }
 
 }
 
-// ====================
-// SAVE
-// ====================
+/* ===========================
+   SAVE
+=========================== */
 
 function savePost(){
 
-    alert("🔖 Postingan disimpan.");
+    alert("🔖 Disimpan");
 
 }
 
-// ====================
-// MENU
-// ====================
+/* ===========================
+   MENU
+=========================== */
 
 function goHome(){
 
-    window.location.href="index.html";
+    location.href="index.html";
 
 }
 
 function goChat(){
 
-    alert("💬 Halaman Chat akan dibuat.");
+    alert("Chat segera hadir.");
 
 }
 
 function goProfile(){
 
-    alert("👤 Halaman Profile akan dibuat.");
+    alert("Profile segera hadir.");
 
 }
 
-// ====================
-// DOUBLE TAP LIKE
-// ====================
-
-let lastTap = 0;
-
-document.addEventListener("touchend",function(){
-
-    let currentTime = new Date().getTime();
-
-    let tapLength = currentTime-lastTap;
-
-    if(tapLength<300 && tapLength>0){
-
-        likePost();
-
-    }
-
-    lastTap=currentTime;
-
-});
-
-// ====================
-// SCROLL
-// ====================
-
-window.addEventListener("wheel",(e)=>{
-
-    if(e.deltaY>0){
-
-        console.log("Next Feed");
-
-    }else{
-
-        console.log("Previous Feed");
-
-    }
-
-});
-
-console.log("🚀 Chuk an Chukk v1.0 Loaded");
+console.log("CHUK AN CHUKK v2 READY");
