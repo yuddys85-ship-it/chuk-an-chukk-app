@@ -1,116 +1,111 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Chuk an Chukk</title>
+<title>CHUK AN CHUKK</title>
 
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
 <div class="app">
 
-    <!-- HEADER -->
-    <header class="header">
+<!-- HEADER -->
 
-        <div class="logo-title">
+<header class="header">
 
-            <img src="logo.png"
-                 class="logo"
-                 alt="Chuk an Chukk Logo">
+<div class="logo-title">
 
-            <span>CHUK AN CHUKK</span>
+<img src="logo.png" class="logo" alt="Logo">
 
-        </div>
+<span>CHUK AN CHUKK</span>
 
-        <div class="header-icons">
+</div>
 
-            <button class="icon-btn"
-                    onclick="searchPost()">
-                🔍
-            </button>
+<div class="header-icons">
 
-            <button class="icon-btn"
-                    onclick="showNotifications()">
-                🔔
-            </button>
+<button onclick="searchPost()">🔍</button>
 
-        </div>
+<button onclick="showNotifications()">🔔</button>
 
-    </header>
+</div>
 
-    <!-- FEED -->
-    <main class="feed">
+</header>
 
-        <div class="post">
+<!-- FEED -->
 
-            <img src="post.jpg"
-                 class="post-image"
-                 alt="Postingan">
+<main class="feed" id="feed">
 
-            <div class="gradient"></div>
+<!-- POST PERTAMA -->
 
-            <div class="post-overlay">
+<div class="post">
 
-                <div class="post-info">
+<img src="post.jpg"
+class="post-image"
+alt="Postingan Pertama">
 
-                    <h3>@ChukOfficial</h3>
+<div class="gradient"></div>
 
-                    <p>
-                        Selamat datang di Chuk an Chukk.
-                        Live Social App for Pi Community 🚀
-                    </p>
+<div class="post-overlay">
 
-                </div>
+<div class="post-info">
 
-                <div class="post-actions">
+<h3>@ChukOfficial</h3>
 
-                    <button onclick="likePost()">❤️</button>
+<p>
+🚀 Selamat datang di CHUK AN CHUKK.
+Live Social App for Pi Community.
+Mari berbagi foto, video dan membangun komunitas Pi bersama.
+</p>
 
-                    <button onclick="commentPost()">💬</button>
+</div>
 
-                    <button onclick="sharePost()">↗️</button>
+<div class="post-actions">
 
-                    <button onclick="savePost()">🔖</button>
+<button onclick="likePost()">❤️</button>
 
-                </div>
+<button onclick="commentPost()">💬</button>
 
-            </div>
+<button onclick="sharePost()">↗️</button>
 
-        </div>
+<button onclick="savePost()">🔖</button>
 
-    </main>
+</div>
 
-    <!-- BOTTOM NAVIGATION -->
+</div>
 
-    <nav class="bottom-nav">
+</div>
 
-        <button onclick="goHome()">
-            🏠
-            <span>Home</span>
-        </button>
+</main>
 
-        <button onclick="window.location.href='post.html'">
-            ➕
-            <span>Post</span>
-        </button>
+<!-- MENU -->
 
-        <button onclick="goChat()">
-            💬
-            <span>Chat</span>
-        </button>
+<nav class="bottom-nav">
 
-        <button onclick="goProfile()">
-            👤
-            <span>Profile</span>
-        </button>
+<button onclick="goHome()">
+🏠
+<span>Home</span>
+</button>
 
-    </nav>
+<button onclick="window.location.href='post.html'">
+➕
+<span>Post</span>
+</button>
+
+<button onclick="goChat()">
+💬
+<span>Chat</span>
+</button>
+
+<button onclick="goProfile()">
+👤
+<span>Profile</span>
+</button>
+
+</nav>
 
 </div>
 
