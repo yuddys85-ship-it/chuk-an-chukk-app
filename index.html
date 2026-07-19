@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>CHUK AN CHUKK</title>
 
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -19,7 +22,9 @@
 
 <div class="logo-title">
 
-<img src="assets/logo.png" class="logo" alt="Logo">
+<img src="assets/logo.png"
+class="logo"
+alt="Logo">
 
 <span>CHUK AN CHUKK</span>
 
@@ -39,45 +44,7 @@
 
 <main class="feed" id="feed">
 
-<!-- POST PERTAMA -->
-
-<div class="post">
-
-<img src="assets/post.jpg"
-class="post-image"
-alt="Postingan Pertama">
-
-<div class="gradient"></div>
-
-<div class="post-overlay">
-
-<div class="post-info">
-
-<h3>@ChukOfficial</h3>
-
-<p>
-🚀 Selamat datang di CHUK AN CHUKK.
-Live Social App for Pi Community.
-Mari berbagi foto, video dan membangun komunitas Pi bersama.
-</p>
-
-</div>
-
-<div class="post-actions">
-
-<button onclick="likePost()">❤️</button>
-
-<button onclick="commentPost()">💬</button>
-
-<button onclick="sharePost()">↗️</button>
-
-<button onclick="savePost()">🔖</button>
-
-</div>
-
-</div>
-
-</div>
+<!-- Feed otomatis dari Supabase -->
 
 </main>
 
@@ -109,7 +76,104 @@ Mari berbagi foto, video dan membangun komunitas Pi bersama.
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
 <script src="script.js"></script>
 
+<script>
+
+async function loadPosts(){
+
+    const { data, error } =
+    await supabase
+    .from("posts")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+    if(error){
+
+        console.log(error);
+
+        return;
+
+    }
+
+    const feed =
+    document.getElementById("feed");
+
+    feed.innerHTML = "";
+
+    data.forEach(post=>{
+
+        let media = "";
+
+        if(post.media.match(/\.(mp4|webm|mov)$/i)){
+
+            media = `
+            <video
+            class="post-image"
+            controls>
+
+            <source src="${post.media}">
+
+            </video>`;
+
+        }else{
+
+            media = `
+            <img
+            src="${post.media}"
+            class="post-image"
+            alt="Post">`;
+
+        }
+
+        feed.innerHTML += `
+
+        <div class="post">
+
+            ${media}
+
+            <div class="gradient"></div>
+
+            <div class="post-overlay">
+
+                <div class="post-info">
+
+                    <h3>@ChukOfficial</h3>
+
+                    <p>${post.caption || ""}</p>
+
+                </div>
+
+                <div class="post-actions">
+
+                    <button onclick="likePost()">❤️</button>
+
+                    <button onclick="commentPost()">💬</button>
+
+                    <button onclick="sharePost()">↗️</button>
+
+                    <button onclick="savePost()">🔖</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+loadPosts();
+
+</script>
+
 </body>
+
 </html>
