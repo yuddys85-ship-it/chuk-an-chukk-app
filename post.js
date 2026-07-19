@@ -1,12 +1,12 @@
 /* =====================================
-   CHUK AN CHUKK
-   post.js v1.0
+   CHUK AN CHUKK v3.0
+   SUPABASE POST
 ===================================== */
 
 let selectedFile = null;
 
 // ===============================
-// Preview Foto / Video
+// PREVIEW FOTO / VIDEO
 // ===============================
 
 function previewMedia(event){
@@ -17,77 +17,123 @@ function previewMedia(event){
 
     selectedFile = file;
 
-    const previewBox = document.querySelector(".preview-box");
+    const preview = document.getElementById("preview");
 
     const url = URL.createObjectURL(file);
 
     if(file.type.startsWith("image")){
 
-        previewBox.innerHTML = `
-            <img src="${url}" alt="Preview">
-        `;
+        preview.outerHTML =
+        `<img id="preview"
+        src="${url}"
+        alt="Preview">`;
 
-    }else if(file.type.startsWith("video")){
+    }else{
 
-        previewBox.innerHTML = `
-            <video controls autoplay muted>
-                <source src="${url}">
-            </video>
-        `;
+        preview.outerHTML =
+        `<video id="preview"
+        controls
+        autoplay
+        muted>
+
+        <source src="${url}">
+
+        </video>`;
 
     }
 
 }
 
 // ===============================
-// Upload Postingan
+// UPLOAD KE SUPABASE
 // ===============================
 
-function uploadPost(){
+async function uploadPost(){
 
     if(!selectedFile){
 
-        alert("Silakan pilih foto atau video terlebih dahulu.");
+        alert("Silakan pilih foto atau video.");
 
         return;
 
     }
 
-    const postData = {
+    const caption =
+    document.getElementById("caption").value;
 
-        caption: document.getElementById("caption").value,
+    const location =
+    document.getElementById("location").value;
 
-        location: document.getElementById("location").value,
+    const hashtags =
+    document.getElementById("hashtags").value;
 
-        hashtags: document.getElementById("hashtags").value,
+    const privacy =
+    document.getElementById("privacy").value;
 
-        privacy: document.getElementById("privacy").value,
+    const fileName =
+    Date.now()+"_"+selectedFile.name;
 
-        fileName: selectedFile.name,
+    alert("Sedang upload...");
+       // Upload ke Storage
 
-        createdAt: new Date().toLocaleString()
+    const { error: uploadError } =
+    await supabase
+    .storage
+    .from("posts")
+    .upload(fileName, selectedFile);
 
-    };
+    if(uploadError){
 
-    localStorage.setItem(
-        "lastPost",
-        JSON.stringify(postData)
-    );
+        alert("Upload gagal.");
+
+        console.log(uploadError);
+
+        return;
+
+    }
+
+    // Ambil URL publik
+
+    const { data: publicData } =
+    supabase
+    .storage
+    .from("posts")
+    .getPublicUrl(fileName);
+
+    const mediaUrl =
+    publicData.publicUrl;
+
+    // Simpan ke Database
+
+    const { error: insertError } =
+    await supabase
+    .from("posts")
+    .insert([{
+
+        media: mediaUrl,
+
+        caption: caption,
+
+        location: location,
+
+        hashtags: hashtags,
+
+        privacy: privacy
+
+    }]);
+
+    if(insertError){
+
+        alert("Data gagal disimpan.");
+
+        console.log(insertError);
+
+        return;
+
+    }
 
     alert("🎉 Postingan berhasil dibuat.");
 
-    window.location.href = "index.html";
+    window.location.href="index.html";
 
 }
-
-// ===============================
-// Kembali
-// ===============================
-
-function goBack(){
-
-    window.location.href = "index.html";
-
-}
-
-console.log("CHUK AN CHUKK POST READY");
