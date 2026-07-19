@@ -1,6 +1,6 @@
 /* =====================================
    CHUK AN CHUKK v3.0
-   SUPABASE POST
+   POST.JS
 ===================================== */
 
 let selectedFile = null;
@@ -17,35 +17,38 @@ function previewMedia(event){
 
     selectedFile = file;
 
-    const preview = document.getElementById("preview");
+    const previewBox =
+    document.querySelector(".preview-box");
 
     const url = URL.createObjectURL(file);
 
     if(file.type.startsWith("image")){
 
-        preview.outerHTML =
-        `<img id="preview"
-        src="${url}"
-        alt="Preview">`;
+        previewBox.innerHTML = `
+            <img id="preview"
+                 src="${url}"
+                 alt="Preview">
+        `;
 
     }else{
 
-        preview.outerHTML =
-        `<video id="preview"
-        controls
-        autoplay
-        muted>
+        previewBox.innerHTML = `
+            <video id="preview"
+                   controls
+                   autoplay
+                   muted>
 
-        <source src="${url}">
+                <source src="${url}">
 
-        </video>`;
+            </video>
+        `;
 
     }
 
 }
 
 // ===============================
-// UPLOAD KE SUPABASE
+// UPLOAD POSTINGAN
 // ===============================
 
 async function uploadPost(){
@@ -58,82 +61,116 @@ async function uploadPost(){
 
     }
 
-    const caption =
-    document.getElementById("caption").value;
+    try{
 
-    const location =
-    document.getElementById("location").value;
+        const caption =
+        document.getElementById("caption").value;
 
-    const hashtags =
-    document.getElementById("hashtags").value;
+        const location =
+        document.getElementById("location").value;
 
-    const privacy =
-    document.getElementById("privacy").value;
+        const hashtags =
+        document.getElementById("hashtags").value;
 
-    const fileName =
-    Date.now()+"_"+selectedFile.name;
+        const privacy =
+        document.getElementById("privacy").value;
 
-    alert("Sedang upload...");
-       // Upload ke Storage
+        const extension =
+        selectedFile.name.split(".").pop();
 
-    const { error: uploadError } =
-    await supabase
-    .storage
-    .from("posts")
-    .upload(fileName, selectedFile);
+        const uploadName =
+        Date.now()+"."+extension;
 
-    if(uploadError){
+        alert("Sedang mengupload...");
 
-        alert("Upload gagal.");
+        // ===============================
+        // Upload ke Storage
+        // ===============================
 
-        console.log(uploadError);
+        const { error: uploadError } =
+        await supabase
+        .storage
+        .from("posts")
+        .upload(uploadName, selectedFile);
 
-        return;
+        if(uploadError){
+
+            console.log(uploadError);
+
+            alert("Upload gagal.");
+
+            return;
+
+        }
+
+        // ===============================
+        // Ambil URL
+        // ===============================
+
+        const { data } =
+        supabase
+        .storage
+        .from("posts")
+        .getPublicUrl(uploadName);
+
+        const mediaUrl =
+        data.publicUrl;
+
+        // ===============================
+        // Simpan ke Database
+        // ===============================
+
+        const { error: insertError } =
+        await supabase
+        .from("posts")
+        .insert([{
+
+            media: mediaUrl,
+
+            caption: caption,
+
+            location: location,
+
+            hashtags: hashtags,
+
+            privacy: privacy
+
+        }]);
+
+        if(insertError){
+
+            console.log(insertError);
+
+            alert("Data gagal disimpan.");
+
+            return;
+
+        }
+
+        alert("🎉 Postingan berhasil dibuat.");
+
+        window.location.href =
+        "index.html";
+
+    }catch(err){
+
+        console.log(err);
+
+        alert("Terjadi kesalahan.");
 
     }
-
-    // Ambil URL publik
-
-    const { data: publicData } =
-    supabase
-    .storage
-    .from("posts")
-    .getPublicUrl(fileName);
-
-    const mediaUrl =
-    publicData.publicUrl;
-
-    // Simpan ke Database
-
-    const { error: insertError } =
-    await supabase
-    .from("posts")
-    .insert([{
-
-        media: mediaUrl,
-
-        caption: caption,
-
-        location: location,
-
-        hashtags: hashtags,
-
-        privacy: privacy
-
-    }]);
-
-    if(insertError){
-
-        alert("Data gagal disimpan.");
-
-        console.log(insertError);
-
-        return;
-
-    }
-
-    alert("🎉 Postingan berhasil dibuat.");
-
-    window.location.href="index.html";
 
 }
+
+// ===============================
+// KEMBALI
+// ===============================
+
+function goBack(){
+
+    window.location.href =
+    "index.html";
+
+}
+
+console.log("🚀 CHUK AN CHUKK POST READY");
