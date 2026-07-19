@@ -1,7 +1,10 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+rt { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const supabaseUrl = "https://aoaqvbrxgtfuvyiscpic.supabase.co";
+const SUPABASE_URL = "https://aoaqvbrxgtfuvyiscpic.supabase.co";
 
-const supabaseKey = "PASTE_KEY_MU";
+const SUPABASE_ANON_KEY = "YOUR_PUBLISHABLE_KEY";
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
