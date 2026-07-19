@@ -10,39 +10,43 @@ async function uploadPost(){
     try{
 
         const caption = document.getElementById("caption").value.trim();
-
         const location = document.getElementById("location").value.trim();
-
         const hashtags = document.getElementById("hashtags").value.trim();
-
         const privacy = document.getElementById("privacy").value;
 
         const extension = selectedFile.name.split(".").pop();
-
         const uploadName = Date.now() + "." + extension;
 
         alert("⏳ Sedang mengupload...");
 
+        // ==========================
         // Upload ke Storage
-        const { error: uploadError } = await supabase
+        // ==========================
+
+        const { data: uploadData, error: uploadError } = await supabase
             .storage
             .from("posts")
-            .upload(uploadName, selectedFile,{
-                cacheControl:"3600",
-                upsert:false
+            .upload(uploadName, selectedFile, {
+                cacheControl: "3600",
+                upsert: false
             });
 
         if(uploadError){
 
-            console.error(uploadError);
+            console.error("UPLOAD ERROR :", uploadError);
 
-            alert("❌ Upload Storage gagal");
+            alert("❌ Upload gagal\n\n" + uploadError.message);
 
             return;
 
         }
 
-        // Ambil URL Public
+        console.log("UPLOAD BERHASIL :", uploadData);
+
+        // ==========================
+        // Ambil Public URL
+        // ==========================
+
         const { data: publicData } = supabase
             .storage
             .from("posts")
@@ -50,42 +54,42 @@ async function uploadPost(){
 
         const mediaUrl = publicData.publicUrl;
 
-        // Simpan Database
-        const { error: dbError } = await supabase
+        // ==========================
+        // Simpan ke Database
+        // ==========================
+
+        const { data: insertData, error: dbError } = await supabase
             .from("posts")
             .insert([{
-
                 media: mediaUrl,
-
                 caption: caption,
-
                 location: location,
-
                 hashtags: hashtags,
-
                 privacy: privacy
-
-            }]);
+            }])
+            .select();
 
         if(dbError){
 
-            console.error(dbError);
+            console.error("DATABASE ERROR :", dbError);
 
-            alert("❌ Gagal menyimpan database");
+            alert("❌ Database gagal\n\n" + dbError.message);
 
             return;
 
         }
 
-        alert("✅ Postingan berhasil dibuat");
+        console.log("DATABASE BERHASIL :", insertData);
 
-        window.location.replace("index.html");
+        alert("✅ Postingan berhasil dibuat.");
+
+        window.location.href = "index.html";
 
     }catch(err){
 
-        console.error(err);
+        console.error("SYSTEM ERROR :", err);
 
-        alert("❌ Terjadi kesalahan");
+        alert("❌ " + err.message);
 
     }
 
