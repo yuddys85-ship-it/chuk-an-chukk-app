@@ -1,10 +1,17 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+/* =====================================
+   CHUK AN CHUKK
+   SUPABASE.JS
+===================================== */
 
-const SUPABASE_URL = "https://aoaqvbrxgtfuvyiscpic.supabase.co";
+const SUPABASE_URL =
+"https://aoaqvbrxgtfuvyiscpic.supabase.co";
 
-const SUPABASE_ANON_KEY = "YOUR_PUBLISHABLE_KEY";
+const SUPABASE_ANON_KEY =
+"sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
 
-export const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
+const supabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
 );
+
+console.log("✅ Supabase Connected");
