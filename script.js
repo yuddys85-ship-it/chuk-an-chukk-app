@@ -1,5 +1,6 @@
 /* ===================================
-   CHUK AN CHUKK v2.0
+   CHUK AN CHUKK v3.0
+   SCRIPT.JS
 =================================== */
 
 let likeCount = 125;
@@ -16,26 +17,75 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ===========================
-   LOAD POST
+   LOAD POST DARI SUPABASE
 =========================== */
 
-function loadPosts(){
+async function loadPosts(){
 
     const feed = document.getElementById("feed");
 
     if(!feed) return;
 
-    const savedPost = localStorage.getItem("lastPost");
+    const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .order("id",{ascending:false});
 
-    if(savedPost){
+    if(error){
 
-        const post = JSON.parse(savedPost);
+        console.log(error);
 
-        feed.innerHTML = `
+        feed.innerHTML="<h2 style='text-align:center;padding:50px;'>Belum ada postingan.</h2>";
+
+        return;
+
+    }
+
+    feed.innerHTML="";
+
+    data.forEach(post=>{
+
+        let media="";
+
+        if(post.media){
+
+            if(
+                post.media.endsWith(".mp4") ||
+                post.media.endsWith(".webm") ||
+                post.media.endsWith(".mov")
+            ){
+
+                media=`
+                <video
+                class="post-image"
+                controls
+                autoplay
+                muted
+                loop>
+
+                <source src="${post.media}">
+
+                </video>
+                `;
+
+            }else{
+
+                media=`
+                <img
+                src="${post.media}"
+                class="post-image"
+                alt="Postingan">
+                `;
+
+            }
+
+        }
+
+        feed.innerHTML += `
+
         <div class="post">
 
-            <img src="assets/post.jpg"
-                 class="post-image">
+            ${media}
 
             <div class="gradient"></div>
 
@@ -45,7 +95,7 @@ function loadPosts(){
 
                     <h3>@ChukOfficial</h3>
 
-                    <p>${post.caption}</p>
+                    <p>${post.caption || ""}</p>
 
                 </div>
 
@@ -64,9 +114,10 @@ function loadPosts(){
             </div>
 
         </div>
+
         `;
 
-    }
+    });
 
 }
 
@@ -130,9 +181,9 @@ function sharePost(){
 
         navigator.share({
 
-            title:"Chuk an Chukk",
+            title:"CHUK AN CHUKK",
 
-            text:"Lihat postingan ini",
+            text:"Lihat postingan ini.",
 
             url:location.href
 
@@ -152,7 +203,7 @@ function sharePost(){
 
 function savePost(){
 
-    alert("🔖 Disimpan");
+    alert("🔖 Postingan disimpan.");
 
 }
 
@@ -168,14 +219,14 @@ function goHome(){
 
 function goChat(){
 
-    alert("Chat segera hadir.");
+    alert("💬 Chat segera hadir.");
 
 }
 
 function goProfile(){
 
-    alert("Profile segera hadir.");
+    alert("👤 Profile segera hadir.");
 
 }
 
-console.log("CHUK AN CHUKK v2 READY");
+console.log("🚀 CHUK AN CHUKK v3.0 READY");
