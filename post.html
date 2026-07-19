@@ -78,7 +78,7 @@
         class="input-box"
         placeholder="Lokasi (opsional)">
 
-    <!-- TAG -->
+    <!-- HASHTAG -->
 
     <input
         type="text"
@@ -86,9 +86,11 @@
         class="input-box"
         placeholder="#hashtag">
 
-    <!-- STATUS -->
+    <!-- PRIVACY -->
 
-    <select id="privacy" class="input-box">
+    <select
+        id="privacy"
+        class="input-box">
 
         <option value="public">
             🌍 Publik
@@ -104,10 +106,11 @@
 
     </select>
 
-    <!-- TOMBOL -->
+    <!-- UPLOAD -->
 
-    <button class="upload-btn"
-            onclick="uploadPost()">
+    <button
+        class="upload-btn"
+        onclick="uploadPost()">
 
         🚀 Upload Postingan
 
@@ -115,7 +118,14 @@
 
 </div>
 
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
 <script src="post.js"></script>
 
 </body>
+
 </html>
