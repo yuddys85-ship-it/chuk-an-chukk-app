@@ -9,13 +9,14 @@ async function uploadPost(){
 
     try{
 
-        const caption = document.getElementById("caption").value.trim();
-        const location = document.getElementById("location").value.trim();
-        const hashtags = document.getElementById("hashtags").value.trim();
-        const privacy = document.getElementById("privacy").value;
+        const caption =
+        document.getElementById("caption").value.trim();
 
-        const extension = selectedFile.name.split(".").pop();
-        const uploadName = Date.now() + "." + extension;
+        const extension =
+        selectedFile.name.split(".").pop();
+
+        const uploadName =
+        Date.now() + "." + extension;
 
         alert("⏳ Sedang mengupload...");
 
@@ -23,73 +24,80 @@ async function uploadPost(){
         // Upload ke Storage
         // ==========================
 
-        const { data: uploadData, error: uploadError } = await supabase
-            .storage
-            .from("posts")
-            .upload(uploadName, selectedFile, {
-                cacheControl: "3600",
-                upsert: false
-            });
+        const { data: uploadData, error: uploadError } =
+        await supabase
+        .storage
+        .from("posts")
+        .upload(uploadName, selectedFile, {
+            cacheControl: "3600",
+            upsert: false
+        });
 
         if(uploadError){
 
-            console.error("UPLOAD ERROR :", uploadError);
+            console.error(uploadError);
 
-            alert("❌ Upload gagal\n\n" + uploadError.message);
+            alert("UPLOAD ERROR\n\n" +
+            JSON.stringify(uploadError,null,2));
 
             return;
 
         }
 
-        console.log("UPLOAD BERHASIL :", uploadData);
+        console.log(uploadData);
 
         // ==========================
-        // Ambil Public URL
+        // Public URL
         // ==========================
 
-        const { data: publicData } = supabase
-            .storage
-            .from("posts")
-            .getPublicUrl(uploadName);
+        const { data: publicData } =
+        supabase
+        .storage
+        .from("posts")
+        .getPublicUrl(uploadName);
 
-        const mediaUrl = publicData.publicUrl;
+        const mediaUrl =
+        publicData.publicUrl;
 
         // ==========================
-        // Simpan ke Database
+        // Simpan Database
         // ==========================
 
-        const { data: insertData, error: dbError } = await supabase
-            .from("posts")
-            .insert([{
-                media: mediaUrl,
-                caption: caption,
-                location: location,
-                hashtags: hashtags,
-                privacy: privacy
-            }])
-            .select();
+        const { data: insertData, error: dbError } =
+        await supabase
+        .from("posts")
+        .insert([{
+
+            media: mediaUrl,
+
+            caption: caption
+
+        }])
+        .select();
 
         if(dbError){
 
-            console.error("DATABASE ERROR :", dbError);
+            console.error(dbError);
 
-            alert("❌ Database gagal\n\n" + dbError.message);
+            alert("DATABASE ERROR\n\n" +
+            JSON.stringify(dbError,null,2));
 
             return;
 
         }
 
-        console.log("DATABASE BERHASIL :", insertData);
+        console.log(insertData);
 
         alert("✅ Postingan berhasil dibuat.");
 
-        window.location.href = "index.html";
+        window.location.href =
+        "index.html";
 
     }catch(err){
 
-        console.error("SYSTEM ERROR :", err);
+        console.error(err);
 
-        alert("❌ " + err.message);
+        alert("SYSTEM ERROR\n\n" + err.message);
 
     }
 
