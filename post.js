@@ -1,103 +1,80 @@
-async function uploadPost(){
+async function uploadPost() {
 
-    if(!selectedFile){
-
+    if (!selectedFile) {
         alert("Silakan pilih foto atau video.");
         return;
-
     }
 
-    try{
+    try {
 
-        const caption =
-        document.getElementById("caption").value.trim();
+        const caption = document.getElementById("caption").value.trim();
 
-        const extension =
-        selectedFile.name.split(".").pop();
+        const extension = selectedFile.name.split(".").pop();
+        const uploadName = Date.now() + "." + extension;
 
-        const uploadName =
-        Date.now() + "." + extension;
-
-        alert("⏳ Sedang mengupload...");
+        alert("⏳ Sedang upload...");
 
         // ==========================
         // Upload ke Storage
         // ==========================
 
-        const { data: uploadData, error: uploadError } =
-        await supabase
-        .storage
-        .from("posts")
-        .upload(uploadName, selectedFile, {
-            cacheControl: "3600",
-            upsert: false
-        });
+        const { data: uploadData, error: uploadError } = await supabase
+            .storage
+            .from("posts")
+            .upload(uploadName, selectedFile);
 
-        if(uploadError){
-
-            console.error(uploadError);
-
-            alert("UPLOAD ERROR\n\n" +
-            JSON.stringify(uploadError,null,2));
-
+        if (uploadError) {
+            alert("❌ STORAGE ERROR\n\n" + uploadError.message);
+            console.log(uploadError);
             return;
-
         }
 
-        console.log(uploadData);
+        console.log("Storage OK", uploadData);
 
         // ==========================
-        // Public URL
+        // Ambil URL
         // ==========================
 
-        const { data: publicData } =
-        supabase
-        .storage
-        .from("posts")
-        .getPublicUrl(uploadName);
+        const { data } = supabase
+            .storage
+            .from("posts")
+            .getPublicUrl(uploadName);
 
-        const mediaUrl =
-        publicData.publicUrl;
+        const mediaUrl = data.publicUrl;
+
+        alert("✅ Upload Storage Berhasil");
 
         // ==========================
         // Simpan Database
         // ==========================
 
-        const { data: insertData, error: dbError } =
-        await supabase
-        .from("posts")
-        .insert([{
+        const { data: dbData, error: dbError } = await supabase
+            .from("posts")
+            .insert([
+                {
+                    media: mediaUrl,
+                    caption: caption
+                }
+            ])
+            .select();
 
-            media: mediaUrl,
-
-            caption: caption
-
-        }])
-        .select();
-
-        if(dbError){
-
-            console.error(dbError);
-
-            alert("DATABASE ERROR\n\n" +
-            JSON.stringify(dbError,null,2));
-
+        if (dbError) {
+            alert("❌ DATABASE ERROR\n\n" + dbError.message);
+            console.log(dbError);
             return;
-
         }
 
-        console.log(insertData);
+        console.log("Database OK", dbData);
 
-        alert("✅ Postingan berhasil dibuat.");
+        alert("✅ POST BERHASIL");
 
-        window.location.href =
-        "index.html";
+        window.location.href = "index.html";
 
-    }catch(err){
+    } catch (err) {
 
-        console.error(err);
+        console.log(err);
 
-        alert("SYSTEM ERROR\n\n" + err.message);
+        alert("❌ SYSTEM ERROR\n\n" + err.message);
 
     }
 
