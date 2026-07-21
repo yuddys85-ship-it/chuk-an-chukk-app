@@ -14,13 +14,4 @@ const supabase = window.supabase.createClient(
     SUPABASE_ANON_KEY
 );
 
-// ==========================
-// DEBUG
-// ==========================
-
 console.log("✅ Supabase Connected");
-console.log("window.supabase =", window.supabase);
-console.log("supabase =", supabase);
-console.log("storage =", supabase.storage);
-
-window.supabaseClient = supabase;
