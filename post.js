@@ -1,7 +1,7 @@
 async function uploadPost() {
 
     if (!selectedFile) {
-        alert("Silakan pilih foto atau video.");
+        alert("❌ Silakan pilih foto atau video terlebih dahulu.");
         return;
     }
 
@@ -21,28 +21,31 @@ async function uploadPost() {
         const { data: uploadData, error: uploadError } = await supabase
             .storage
             .from("posts")
-            .upload(uploadName, selectedFile);
+            .upload(uploadName, selectedFile, {
+                cacheControl: "3600",
+                upsert: true
+            });
 
         if (uploadError) {
-            alert("❌ STORAGE ERROR\n\n" + uploadError.message);
-            console.log(uploadError);
+            console.error(uploadError);
+            alert("❌ STORAGE ERROR\n\n" + JSON.stringify(uploadError, null, 2));
             return;
         }
 
         console.log("Storage OK", uploadData);
 
         // ==========================
-        // Ambil URL
+        // Ambil Public URL
         // ==========================
 
-        const { data } = supabase
+        const { data: publicUrlData } = supabase
             .storage
             .from("posts")
             .getPublicUrl(uploadName);
 
-        const mediaUrl = data.publicUrl;
+        const mediaUrl = publicUrlData.publicUrl;
 
-        alert("✅ Upload Storage Berhasil");
+        console.log("Media URL :", mediaUrl);
 
         // ==========================
         // Simpan Database
@@ -50,29 +53,27 @@ async function uploadPost() {
 
         const { data: dbData, error: dbError } = await supabase
             .from("posts")
-            .insert([
-                {
-                    media: mediaUrl,
-                    caption: caption
-                }
-            ])
+            .insert([{
+                media: mediaUrl,
+                caption: caption
+            }])
             .select();
 
         if (dbError) {
-            alert("❌ DATABASE ERROR\n\n" + dbError.message);
-            console.log(dbError);
+            console.error(dbError);
+            alert("❌ DATABASE ERROR\n\n" + JSON.stringify(dbError, null, 2));
             return;
         }
 
         console.log("Database OK", dbData);
 
-        alert("✅ POST BERHASIL");
+        alert("✅ Postingan berhasil dibuat!");
 
         window.location.href = "index.html";
 
     } catch (err) {
 
-        console.log(err);
+        console.error(err);
 
         alert("❌ SYSTEM ERROR\n\n" + err.message);
 
