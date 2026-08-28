@@ -9,9 +9,12 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
 "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
 
-const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-);
+// Buat Supabase Client
+window.chukSupabase =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
 
-console.log("✅ Supabase Connected");
+console.log("✅ Supabase Client Ready");
+console.log("Storage:", window.chukSupabase.storage);
