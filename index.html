@@ -16,65 +16,106 @@
 
 <div class="app">
 
-<!-- HEADER -->
+    <!-- HEADER -->
 
-<header class="header">
+    <header class="header">
 
-<div class="logo-title">
+        <div class="logo-title">
 
-<img src="assets/logo.png"
-class="logo"
-alt="Logo">
+            <img
+                src="assets/logo.png"
+                class="logo"
+                alt="Logo">
 
-<span>CHUK AN CHUKK</span>
+            <span>CHUK AN CHUKK</span>
+
+        </div>
+
+        <div class="header-icons">
+
+            <button onclick="searchPost()">
+                🔍
+            </button>
+
+            <button onclick="showNotifications()">
+                🔔
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- FEED -->
+
+    <main
+        class="feed"
+        id="feed">
+
+        <div style="
+            text-align:center;
+            padding:40px;
+        ">
+            ⏳ Memuat postingan...
+        </div>
+
+    </main>
+
+
+    <!-- BOTTOM NAVIGATION -->
+
+    <nav class="bottom-nav">
+
+        <button onclick="goHome()">
+
+            🏠
+
+            <span>
+                Home
+            </span>
+
+        </button>
+
+
+        <button
+            onclick="window.location.href='post.html'">
+
+            ➕
+
+            <span>
+                Post
+            </span>
+
+        </button>
+
+
+        <button onclick="goChat()">
+
+            💬
+
+            <span>
+                Chat
+            </span>
+
+        </button>
+
+
+        <button onclick="goProfile()">
+
+            👤
+
+            <span>
+                Profile
+            </span>
+
+        </button>
+
+    </nav>
 
 </div>
 
-<div class="header-icons">
 
-<button onclick="searchPost()">🔍</button>
-
-<button onclick="showNotifications()">🔔</button>
-
-</div>
-
-</header>
-
-<!-- FEED -->
-
-<main class="feed" id="feed">
-
-<!-- Feed otomatis dari Supabase -->
-
-</main>
-
-<!-- MENU -->
-
-<nav class="bottom-nav">
-
-<button onclick="goHome()">
-🏠
-<span>Home</span>
-</button>
-
-<button onclick="window.location.href='post.html'">
-➕
-<span>Post</span>
-</button>
-
-<button onclick="goChat()">
-💬
-<span>Chat</span>
-</button>
-
-<button onclick="goProfile()">
-👤
-<span>Profile</span>
-</button>
-
-</nav>
-
-</div>
+<!-- SUPABASE -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -82,93 +123,353 @@ alt="Logo">
 
 <script src="script.js"></script>
 
+
 <script>
 
-async function loadPosts(){
+/* =====================================
+   CHUK AN CHUKK
+   LOAD POSTS
+===================================== */
 
-    const { data, error } =
-    await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at",{ascending:false});
+async function loadPosts() {
 
-    if(error){
-
-        console.log(error);
-
-        return;
-
-    }
+    const sb = window.chukSupabase;
 
     const feed =
-    document.getElementById("feed");
+        document.getElementById("feed");
 
-    feed.innerHTML = "";
 
-    data.forEach(post=>{
+    /* ==========================
+       CHECK SUPABASE
+    ========================== */
 
-        let media = "";
+    if (!sb) {
 
-        if(post.media.match(/\.(mp4|webm|mov)$/i)){
+        console.error(
+            "❌ Supabase Client tidak ditemukan"
+        );
 
-            media = `
-            <video
-            class="post-image"
-            controls>
+        feed.innerHTML = `
 
-            <source src="${post.media}">
+            <div style="
+                text-align:center;
+                padding:40px;
+            ">
 
-            </video>`;
-
-        }else{
-
-            media = `
-            <img
-            src="${post.media}"
-            class="post-image"
-            alt="Post">`;
-
-        }
-
-        feed.innerHTML += `
-
-        <div class="post">
-
-            ${media}
-
-            <div class="gradient"></div>
-
-            <div class="post-overlay">
-
-                <div class="post-info">
-
-                    <h3>@ChukOfficial</h3>
-
-                    <p>${post.caption || ""}</p>
-
-                </div>
-
-                <div class="post-actions">
-
-                    <button onclick="likePost()">❤️</button>
-
-                    <button onclick="commentPost()">💬</button>
-
-                    <button onclick="sharePost()">↗️</button>
-
-                    <button onclick="savePost()">🔖</button>
-
-                </div>
+                ❌ Supabase belum siap.
 
             </div>
 
-        </div>
+        `;
+
+        return;
+    }
+
+
+    /* ==========================
+       LOAD POSTS
+    ========================== */
+
+    console.log(
+        "⏳ Mengambil postingan..."
+    );
+
+
+    const {
+        data,
+        error
+    } = await sb
+
+        .from("posts")
+
+        .select("*")
+
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+    /* ==========================
+       DATABASE ERROR
+    ========================== */
+
+    if (error) {
+
+        console.error(
+            "❌ LOAD POSTS ERROR:",
+            error
+        );
+
+        feed.innerHTML = `
+
+            <div style="
+                text-align:center;
+                padding:40px;
+            ">
+
+                ❌ Gagal memuat postingan.
+
+                <br><br>
+
+                ${error.message}
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    /* ==========================
+       NO POSTS
+    ========================== */
+
+    if (!data || data.length === 0) {
+
+        feed.innerHTML = `
+
+            <div style="
+                text-align:center;
+                padding:40px;
+            ">
+
+                📭 Belum ada postingan.
+
+                <br><br>
+
+                <button
+                    onclick="
+                    window.location.href='post.html'
+                    "
+                    style="
+                        padding:12px 20px;
+                        border:none;
+                        border-radius:10px;
+                        cursor:pointer;
+                    "
+                >
+
+                    ➕ Buat Postingan
+
+                </button>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    /* ==========================
+       CLEAR FEED
+    ========================== */
+
+    feed.innerHTML = "";
+
+
+    /* ==========================
+       RENDER POSTS
+    ========================== */
+
+    data.forEach(post => {
+
+        const mediaUrl =
+            post.media || "";
+
+        let media = "";
+
+
+        /* ==========================
+           VIDEO
+        ========================== */
+
+        if (
+            /\.(mp4|webm|mov|m4v)$/i
+                .test(mediaUrl)
+        ) {
+
+            media = `
+
+                <video
+                    class="post-image"
+                    controls
+                    playsinline
+                    preload="metadata"
+                >
+
+                    <source
+                        src="${mediaUrl}"
+                        type="video/mp4">
+
+                    Browser Anda tidak
+                    mendukung video.
+
+                </video>
+
+            `;
+
+        }
+
+
+        /* ==========================
+           IMAGE
+        ========================== */
+
+        else {
+
+            media = `
+
+                <img
+                    src="${mediaUrl}"
+                    class="post-image"
+                    alt="Post"
+                    loading="lazy"
+                    onerror="
+                        this.style.display='none';
+                    "
+                >
+
+            `;
+
+        }
+
+
+        /* ==========================
+           LOCATION
+        ========================== */
+
+        const locationHTML =
+            post.location
+            ? `
+
+                <small>
+                    📍 ${post.location}
+                </small>
+
+              `
+            : "";
+
+
+        /* ==========================
+           HASHTAGS
+        ========================== */
+
+        const hashtagHTML =
+            post.hashtags
+            ? `
+
+                <div class="hashtags">
+                    ${post.hashtags}
+                </div>
+
+              `
+            : "";
+
+
+        /* ==========================
+           POST HTML
+        ========================== */
+
+        feed.innerHTML += `
+
+            <article class="post">
+
+                ${media}
+
+
+                <div class="gradient">
+                </div>
+
+
+                <div class="post-overlay">
+
+
+                    <div class="post-info">
+
+
+                        <h3>
+                            @ChukOfficial
+                        </h3>
+
+
+                        <p>
+                            ${post.caption || ""}
+                        </p>
+
+
+                        ${locationHTML}
+
+
+                        ${hashtagHTML}
+
+
+                    </div>
+
+
+                    <div class="post-actions">
+
+
+                        <button
+                            onclick="likePost()"
+                            aria-label="Like"
+                        >
+                            ❤️
+                        </button>
+
+
+                        <button
+                            onclick="commentPost()"
+                            aria-label="Comment"
+                        >
+                            💬
+                        </button>
+
+
+                        <button
+                            onclick="sharePost()"
+                            aria-label="Share"
+                        >
+                            ↗️
+                        </button>
+
+
+                        <button
+                            onclick="savePost()"
+                            aria-label="Save"
+                        >
+                            🔖
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </article>
 
         `;
 
     });
 
+
+    console.log(
+        "✅ Postingan berhasil dimuat:",
+        data.length
+    );
+
 }
+
+
+/* =====================================
+   START
+===================================== */
 
 loadPosts();
 
