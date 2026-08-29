@@ -1,10 +1,11 @@
 /* ===================================
-   CHUK AN CHUKK v3.0
+   CHUK AN CHUKK v3.1
    SCRIPT.JS
 =================================== */
 
 let likeCount = 125;
 let liked = false;
+
 
 /* ===========================
    APP READY
@@ -12,114 +13,10 @@ let liked = false;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    loadPosts();
+    console.log("🚀 CHUK AN CHUKK READY");
 
 });
 
-/* ===========================
-   LOAD POST DARI SUPABASE
-=========================== */
-
-async function loadPosts(){
-
-    const feed = document.getElementById("feed");
-
-    if(!feed) return;
-
-    const { data, error } = await supabase
-        .from("posts")
-        .select("*")
-        .order("id",{ascending:false});
-
-    if(error){
-
-        console.log(error);
-
-        feed.innerHTML="<h2 style='text-align:center;padding:50px;'>Belum ada postingan.</h2>";
-
-        return;
-
-    }
-
-    feed.innerHTML="";
-
-    data.forEach(post=>{
-
-        let media="";
-
-        if(post.media){
-
-            if(
-                post.media.endsWith(".mp4") ||
-                post.media.endsWith(".webm") ||
-                post.media.endsWith(".mov")
-            ){
-
-                media=`
-                <video
-                class="post-image"
-                controls
-                autoplay
-                muted
-                loop>
-
-                <source src="${post.media}">
-
-                </video>
-                `;
-
-            }else{
-
-                media=`
-                <img
-                src="${post.media}"
-                class="post-image"
-                alt="Postingan">
-                `;
-
-            }
-
-        }
-
-        feed.innerHTML += `
-
-        <div class="post">
-
-            ${media}
-
-            <div class="gradient"></div>
-
-            <div class="post-overlay">
-
-                <div class="post-info">
-
-                    <h3>@ChukOfficial</h3>
-
-                    <p>${post.caption || ""}</p>
-
-                </div>
-
-                <div class="post-actions">
-
-                    <button onclick="likePost()">❤️</button>
-
-                    <button onclick="commentPost()">💬</button>
-
-                    <button onclick="sharePost()">↗️</button>
-
-                    <button onclick="savePost()">🔖</button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        `;
-
-    });
-
-}
 
 /* ===========================
    HEADER
@@ -127,15 +24,17 @@ async function loadPosts(){
 
 function searchPost(){
 
-    alert("🔍 Segera hadir");
+    alert("🔍 Fitur pencarian segera hadir.");
 
 }
+
 
 function showNotifications(){
 
-    alert("🔔 Belum ada notifikasi");
+    alert("🔔 Belum ada notifikasi.");
 
 }
+
 
 /* ===========================
    LIKE
@@ -143,7 +42,7 @@ function showNotifications(){
 
 function likePost(){
 
-    liked=!liked;
+    liked = !liked;
 
     if(liked){
 
@@ -161,15 +60,19 @@ function likePost(){
 
 }
 
+
 /* ===========================
    COMMENT
 =========================== */
 
 function commentPost(){
 
-    alert("💬 Fitur komentar segera hadir.");
+    alert(
+        "💬 Fitur komentar segera hadir."
+    );
 
 }
+
 
 /* ===========================
    SHARE
@@ -181,21 +84,31 @@ function sharePost(){
 
         navigator.share({
 
-            title:"CHUK AN CHUKK",
+            title: "CHUK AN CHUKK",
 
-            text:"Lihat postingan ini.",
+            text: "Lihat postingan ini.",
 
-            url:location.href
+            url: location.href
+
+        }).catch(error => {
+
+            console.log(
+                "Share dibatalkan:",
+                error
+            );
 
         });
 
     }else{
 
-        alert("Share tidak didukung.");
+        alert(
+            "📤 Share tidak didukung browser ini."
+        );
 
     }
 
 }
+
 
 /* ===========================
    SAVE
@@ -203,9 +116,12 @@ function sharePost(){
 
 function savePost(){
 
-    alert("🔖 Postingan disimpan.");
+    alert(
+        "🔖 Postingan disimpan."
+    );
 
 }
+
 
 /* ===========================
    MENU
@@ -213,20 +129,30 @@ function savePost(){
 
 function goHome(){
 
-    location.href="index.html";
+    window.location.href =
+        "index.html";
 
 }
+
 
 function goChat(){
 
-    alert("💬 Chat segera hadir.");
+    alert(
+        "💬 Fitur Chat segera hadir."
+    );
 
 }
+
 
 function goProfile(){
 
-    alert("👤 Profile segera hadir.");
+    alert(
+        "👤 Fitur Profile segera hadir."
+    );
 
 }
 
-console.log("🚀 CHUK AN CHUKK v3.0 READY");
+
+console.log(
+    "🚀 CHUK AN CHUKK v3.1 READY"
+);
