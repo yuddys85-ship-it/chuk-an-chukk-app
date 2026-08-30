@@ -1,6 +1,7 @@
-/* ===========================
-   CHUK AN CHUKK v2.1
-=========================== */
+/* =========================================
+   CHUK AN CHUKK - FULL SCREEN SOCIAL FEED
+   STYLE.CSS
+========================================= */
 
 *{
     margin:0;
@@ -8,105 +9,404 @@
     box-sizing:border-box;
 }
 
-/* CHUK AN CHUKK - FULL SCREEN POST */
-
-html,body{
-margin:0;
-padding:0;
-background:#000;
+html,
+body{
+    width:100%;
+    height:100%;
+    background:#000;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    overflow:hidden;
 }
+
+body{
+    overscroll-behavior:none;
+}
+
+.app{
+    width:100%;
+    height:100dvh;
+    background:#000;
+    position:relative;
+    overflow:hidden;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:64px;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 16px;
+
+    background:linear-gradient(
+        to bottom,
+        rgba(0,0,0,.75),
+        rgba(0,0,0,0)
+    );
+}
+
+.logo-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.logo{
+    width:42px;
+    height:42px;
+    object-fit:contain;
+    border-radius:50%;
+}
+
+.logo-title span{
+    font-size:18px;
+    font-weight:700;
+    color:#fff;
+}
+
+.header-icons{
+    display:flex;
+    gap:8px;
+}
+
+.header-icons button{
+    border:0;
+    background:transparent;
+    color:#fff;
+    font-size:25px;
+    width:42px;
+    height:42px;
+    cursor:pointer;
+}
+
+/* =========================================
+   FULL SCREEN FEED
+========================================= */
 
 .feed{
-width:100%;
-height:100vh;
-padding:0;
-margin:0;
-overflow-y:auto;
-scroll-snap-type:y mandatory;
+    width:100%;
+    height:100dvh;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    scroll-snap-type:y mandatory;
+
+    scrollbar-width:none;
+
+    background:#000;
 }
+
+.feed::-webkit-scrollbar{
+    display:none;
+}
+
+/* =========================================
+   POST
+========================================= */
 
 .post{
-position:relative;
-width:100%;
-height:100vh;
-margin:0;
-padding:0;
-overflow:hidden;
-background:#000;
-scroll-snap-align:start;
+    position:relative;
+
+    width:100%;
+    height:100dvh;
+    min-height:100dvh;
+
+    background:#000;
+
+    overflow:hidden;
+
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
 }
+
+/* =========================================
+   FOTO / VIDEO
+========================================= */
 
 .post-image{
-position:absolute;
-inset:0;
-width:100%;
-height:100%;
-object-fit:cover;
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    background:#000;
 }
+
+/* video */
+video.post-image{
+    object-fit:cover;
+}
+
+/* =========================================
+   GRADIENT
+========================================= */
+
+.gradient{
+    position:absolute;
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.55) 0%,
+            transparent 20%,
+            transparent 58%,
+            rgba(0,0,0,.78) 100%
+        );
+}
+
+/* =========================================
+   OVERLAY
+========================================= */
 
 .post-overlay{
-position:absolute;
-left:0;
-right:0;
-bottom:0;
-z-index:5;
-display:flex;
-justify-content:space-between;
-align-items:flex-end;
-padding:20px 15px 80px;
+    position:absolute;
+
+    inset:0;
+
+    z-index:10;
+
+    pointer-events:none;
 }
 
+/* =========================================
+   POST INFO
+========================================= */
+
 .post-info{
-color:#fff;
-max-width:75%;
-text-shadow:0 2px 5px #000;
+    position:absolute;
+
+    left:18px;
+    right:85px;
+    bottom:92px;
+
+    color:#fff;
+
+    text-shadow:
+        0 1px 4px rgba(0,0,0,.8);
 }
 
 .post-info h3{
-margin:0 0 8px;
+    font-size:18px;
+    font-weight:700;
+
+    margin-bottom:9px;
 }
 
 .post-info p{
-margin:0;
+    font-size:15px;
+    line-height:1.4;
+
+    max-width:600px;
+
+    word-wrap:break-word;
 }
 
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
 .post-actions{
-display:flex;
-flex-direction:column;
-gap:15px;
+    position:absolute;
+
+    right:12px;
+    bottom:135px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    gap:18px;
+
+    pointer-events:auto;
 }
 
 .post-actions button{
-width:45px;
-height:45px;
-border:0;
-border-radius:50%;
-background:rgba(0,0,0,.4);
-color:#fff;
-font-size:24px;
+    width:52px;
+    height:52px;
+
+    border:0;
+    background:transparent;
+
+    color:#fff;
+
+    font-size:31px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    filter:
+        drop-shadow(0 2px 3px rgba(0,0,0,.8));
+
+    transition:
+        transform .15s ease;
 }
 
-.gradient{
-position:absolute;
-inset:0;
-pointer-events:none;
-background:linear-gradient(
-transparent 55%,
-rgba(0,0,0,.8)
-);
+.post-actions button:active{
+    transform:scale(.8);
 }
+
+/* =========================================
+   BOTTOM NAV
+========================================= */
+
+.bottom-nav{
+    position:fixed;
+
+    left:0;
+    bottom:0;
+
+    width:100%;
+    height:70px;
+
+    z-index:200;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.8),
+            rgba(0,0,0,0)
+        );
+
+    pointer-events:auto;
+}
+
+.bottom-nav button{
+    border:0;
+
+    background:transparent;
+
+    color:#fff;
+
+    min-width:60px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    gap:3px;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    text-shadow:
+        0 1px 4px #000;
+}
+
+.bottom-nav button span{
+    font-size:11px;
+    color:#fff;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
 
 @media(max-width:600px){
 
-.post,
-.feed{
-height:100dvh;
+    .header{
+        height:58px;
+        padding:7px 12px;
+    }
+
+    .logo{
+        width:38px;
+        height:38px;
+    }
+
+    .logo-title span{
+        font-size:16px;
+    }
+
+    .header-icons button{
+        font-size:23px;
+        width:38px;
+        height:38px;
+    }
+
+    .post-info{
+        left:15px;
+        right:75px;
+        bottom:86px;
+    }
+
+    .post-info h3{
+        font-size:17px;
+    }
+
+    .post-info p{
+        font-size:14px;
+    }
+
+    .post-actions{
+        right:7px;
+        bottom:125px;
+        gap:13px;
+    }
+
+    .post-actions button{
+        width:48px;
+        height:48px;
+        font-size:29px;
+    }
+
+    .bottom-nav{
+        height:62px;
+    }
+
+    .bottom-nav button{
+        font-size:21px;
+    }
+
+    .bottom-nav button span{
+        font-size:10px;
+    }
 }
 
-.post-image{
-width:100%;
-height:100%;
-object-fit:cover;
-}
+/* =========================================
+   TABLET / DESKTOP
+========================================= */
 
+@media(min-width:700px){
+
+    .post{
+        max-width:700px;
+        margin:auto;
+    }
+
+    .header{
+        max-width:700px;
+        left:50%;
+        transform:translateX(-50%);
+    }
+
+    .bottom-nav{
+        max-width:700px;
+        left:50%;
+        transform:translateX(-50%);
+    }
 }
