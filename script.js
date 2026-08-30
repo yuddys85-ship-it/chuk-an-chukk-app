@@ -169,77 +169,86 @@ function likePost(postId, button){
    KOMENTAR
 =========================== */
 
-async function commentPost(postId){
+async function sendComment(postId){
 
-    const oldBox = document.getElementById("commentBox");
+    const input = document.getElementById("commentText");
 
-    if(oldBox) oldBox.remove();
+    if(!input) return;
 
-    const box = document.createElement("div");
+    const text = input.value.trim();
 
-    box.id = "commentBox";
-    box.className = "comment-box";
+    if(!text){
+        alert("Tulis komentar terlebih dahulu.");
+        return;
+    }
 
-    box.innerHTML = `
+    const button = document.querySelector(".comment-input button");
 
-        <div class="comment-panel">
+    if(button){
+        button.disabled = true;
+        button.textContent = "Mengirim...";
+    }
 
-            <div class="comment-header">
+    try{
 
-                <strong>Komentar</strong>
+        const username =
+            localStorage.getItem("pi_username") ||
+            "User";
 
-                <button
-                    class="comment-close"
-                    onclick="closeComments()">
-                    ✕
-                </button>
+        console.log("Mengirim komentar:", {
+            post_id: postId,
+            username: username,
+            comment: text
+        });
 
-            </div>
+        const { data, error } = await supabase
+            .from("comments")
+            .insert([{
+                post_id: postId,
+                username: username,
+                comment: text
+            }])
+            .select();
 
-            <div
-                id="commentsList"
-                class="comments-list">
+        if(error){
 
-                <div class="comment-loading">
-                    Memuat komentar...
-                </div>
+            console.error("COMMENT ERROR:", error);
 
-            </div>
+            alert(
+                "❌ Komentar gagal dikirim\n\n" +
+                error.message
+            );
 
-            <div class="comment-input">
+            return;
+        }
 
-                <input
-                    id="commentText"
-                    type="text"
-                    placeholder="Tambahkan komentar..."
-                    maxlength="500"
-                    autocomplete="off">
+        console.log("COMMENT BERHASIL:", data);
 
-                <button
-                    onclick="sendComment('${postId}')">
-                    Kirim
-                </button>
+        input.value = "";
 
-            </div>
+        alert("✅ Komentar berhasil dikirim!");
 
-        </div>
+        await loadComments(postId);
 
-    `;
+    }catch(err){
 
-    document.body.appendChild(box);
+        console.error("SYSTEM COMMENT ERROR:", err);
 
-    loadComments(postId);
+        alert(
+            "❌ System error\n\n" +
+            err.message
+        );
 
-    setTimeout(() => {
+    }finally{
 
-        const input =
-            document.getElementById("commentText");
+        if(button){
 
-        if(input) input.focus();
+            button.disabled = false;
+            button.textContent = "Kirim";
 
-    },100);
-}
+        }
 
+    }
 /* ===========================
    LOAD COMMENTS
 =========================== */
