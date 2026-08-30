@@ -365,6 +365,7 @@ video.post-image{
     right:0;
     transform:none;
 }
+
 /* =========================================
    FONT MENGIKUTI PENGATURAN HP
 ========================================= */
@@ -619,11 +620,4 @@ body{
     .post-info p{
         line-height:1.5;
     }
-}
-.bottom-nav{
-    width:100vw;
-    max-width:none;
-    left:0;
-    right:0;
-    transform:none;
 }
