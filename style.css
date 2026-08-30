@@ -323,90 +323,53 @@ video.post-image{
 }
 
 /* =========================================
-   MOBILE
+   FULL WIDTH - SEMUA LAYAR
 ========================================= */
 
-@media(max-width:600px){
-
-    .header{
-        height:58px;
-        padding:7px 12px;
-    }
-
-    .logo{
-        width:38px;
-        height:38px;
-    }
-
-    .logo-title span{
-        font-size:16px;
-    }
-
-    .header-icons button{
-        font-size:23px;
-        width:38px;
-        height:38px;
-    }
-
-    .post-info{
-        left:15px;
-        right:75px;
-        bottom:86px;
-    }
-
-    .post-info h3{
-        font-size:17px;
-    }
-
-    .post-info p{
-        font-size:14px;
-    }
-
-    .post-actions{
-        right:7px;
-        bottom:125px;
-        gap:13px;
-    }
-
-    .post-actions button{
-        width:48px;
-        height:48px;
-        font-size:29px;
-    }
-
-    .bottom-nav{
-        height:62px;
-    }
-
-    .bottom-nav button{
-        font-size:21px;
-    }
-
-    .bottom-nav button span{
-        font-size:10px;
-    }
+.app{
+    width:100vw;
+    max-width:none;
+    height:100dvh;
+    margin:0;
+    padding:0;
 }
 
-/* =========================================
-   TABLET / DESKTOP
-========================================= */
+.feed{
+    width:100vw;
+    max-width:none;
+    height:100dvh;
+    margin:0;
+    padding:0;
+}
 
-@media(min-width:700px){
+.post{
+    width:100vw;
+    max-width:none;
+    height:100dvh;
+    min-height:100dvh;
+    margin:0;
+    padding:0;
+}
 
-    .post{
-        max-width:700px;
-        margin:auto;
-    }
+.post-image{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+}
 
-    .header{
-        max-width:700px;
-        left:50%;
-        transform:translateX(-50%);
-    }
+.header{
+    width:100vw;
+    max-width:none;
+    left:0;
+    right:0;
+    transform:none;
+}
 
-    .bottom-nav{
-        max-width:700px;
-        left:50%;
-        transform:translateX(-50%);
-    }
+.bottom-nav{
+    width:100vw;
+    max-width:none;
+    left:0;
+    right:0;
+    transform:none;
 }
