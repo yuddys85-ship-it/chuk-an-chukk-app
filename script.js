@@ -1,5 +1,5 @@
 /* ===================================
-   CHUK AN CHUKK v4.0
+   CHUK AN CHUKK v5.0
    SOCIAL FEED + KOMENTAR
 =================================== */
 
@@ -26,11 +26,11 @@ async function loadPosts(){
     const { data, error } = await supabase
         .from("posts")
         .select("*")
-        .order("created_at",{ascending:false});
+        .order("created_at", {ascending:false});
 
     if(error){
 
-        console.error(error);
+        console.error("POST ERROR:", error);
 
         feed.innerHTML = `
             <div class="empty-feed">
@@ -111,26 +111,22 @@ async function loadPosts(){
                     <div class="post-actions">
 
                         <button
-                            onclick="likePost('${post.id}', this)"
-                            aria-label="Like">
+                            onclick="likePost('${post.id}', this)">
                             ❤️
                         </button>
 
                         <button
-                            onclick="commentPost('${post.id}')"
-                            aria-label="Komentar">
+                            onclick="commentPost('${post.id}')">
                             💬
                         </button>
 
                         <button
-                            onclick="sharePost('${post.id}')"
-                            aria-label="Bagikan">
+                            onclick="sharePost('${post.id}')">
                             ↗️
                         </button>
 
                         <button
-                            onclick="savePost('${post.id}')"
-                            aria-label="Simpan">
+                            onclick="savePost('${post.id}')">
                             🔖
                         </button>
 
@@ -139,7 +135,6 @@ async function loadPosts(){
                 </div>
 
             </article>
-
         `;
     });
 }
@@ -161,94 +156,99 @@ function likePost(postId, button){
         likedPosts.add(postId);
 
         button.classList.add("liked");
-
     }
 }
 
 /* ===========================
-   KOMENTAR
+   OPEN COMMENTS
 =========================== */
 
-async function sendComment(postId){
+function commentPost(postId){
 
-    const input = document.getElementById("commentText");
+    const oldBox =
+        document.getElementById("commentBox");
 
-    if(!input) return;
-
-    const text = input.value.trim();
-
-    if(!text){
-        alert("Tulis komentar terlebih dahulu.");
-        return;
+    if(oldBox){
+        oldBox.remove();
     }
 
-    const button = document.querySelector(".comment-input button");
+    const box =
+        document.createElement("div");
 
-    if(button){
-        button.disabled = true;
-        button.textContent = "Mengirim...";
-    }
+    box.id = "commentBox";
+    box.className = "comment-box";
 
-    try{
+    box.innerHTML = `
 
-        const username =
-            localStorage.getItem("pi_username") ||
-            "User";
+        <div class="comment-panel">
 
-        console.log("Mengirim komentar:", {
-            post_id: postId,
-            username: username,
-            comment: text
-        });
+            <div class="comment-header">
 
-        const { data, error } = await supabase
-            .from("comments")
-            .insert([{
-                post_id: postId,
-                username: username,
-                comment: text
-            }])
-            .select();
+                <strong>💬 Komentar</strong>
 
-        if(error){
+                <button
+                    type="button"
+                    class="comment-close"
+                    onclick="closeComments()">
 
-            console.error("COMMENT ERROR:", error);
+                    ✕
 
-            alert(
-                "❌ Komentar gagal dikirim\n\n" +
-                error.message
-            );
+                </button>
 
-            return;
+            </div>
+
+            <div
+                id="commentsList"
+                class="comments-list">
+
+                <div class="comment-loading">
+                    Memuat komentar...
+                </div>
+
+            </div>
+
+            <form
+                class="comment-input"
+                onsubmit="
+                    event.preventDefault();
+                    sendComment('${postId}');
+                ">
+
+                <input
+                    id="commentText"
+                    type="text"
+                    placeholder="Tulis komentar..."
+                    maxlength="500"
+                    autocomplete="off"
+                    enterkeyhint="send">
+
+                <button type="submit">
+                    Kirim
+                </button>
+
+            </form>
+
+        </div>
+    `;
+
+    document.body.appendChild(box);
+
+    loadComments(postId);
+
+    setTimeout(() => {
+
+        const input =
+            document.getElementById("commentText");
+
+        if(input){
+
+            input.focus();
+
         }
 
-        console.log("COMMENT BERHASIL:", data);
+    }, 300);
+}
 
-        input.value = "";
-
-        alert("✅ Komentar berhasil dikirim!");
-
-        await loadComments(postId);
-
-    }catch(err){
-
-        console.error("SYSTEM COMMENT ERROR:", err);
-
-        alert(
-            "❌ System error\n\n" +
-            err.message
-        );
-
-    }finally{
-
-        if(button){
-
-            button.disabled = false;
-            button.textContent = "Kirim";
-
-        }
-
-    }
 /* ===========================
    LOAD COMMENTS
 =========================== */
@@ -260,19 +260,20 @@ async function loadComments(postId){
 
     if(!list) return;
 
-    const { data, error } = await supabase
+    const { data, error } =
+        await supabase
         .from("comments")
         .select("*")
         .eq("post_id", postId)
-        .order("created_at",{ascending:true});
+        .order("created_at", {ascending:true});
 
     if(error){
 
-        console.error(error);
+        console.error("LOAD COMMENT ERROR:", error);
 
         list.innerHTML = `
             <div class="comment-empty">
-                Belum ada komentar.
+                Gagal memuat komentar.
             </div>
         `;
 
@@ -291,33 +292,34 @@ async function loadComments(postId){
         return;
     }
 
-    list.innerHTML = data.map(comment => `
+    list.innerHTML =
+        data.map(comment => `
 
-        <div class="comment-item">
+            <div class="comment-item">
 
-            <div class="comment-avatar">
-                👤
+                <div class="comment-avatar">
+                    👤
+                </div>
+
+                <div class="comment-content">
+
+                    <strong>
+                        @${escapeHTML(
+                            comment.username || "User"
+                        )}
+                    </strong>
+
+                    <p>
+                        ${escapeHTML(
+                            comment.comment || ""
+                        )}
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="comment-content">
-
-                <strong>
-                    @${escapeHTML(
-                        comment.username || "User"
-                    )}
-                </strong>
-
-                <p>
-                    ${escapeHTML(
-                        comment.comment || ""
-                    )}
-                </p>
-
-            </div>
-
-        </div>
-
-    `).join("");
+        `).join("");
 }
 
 /* ===========================
@@ -331,7 +333,8 @@ async function sendComment(postId){
 
     if(!input) return;
 
-    const text = input.value.trim();
+    const text =
+        input.value.trim();
 
     if(!text){
 
@@ -340,36 +343,89 @@ async function sendComment(postId){
         return;
     }
 
-    const username =
-        localStorage.getItem("pi_username") ||
-        "User";
-
-    const { error } = await supabase
-        .from("comments")
-        .insert({
-
-            post_id: postId,
-
-            username: username,
-
-            comment: text
-
-        });
-
-    if(error){
-
-        console.error(error);
-
-        alert(
-            "❌ Komentar gagal dikirim."
+    const button =
+        document.querySelector(
+            "#commentBox .comment-input button"
         );
 
-        return;
+    if(button){
+
+        button.disabled = true;
+        button.textContent = "Mengirim...";
+
     }
 
-    input.value = "";
+    try{
 
-    loadComments(postId);
+        const username =
+            localStorage.getItem("pi_username") ||
+            "User";
+
+        console.log("Mengirim komentar:", {
+            post_id: postId,
+            username: username,
+            comment: text
+        });
+
+        const { data, error } =
+            await supabase
+            .from("comments")
+            .insert([{
+
+                post_id: postId,
+
+                username: username,
+
+                comment: text
+
+            }])
+            .select();
+
+        if(error){
+
+            console.error(
+                "COMMENT ERROR:",
+                error
+            );
+
+            alert(
+                "❌ Komentar gagal dikirim\n\n" +
+                error.message
+            );
+
+            return;
+        }
+
+        console.log(
+            "✅ KOMENTAR BERHASIL:",
+            data
+        );
+
+        input.value = "";
+
+        await loadComments(postId);
+
+    }catch(error){
+
+        console.error(
+            "SYSTEM COMMENT ERROR:",
+            error
+        );
+
+        alert(
+            "❌ System error\n\n" +
+            error.message
+        );
+
+    }finally{
+
+        if(button){
+
+            button.disabled = false;
+            button.textContent = "Kirim";
+
+        }
+    }
 }
 
 /* ===========================
@@ -402,17 +458,20 @@ async function sharePost(postId){
 
                 title:"CHUK AN CHUKK",
 
-                text:"Lihat postingan ini di Chuk an Chukk.",
+                text:
+                    "Lihat postingan ini di Chuk an Chukk.",
 
                 url:location.href
 
             });
 
-        }catch(e){}
+        }catch(error){}
 
     }else{
 
-        alert("Share tidak didukung oleh HP ini.");
+        alert(
+            "Share tidak didukung oleh HP ini."
+        );
 
     }
 }
@@ -438,13 +497,17 @@ function savePost(postId){
 
 function searchPost(){
 
-    alert("🔍 Fitur pencarian segera hadir.");
+    alert(
+        "🔍 Fitur pencarian segera hadir."
+    );
 
 }
 
 function showNotifications(){
 
-    alert("🔔 Belum ada notifikasi.");
+    alert(
+        "🔔 Belum ada notifikasi."
+    );
 
 }
 
@@ -454,19 +517,23 @@ function showNotifications(){
 
 function goHome(){
 
-    location.href="index.html";
+    location.href = "index.html";
 
 }
 
 function goChat(){
 
-    alert("💬 Chat segera hadir.");
+    alert(
+        "💬 Chat segera hadir."
+    );
 
 }
 
 function goProfile(){
 
-    alert("👤 Profile segera hadir.");
+    alert(
+        "👤 Profile segera hadir."
+    );
 
 }
 
@@ -485,5 +552,5 @@ function escapeHTML(text){
 }
 
 console.log(
-    "🚀 CHUK AN CHUKK v4.0 READY"
+    "🚀 CHUK AN CHUKK v5.0 READY"
 );
