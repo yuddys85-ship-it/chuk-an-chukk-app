@@ -1,50 +1,39 @@
-/* ===================================
-   CHUK AN CHUKK v5.1
+/* =========================================
+   CHUK AN CHUKK v5.0
    SOCIAL FEED + KOMENTAR
-=================================== */
-
-/* ===================================
-   SUPABASE CLIENT
-=================================== */
+   SUPABASE FIX
+========================================= */
 
 const db = window.chukSupabase;
 
-if (!db) {
-    console.error("❌ Supabase Client tidak ditemukan.");
-}
-
-/* ===================================
-   LIKE
-=================================== */
-
 let likedPosts = new Set();
+let currentCommentPostId = null;
 
-/* ===================================
+/* =========================================
    APP READY
-=================================== */
+========================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (!db) {
+        console.error("❌ Supabase client tidak ditemukan.");
+        return;
+    }
+
     loadPosts();
+
 });
 
-/* ===================================
+
+/* =========================================
    LOAD POSTS
-=================================== */
+========================================= */
 
 async function loadPosts() {
 
     const feed = document.getElementById("feed");
 
     if (!feed) return;
-
-    if (!db) {
-        feed.innerHTML = `
-            <div class="empty-feed">
-                ❌ Supabase belum terhubung.
-            </div>
-        `;
-        return;
-    }
 
     const { data, error } = await db
         .from("posts")
@@ -66,8 +55,6 @@ async function loadPosts() {
         return;
     }
 
-    feed.innerHTML = "";
-
     if (!data || data.length === 0) {
 
         feed.innerHTML = `
@@ -79,15 +66,16 @@ async function loadPosts() {
         return;
     }
 
-    data.forEach(post => {
+    feed.innerHTML = "";
+
+    data.forEach(function (post) {
 
         let media = "";
 
         if (post.media) {
 
             const isVideo =
-                /\.(mp4|webm|mov|m4v)$/i
-                .test(post.media);
+                /\.(mp4|webm|mov|m4v)$/i.test(post.media);
 
             if (isVideo) {
 
@@ -126,17 +114,10 @@ async function loadPosts() {
 
                     <div class="post-info">
 
-                        <h3>
-                            @${escapeHTML(
-                                post.username ||
-                                "ChukOfficial"
-                            )}
-                        </h3>
+                        <h3>@ChukOfficial</h3>
 
                         <p>
-                            ${escapeHTML(
-                                post.caption || ""
-                            )}
+                            ${escapeHTML(post.caption || "")}
                         </p>
 
                     </div>
@@ -144,28 +125,24 @@ async function loadPosts() {
                     <div class="post-actions">
 
                         <button
-                            type="button"
                             onclick="likePost('${post.id}', this)"
                             aria-label="Like">
                             ❤️
                         </button>
 
                         <button
-                            type="button"
                             onclick="commentPost('${post.id}')"
                             aria-label="Komentar">
                             💬
                         </button>
 
                         <button
-                            type="button"
                             onclick="sharePost('${post.id}')"
                             aria-label="Bagikan">
                             ↗️
                         </button>
 
                         <button
-                            type="button"
                             onclick="savePost('${post.id}')"
                             aria-label="Simpan">
                             🔖
@@ -180,44 +157,48 @@ async function loadPosts() {
     });
 }
 
-/* ===================================
-   LIKE POST
-=================================== */
+
+/* =========================================
+   LIKE
+========================================= */
 
 function likePost(postId, button) {
+
+    if (!postId || !button) return;
 
     if (likedPosts.has(postId)) {
 
         likedPosts.delete(postId);
-
         button.classList.remove("liked");
 
     } else {
 
         likedPosts.add(postId);
-
         button.classList.add("liked");
+
     }
 }
 
-/* ===================================
+
+/* =========================================
    BUKA KOMENTAR
-=================================== */
+========================================= */
 
-function commentPost(postId) {
+async function commentPost(postId) {
 
-    const oldBox =
-        document.getElementById("commentBox");
+    if (!postId || postId === "undefined") {
 
-    if (oldBox) {
-        oldBox.remove();
+        alert("❌ ID postingan tidak ditemukan.");
+        return;
     }
 
-    const box =
-        document.createElement("div");
+    currentCommentPostId = postId;
+
+    closeComments();
+
+    const box = document.createElement("div");
 
     box.id = "commentBox";
-    box.className = "comment-box";
 
     box.innerHTML = `
 
@@ -225,17 +206,12 @@ function commentPost(postId) {
 
             <div class="comment-header">
 
-                <strong>
-                    💬 Komentar
-                </strong>
+                <strong>💬 Komentar</strong>
 
                 <button
-                    type="button"
                     class="comment-close"
                     onclick="closeComments()">
-
                     ✕
-
                 </button>
 
             </div>
@@ -250,77 +226,83 @@ function commentPost(postId) {
 
             </div>
 
-            <form
-                class="comment-input"
-                onsubmit="
-                    event.preventDefault();
-                    sendComment('${postId}');
-                ">
+            <div class="comment-input">
 
                 <input
                     id="commentText"
                     type="text"
                     placeholder="Tulis komentar..."
-                    maxlength="500"
                     autocomplete="off"
                     enterkeyhint="send">
 
                 <button
-                    type="submit">
-
+                    type="button"
+                    onclick="sendComment('${postId}')">
                     Kirim
-
                 </button>
 
-            </form>
+            </div>
 
         </div>
     `;
 
     document.body.appendChild(box);
 
-    loadComments(postId);
+    await loadComments(postId);
 
-    setTimeout(() => {
+    const input =
+        document.getElementById("commentText");
 
-        const input =
-            document.getElementById(
-                "commentText"
-            );
+    if (input) {
 
-        if (input) {
+        setTimeout(function () {
+
             input.focus();
-        }
 
-    }, 300);
+        }, 150);
+
+        input.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    sendComment(postId);
+                }
+            }
+        );
+    }
 }
 
-/* ===================================
+
+/* =========================================
    LOAD COMMENTS
-=================================== */
+========================================= */
 
 async function loadComments(postId) {
 
     const list =
-        document.getElementById(
-            "commentsList"
-        );
+        document.getElementById("commentsList");
 
     if (!list) return;
 
-    if (!db) {
+    if (!postId || postId === "undefined") {
 
         list.innerHTML = `
             <div class="comment-empty">
-                ❌ Supabase belum terhubung.
+                ID postingan tidak ditemukan.
             </div>
         `;
 
         return;
     }
 
-    const { data, error } =
-        await db
+    const { data, error } = await db
         .from("comments")
         .select("*")
         .eq("post_id", postId)
@@ -330,10 +312,7 @@ async function loadComments(postId) {
 
     if (error) {
 
-        console.error(
-            "LOAD COMMENT ERROR:",
-            error
-        );
+        console.error("LOAD COMMENT ERROR:", error);
 
         list.innerHTML = `
             <div class="comment-empty">
@@ -356,8 +335,9 @@ async function loadComments(postId) {
         return;
     }
 
-    list.innerHTML =
-        data.map(comment => `
+    list.innerHTML = data.map(function (comment) {
+
+        return `
 
             <div class="comment-item">
 
@@ -369,15 +349,13 @@ async function loadComments(postId) {
 
                     <strong>
                         @${escapeHTML(
-                            comment.username ||
-                            "User"
+                            comment.username || "User"
                         )}
                     </strong>
 
                     <p>
                         ${escapeHTML(
-                            comment.comment ||
-                            ""
+                            comment.comment || ""
                         )}
                     </p>
 
@@ -385,21 +363,31 @@ async function loadComments(postId) {
 
             </div>
 
-        `).join("");
+        `;
+
+    }).join("");
 }
 
-/* ===================================
+
+/* =========================================
    KIRIM KOMENTAR
-=================================== */
+========================================= */
 
 async function sendComment(postId) {
 
     const input =
-        document.getElementById(
-            "commentText"
-        );
+        document.getElementById("commentText");
 
     if (!input) return;
+
+    if (!postId || postId === "undefined") {
+
+        alert(
+            "❌ ID postingan tidak ditemukan."
+        );
+
+        return;
+    }
 
     const text =
         input.value.trim();
@@ -407,15 +395,6 @@ async function sendComment(postId) {
     if (!text) {
 
         input.focus();
-
-        return;
-    }
-
-    if (!db) {
-
-        alert(
-            "❌ Supabase belum terhubung."
-        );
 
         return;
     }
@@ -428,17 +407,15 @@ async function sendComment(postId) {
     if (button) {
 
         button.disabled = true;
-        button.textContent =
-            "Mengirim...";
+        button.textContent = "Mengirim...";
 
     }
 
     try {
 
         const username =
-            localStorage.getItem(
-                "pi_username"
-            ) || "User";
+            localStorage.getItem("pi_username") ||
+            "User";
 
         console.log(
             "📤 Mengirim komentar:",
@@ -449,10 +426,9 @@ async function sendComment(postId) {
             }
         );
 
-        const { data, error } =
-            await db
+        const { error } = await db
             .from("comments")
-            .insert([{
+            .insert({
 
                 post_id: postId,
 
@@ -460,13 +436,12 @@ async function sendComment(postId) {
 
                 comment: text
 
-            }])
-            .select();
+            });
 
         if (error) {
 
             console.error(
-                "❌ COMMENT ERROR:",
+                "COMMENT ERROR:",
                 error
             );
 
@@ -479,8 +454,7 @@ async function sendComment(postId) {
         }
 
         console.log(
-            "✅ KOMENTAR BERHASIL:",
-            data
+            "✅ KOMENTAR BERHASIL"
         );
 
         input.value = "";
@@ -490,7 +464,7 @@ async function sendComment(postId) {
     } catch (error) {
 
         console.error(
-            "❌ SYSTEM COMMENT ERROR:",
+            "SYSTEM COMMENT ERROR:",
             error
         );
 
@@ -510,133 +484,144 @@ async function sendComment(postId) {
     }
 }
 
-/* ===================================
-   TUTUP KOMENTAR
-=================================== */
+
+/* =========================================
+   CLOSE KOMENTAR
+========================================= */
 
 function closeComments() {
 
     const box =
-        document.getElementById(
-            "commentBox"
-        );
+        document.getElementById("commentBox");
 
     if (box) {
+
         box.remove();
+
     }
+
+    currentCommentPostId = null;
 }
 
-/* ===================================
+
+/* =========================================
    SHARE
-=================================== */
+========================================= */
 
 async function sharePost(postId) {
 
-    if (navigator.share) {
+    try {
 
-        try {
+        if (navigator.share) {
 
             await navigator.share({
 
-                title:
-                    "CHUK AN CHUKK",
+                title: "CHUK AN CHUKK",
 
                 text:
                     "Lihat postingan ini di Chuk an Chukk.",
 
-                url:
-                    location.href
+                url: location.href
 
             });
 
-        } catch (error) {
+        } else {
 
-            console.log(
-                "Share dibatalkan."
+            alert(
+                "Share tidak didukung oleh HP ini."
             );
 
         }
 
-    } else {
+    } catch (error) {
 
-        alert(
-            "Share tidak didukung oleh HP ini."
-        );
+        console.log("Share dibatalkan.");
+
     }
 }
 
-/* ===================================
+
+/* =========================================
    SAVE
-=================================== */
+========================================= */
 
 function savePost(postId) {
+
+    if (!postId) return;
 
     localStorage.setItem(
         "saved_" + postId,
         "true"
     );
 
-    alert(
-        "🔖 Postingan disimpan."
-    );
+    alert("🔖 Postingan disimpan.");
+
 }
 
-/* ===================================
+
+/* =========================================
    SEARCH
-=================================== */
+========================================= */
 
 function searchPost() {
 
     alert(
         "🔍 Fitur pencarian segera hadir."
     );
+
 }
 
-/* ===================================
+
+/* =========================================
    NOTIFICATION
-=================================== */
+========================================= */
 
 function showNotifications() {
 
     alert(
         "🔔 Belum ada notifikasi."
     );
+
 }
 
-/* ===================================
+
+/* =========================================
    MENU
-=================================== */
+========================================= */
 
 function goHome() {
 
-    location.href =
-        "index.html";
+    location.href = "index.html";
+
 }
+
 
 function goChat() {
 
     alert(
         "💬 Chat segera hadir."
     );
+
 }
+
 
 function goProfile() {
 
     alert(
         "👤 Profile segera hadir."
     );
+
 }
 
-/* ===================================
+
+/* =========================================
    SECURITY
-=================================== */
+========================================= */
 
 function escapeHTML(text) {
 
     const div =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     div.textContent =
         String(text);
@@ -644,14 +629,16 @@ function escapeHTML(text) {
     return div.innerHTML;
 }
 
-/* ===================================
+
+/* =========================================
    READY
-=================================== */
+========================================= */
 
 console.log(
-    "🚀 CHUK AN CHUKK v5.1 READY"
+    "🚀 CHUK AN CHUKK v5.0 READY"
 );
+
 console.log(
-    "🗄️ Database client:",
-    !!db
+    "Supabase:",
+    db ? "CONNECTED ✅" : "NOT CONNECTED ❌"
 );
