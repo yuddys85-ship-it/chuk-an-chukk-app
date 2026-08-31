@@ -647,3 +647,45 @@ body{
         line-height:1.5;
     }
 }
+/* FIX INPUT KOMENTAR HP */
+#commentBox{
+    position:fixed !important;
+    inset:0 !important;
+    z-index:999999 !important;
+    pointer-events:auto !important;
+}
+
+#commentBox .comment-panel{
+    position:relative !important;
+    z-index:1000000 !important;
+    pointer-events:auto !important;
+}
+
+#commentBox .comment-input{
+    position:relative !important;
+    z-index:1000001 !important;
+    pointer-events:auto !important;
+}
+
+#commentBox #commentText{
+    position:relative !important;
+    z-index:1000002 !important;
+
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+
+    pointer-events:auto !important;
+
+    user-select:text !important;
+    -webkit-user-select:text !important;
+
+    touch-action:manipulation !important;
+
+    color:#fff !important;
+    background:#252525 !important;
+    border:1px solid #777 !important;
+
+    width:100% !important;
+    min-height:50px !important;
+}
