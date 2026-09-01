@@ -4,11 +4,16 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <title>CHUK AN CHUKK</title>
 
-<link rel="stylesheet" href="style.css">
+<link
+    rel="stylesheet"
+    href="style.css">
 
 </head>
 
@@ -16,7 +21,9 @@
 
 <div class="app">
 
-    <!-- HEADER -->
+    <!-- =========================
+         HEADER
+    ========================== -->
 
     <header class="header">
 
@@ -25,20 +32,32 @@
             <img
                 src="assets/logo.png"
                 class="logo"
-                alt="Logo">
+                alt="Chuk an Chukk">
 
-            <span>CHUK AN CHUKK</span>
+            <span>
+                CHUK AN CHUKK
+            </span>
 
         </div>
 
         <div class="header-icons">
 
-            <button onclick="searchPost()">
+            <button
+                type="button"
+                onclick="searchPost()"
+                aria-label="Cari">
+
                 🔍
+
             </button>
 
-            <button onclick="showNotifications()">
+            <button
+                type="button"
+                onclick="showNotifications()"
+                aria-label="Notifikasi">
+
                 🔔
+
             </button>
 
         </div>
@@ -46,27 +65,43 @@
     </header>
 
 
-    <!-- FEED -->
+    <!-- =========================
+         FEED
+    ========================== -->
 
     <main
         class="feed"
         id="feed">
 
-        <div style="
-            text-align:center;
-            padding:40px;
-        ">
+        <div
+            style="
+                width:100%;
+                min-height:100dvh;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                text-align:center;
+                color:#fff;
+                background:#000;
+                font-size:1.1rem;
+            ">
+
             ⏳ Memuat postingan...
+
         </div>
 
     </main>
 
 
-    <!-- BOTTOM NAVIGATION -->
+    <!-- =========================
+         BOTTOM NAV
+    ========================== -->
 
     <nav class="bottom-nav">
 
-        <button onclick="goHome()">
+        <button
+            type="button"
+            onclick="goHome()">
 
             🏠
 
@@ -78,7 +113,10 @@
 
 
         <button
-            onclick="window.location.href='post.html'">
+            type="button"
+            onclick="
+                window.location.href='post.html'
+            ">
 
             ➕
 
@@ -89,7 +127,9 @@
         </button>
 
 
-        <button onclick="goChat()">
+        <button
+            type="button"
+            onclick="goChat()">
 
             💬
 
@@ -100,7 +140,9 @@
         </button>
 
 
-        <button onclick="goProfile()">
+        <button
+            type="button"
+            onclick="goProfile()">
 
             👤
 
@@ -115,366 +157,65 @@
 </div>
 
 
-<!-- SUPABASE -->
+<!-- =========================
+     SUPABASE LIBRARY
+========================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
+<!-- =========================
+     CHUK SUPABASE CLIENT
+========================== -->
+
 <script src="supabase.js"></script>
+
+
+<!-- =========================
+     FIX SUPABASE CLIENT
+========================== -->
+
+<script>
+
+    /*
+     * supabase.js membuat:
+     *
+     * window.chukSupabase
+     *
+     * Sedangkan script.js menggunakan:
+     *
+     * supabase.from(...)
+     *
+     * Jadi kita arahkan supabase
+     * ke client Chuk an Chukk.
+     */
+
+    if (window.chukSupabase) {
+
+        window.supabase =
+            window.chukSupabase;
+
+        console.log(
+            "✅ CHUK Supabase Client aktif"
+        );
+
+    } else {
+
+        console.error(
+            "❌ CHUK Supabase Client tidak ditemukan"
+        );
+
+    }
+
+</script>
+
+
+<!-- =========================
+     MAIN SCRIPT
+========================== -->
 
 <script src="script.js"></script>
 
 
-<script>
-
-/* =====================================
-   CHUK AN CHUKK
-   LOAD POSTS
-===================================== */
-
-async function loadPosts() {
-
-    const sb = window.chukSupabase;
-
-    const feed =
-        document.getElementById("feed");
-
-
-    /* ==========================
-       CHECK SUPABASE
-    ========================== */
-
-    if (!sb) {
-
-        console.error(
-            "❌ Supabase Client tidak ditemukan"
-        );
-
-        feed.innerHTML = `
-
-            <div style="
-                text-align:center;
-                padding:40px;
-            ">
-
-                ❌ Supabase belum siap.
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    /* ==========================
-       LOAD POSTS
-    ========================== */
-
-    console.log(
-        "⏳ Mengambil postingan..."
-    );
-
-
-    const {
-        data,
-        error
-    } = await sb
-
-        .from("posts")
-
-        .select("*")
-
-        .order(
-            "created_at",
-            {
-                ascending:false
-            }
-        );
-
-
-    /* ==========================
-       DATABASE ERROR
-    ========================== */
-
-    if (error) {
-
-        console.error(
-            "❌ LOAD POSTS ERROR:",
-            error
-        );
-
-        feed.innerHTML = `
-
-            <div style="
-                text-align:center;
-                padding:40px;
-            ">
-
-                ❌ Gagal memuat postingan.
-
-                <br><br>
-
-                ${error.message}
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    /* ==========================
-       NO POSTS
-    ========================== */
-
-    if (!data || data.length === 0) {
-
-        feed.innerHTML = `
-
-            <div style="
-                text-align:center;
-                padding:40px;
-            ">
-
-                📭 Belum ada postingan.
-
-                <br><br>
-
-                <button
-                    onclick="
-                    window.location.href='post.html'
-                    "
-                    style="
-                        padding:12px 20px;
-                        border:none;
-                        border-radius:10px;
-                        cursor:pointer;
-                    "
-                >
-
-                    ➕ Buat Postingan
-
-                </button>
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    /* ==========================
-       CLEAR FEED
-    ========================== */
-
-    feed.innerHTML = "";
-
-
-    /* ==========================
-       RENDER POSTS
-    ========================== */
-
-    data.forEach(post => {
-
-        const mediaUrl =
-            post.media || "";
-
-        let media = "";
-
-
-        /* ==========================
-           VIDEO
-        ========================== */
-
-        if (
-            /\.(mp4|webm|mov|m4v)$/i
-                .test(mediaUrl)
-        ) {
-
-            media = `
-
-                <video
-                    class="post-image"
-                    controls
-                    playsinline
-                    preload="metadata"
-                >
-
-                    <source
-                        src="${mediaUrl}"
-                        type="video/mp4">
-
-                    Browser Anda tidak
-                    mendukung video.
-
-                </video>
-
-            `;
-
-        }
-
-
-        /* ==========================
-           IMAGE
-        ========================== */
-
-        else {
-
-            media = `
-
-                <img
-                    src="${mediaUrl}"
-                    class="post-image"
-                    alt="Post"
-                    loading="lazy"
-                    onerror="
-                        this.style.display='none';
-                    "
-                >
-
-            `;
-
-        }
-
-
-        /* ==========================
-           LOCATION
-        ========================== */
-
-        const locationHTML =
-            post.location
-            ? `
-
-                <small>
-                    📍 ${post.location}
-                </small>
-
-              `
-            : "";
-
-
-        /* ==========================
-           HASHTAGS
-        ========================== */
-
-        const hashtagHTML =
-            post.hashtags
-            ? `
-
-                <div class="hashtags">
-                    ${post.hashtags}
-                </div>
-
-              `
-            : "";
-
-
-        /* ==========================
-           POST HTML
-        ========================== */
-
-        feed.innerHTML += `
-
-            <article class="post">
-
-                ${media}
-
-
-                <div class="gradient">
-                </div>
-
-
-                <div class="post-overlay">
-
-
-                    <div class="post-info">
-
-
-                        <h3>
-                            @ChukOfficial
-                        </h3>
-
-
-                        <p>
-                            ${post.caption || ""}
-                        </p>
-
-
-                        ${locationHTML}
-
-
-                        ${hashtagHTML}
-
-
-                    </div>
-
-
-                    <div class="post-actions">
-
-
-                        <button
-                            onclick="likePost()"
-                            aria-label="Like"
-                        >
-                            ❤️
-                        </button>
-
-
-                        <button
-                            onclick="commentPost()"
-                            aria-label="Comment"
-                        >
-                            💬
-                        </button>
-
-
-                        <button
-                            onclick="sharePost()"
-                            aria-label="Share"
-                        >
-                            ↗️
-                        </button>
-
-
-                        <button
-                            onclick="savePost()"
-                            aria-label="Save"
-                        >
-                            🔖
-                        </button>
-
-
-                    </div>
-
-
-                </div>
-
-
-            </article>
-
-        `;
-
-    });
-
-
-    console.log(
-        "✅ Postingan berhasil dimuat:",
-        data.length
-    );
-
-}
-
-
-/* =====================================
-   START
-===================================== */
-
-loadPosts();
-
-</script>
-
 </body>
-
 </html>
