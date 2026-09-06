@@ -237,7 +237,14 @@ async function commentPost(postId) {
     }
 
     /* Karena post_id di database bigint */
-    if (!/^\d+$/.test(String(postId))) {
+    if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    .test(String(postId).trim())
+) {
+    alert("❌ ID postingan tidak valid: " + postId);
+    console.error("UUID POST INVALID:", postId);
+    return;
+}
 
         alert(
             "❌ ID postingan tidak valid: " +
