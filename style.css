@@ -1,691 +1,1005 @@
-/* =========================================
-   CHUK AN CHUKK - FULL SCREEN SOCIAL FEED
+/* =========================================================
+   CHUK AN CHUKK
    STYLE.CSS
-========================================= */
+   SOCIAL FEED STYLE
+   ========================================================= */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-html,
-body{
-    width:100%;
-    height:100%;
-    background:#000;
-    color:#fff;
-    font-family:Arial,Helvetica,sans-serif;
-    overflow:hidden;
+html {
+    width: 100%;
+    min-height: 100%;
+    background: #f0f2f5;
 }
 
-body{
-    overscroll-behavior:none;
+body {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    margin: 0;
+
+    background: #f0f2f5;
+    color: #111;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    overflow-x: hidden;
 }
 
-.app{
-    width:100%;
-    height:100dvh;
-    background:#000;
-    position:relative;
-    overflow:hidden;
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+.app {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    background: #f0f2f5;
 }
 
-/* =========================================
-   HEADER
-========================================= */
 
-.header{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:64px;
-    z-index:100;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:8px 16px;
+/* =========================================================
+   HEADER APP
+   ========================================================= */
 
-    background:linear-gradient(
-        to bottom,
-        rgba(0,0,0,.75),
-        rgba(0,0,0,0)
-    );
+.header {
+    position: sticky;
+    top: 0;
+
+    width: 100%;
+    height: 62px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 8px 15px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #ddd;
+
+    z-index: 1000;
 }
 
-.logo-title{
-    display:flex;
-    align-items:center;
-    gap:9px;
+
+.logo-title {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    min-width: 0;
 }
 
-.logo{
-    width:42px;
-    height:42px;
-    object-fit:contain;
-    border-radius:50%;
+
+.logo {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
 }
 
-.logo-title span{
-    font-size:18px;
-    font-weight:700;
-    color:#fff;
+
+.logo-title span {
+    font-size: 19px;
+    font-weight: 700;
+
+    white-space: nowrap;
 }
 
-.header-icons{
-    display:flex;
-    gap:8px;
+
+.header-icons {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
 }
 
-.header-icons button{
-    border:0;
-    background:transparent;
-    color:#fff;
-    font-size:25px;
-    width:42px;
-    height:42px;
-    cursor:pointer;
+
+.header-icons button {
+    width: 40px;
+    height: 40px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #f0f2f5;
+
+    font-size: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================
-   FULL SCREEN FEED
-========================================= */
 
-.feed{
-    width:100%;
-    height:100dvh;
-
-    overflow-y:auto;
-    overflow-x:hidden;
-
-    scroll-snap-type:y mandatory;
-
-    scrollbar-width:none;
-
-    background:#000;
+.header-icons button:active {
+    transform: scale(.92);
 }
 
-.feed::-webkit-scrollbar{
-    display:none;
+
+/* =========================================================
+   FEED
+   ========================================================= */
+
+.feed {
+    width: 100%;
+    max-width: 680px;
+
+    margin: 0 auto;
+
+    padding: 10px 0 90px;
 }
 
-/* =========================================
-   POST
-========================================= */
 
-.post{
-    position:relative;
+/* =========================================================
+   POST CARD
+   ========================================================= */
 
-    width:100%;
-    height:100dvh;
-    min-height:100dvh;
+.post {
+    position: relative;
 
-    background:#000;
+    width: 100%;
 
-    overflow:hidden;
+    margin: 0 0 12px;
 
-    scroll-snap-align:start;
-    scroll-snap-stop:always;
+    background: #ffffff;
+
+    overflow: hidden;
+
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
-/* =========================================
-   FOTO / VIDEO
-========================================= */
 
-.post-image{
-    position:absolute;
+/* =========================================================
+   MEDIA
+   ========================================================= */
 
-    inset:0;
+.post > img.post-image,
+.post > .video-wrapper {
+    display: block;
 
-    width:100%;
-    height:100%;
-
-    object-fit:cover;
-
-    background:#000;
+    width: 100%;
 }
 
-/* video */
-video.post-image{
-    object-fit:cover;
+
+/*
+   Foto
+*/
+
+.post > img.post-image {
+    width: 100%;
+    height: auto;
+
+    max-height: 720px;
+
+    object-fit: cover;
+
+    background: #000;
 }
 
-/* =========================================
+
+/*
+   Video
+*/
+
+.video-wrapper {
+    position: relative;
+
+    width: 100% !important;
+
+    height: auto !important;
+
+    background: #000;
+
+    overflow: hidden;
+}
+
+
+.video-wrapper video.post-image {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    max-height: 720px;
+
+    object-fit: contain;
+
+    background: #000;
+}
+
+
+/* =========================================================
    GRADIENT
-========================================= */
+   ========================================================= */
 
-.gradient{
-    position:absolute;
-    inset:0;
+/*
+   Script lama membuat .gradient setelah media.
+   Kita sembunyikan karena model baru tidak membutuhkan
+   overlay gelap.
+*/
 
-    pointer-events:none;
-
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(0,0,0,.55) 0%,
-            transparent 20%,
-            transparent 58%,
-            rgba(0,0,0,.78) 100%
-        );
+.post > .gradient {
+    display: none;
 }
 
-/* =========================================
-   OVERLAY
-========================================= */
 
-.post-overlay{
-    position:absolute;
+/* =========================================================
+   POST OVERLAY
+   ========================================================= */
 
-    inset:0;
+/*
+   PENTING:
+   Jangan lagi dibuat absolute.
+   Sekarang menjadi bagian normal dari kartu.
+*/
 
-    z-index:10;
+.post-overlay {
+    position: relative;
 
-    pointer-events:none;
+    inset: auto;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+
+    color: #111;
+
+    z-index: 10;
 }
 
-/* =========================================
-   POST INFO
-========================================= */
 
-.post-info{
-    position:absolute;
+/* =========================================================
+   POST INFO / CAPTION
+   ========================================================= */
 
-    left:18px;
-    right:85px;
-    bottom:92px;
+.post-info {
+    position: relative;
 
-    color:#fff;
+    left: auto;
+    right: auto;
+    bottom: auto;
 
-    text-shadow:
-        0 1px 4px rgba(0,0,0,.8);
+    width: 100%;
+
+    padding: 13px 16px 10px;
+
+    order: 1;
+
+    background: #ffffff;
+
+    z-index: 20;
 }
 
-.post-info h3{
-    font-size:18px;
-    font-weight:700;
 
-    margin-bottom:9px;
+/*
+   Username
+*/
+
+.post-info h3 {
+    margin: 0 0 6px;
+
+    color: #111;
+
+    font-size: 16px;
+    line-height: 1.25;
+
+    font-weight: 700;
 }
 
-.post-info p{
-    font-size:15px;
-    line-height:1.4;
 
-    max-width:600px;
+/*
+   Caption
+*/
 
-    word-wrap:break-word;
+.post-info p {
+    margin: 0;
+
+    color: #222;
+
+    font-size: 16px;
+
+    line-height: 1.4;
+
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
 }
 
-/* =========================================
+
+/* =========================================================
    ACTION BUTTONS
-========================================= */
+   ========================================================= */
 
-.post-actions{
-    position:absolute;
+.post-actions {
+    position: relative;
 
-    right:12px;
-    bottom:135px;
+    right: auto;
+    bottom: auto;
 
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+    width: 100%;
 
-    gap:18px;
+    min-height: 52px;
 
-    pointer-events:auto;
+    padding: 4px 8px;
+
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    justify-content: space-around;
+
+    gap: 4px;
+
+    background: #ffffff;
+
+    border-top: 1px solid #e1e1e1;
+
+    order: 2;
+
+    z-index: 30;
 }
 
-.post-actions button{
-    width:52px;
-    height:52px;
 
-    border:0;
-    background:transparent;
+/*
+   Tombol
+*/
 
-    color:#fff;
+.post-actions button {
+    flex: 1;
 
-    font-size:31px;
+    min-width: 0;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    height: 46px;
 
-    cursor:pointer;
+    border: none;
+    border-radius: 8px;
 
-    filter:
-        drop-shadow(0 2px 3px rgba(0,0,0,.8));
+    background: transparent;
 
-    transition:
-        transform .15s ease;
+    color: #555;
+
+    font-size: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
-.post-actions button:active{
-    transform:scale(.8);
+
+/*
+   Hover
+*/
+
+.post-actions button:hover {
+    background: #f0f2f5;
 }
 
-/* =========================================
-   BOTTOM NAV
-========================================= */
 
-.bottom-nav{
-    position:fixed;
+/*
+   Tekan
+*/
 
-    left:0;
-    bottom:0;
+.post-actions button:active {
+    transform: scale(.96);
 
-    width:100%;
-    height:70px;
-
-    z-index:200;
-
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-
-    background:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,.8),
-            rgba(0,0,0,0)
-        );
-
-    pointer-events:auto;
+    background: #e4e6eb;
 }
 
-.bottom-nav button{
-    border:0;
 
-    background:transparent;
+/*
+   Like aktif
+*/
 
-    color:#fff;
+.post-actions button.liked {
+    color: #1877f2;
 
-    min-width:60px;
+    background: transparent;
 
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-
-    gap:3px;
-
-    font-size:22px;
-
-    cursor:pointer;
-
-    text-shadow:
-        0 1px 4px #000;
+    transform: none;
 }
 
-.bottom-nav button span{
-    font-size:11px;
-    color:#fff;
+
+/* =========================================================
+   SOUND BUTTON
+   ========================================================= */
+
+/*
+   Tetap berada di dalam video.
+*/
+
+.sound-button {
+    position: absolute !important;
+
+    right: 14px !important;
+    top: auto !important;
+    bottom: 14px !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    min-width: 46px !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: rgba(0, 0, 0, .70) !important;
+
+    color: #ffffff !important;
+
+    font-size: 21px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    z-index: 9999 !important;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================
-   FULL WIDTH - SEMUA LAYAR
-========================================= */
 
-.app{
-    width:100vw;
-    max-width:none;
-    height:100dvh;
-    margin:0;
-    padding:0;
+.sound-button:active {
+    transform: scale(.90);
 }
 
-.feed{
-    width:100vw;
-    max-width:none;
-    height:100dvh;
-    margin:0;
-    padding:0;
+
+/* =========================================================
+   EMPTY FEED
+   ========================================================= */
+
+.empty-feed {
+    width: 100%;
+
+    padding: 50px 20px;
+
+    text-align: center;
+
+    color: #65676b;
+
+    font-size: 16px;
+
+    background: #ffffff;
 }
 
-.post{
-    width:100vw;
-    max-width:none;
-    height:100dvh;
-    min-height:100dvh;
-    margin:0;
-    padding:0;
+
+/* =========================================================
+   COMMENT BOX
+   ========================================================= */
+
+#commentBox {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, .45);
+
+    z-index: 10000;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
 }
 
-.post-image{
-    width:100%;
-    height:100%;
-    display:block;
-    object-fit:cover;
+
+/* =========================================================
+   COMMENT PANEL
+   ========================================================= */
+
+.comment-panel {
+    width: 100%;
+    max-width: 680px;
+
+    max-height: 78vh;
+
+    background: #ffffff;
+
+    border-radius: 18px 18px 0 0;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
 }
 
-.header{
-    width:100vw;
-    max-width:none;
-    left:0;
-    right:0;
-    transform:none;
+
+/* =========================================================
+   COMMENT HEADER
+   ========================================================= */
+
+.comment-header {
+    height: 54px;
+
+    padding: 0 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #ddd;
+
+    background: #ffffff;
 }
 
-/* =========================================
-   FONT MENGIKUTI PENGATURAN HP
-========================================= */
 
-html{
-    font-size:100%;
+.comment-header strong {
+    font-size: 17px;
 }
 
-body{
-    font-size:1rem;
+
+.comment-close {
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #f0f2f5;
+
+    font-size: 18px;
+
+    cursor: pointer;
 }
 
-/* Semua teks mengikuti ukuran dasar browser/HP */
 
-.logo-title span{
-    font-size:1.1rem;
+/* =========================================================
+   COMMENT LIST
+   ========================================================= */
+
+.comments-list {
+    flex: 1;
+
+    min-height: 120px;
+
+    max-height: 55vh;
+
+    overflow-y: auto;
+
+    padding: 10px 14px;
+
+    background: #ffffff;
 }
 
-.post-info h3{
-    font-size:1.15rem;
+
+.comment-item {
+    display: flex;
+
+    gap: 9px;
+
+    margin-bottom: 13px;
 }
 
-.post-info p{
-    font-size:1rem;
+
+.comment-avatar {
+    flex: 0 0 38px;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 50%;
+
+    background: #e4e6eb;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
 }
 
-.post-actions button{
-    font-size:1.9rem;
+
+.comment-content {
+    min-width: 0;
+
+    padding: 8px 11px;
+
+    border-radius: 14px;
+
+    background: #f0f2f5;
 }
 
-.bottom-nav button{
-    font-size:1.4rem;
+
+.comment-content strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    font-size: 14px;
 }
 
-.bottom-nav button span{
-    font-size:.75rem;
+
+.comment-content p {
+    margin: 0;
+
+    color: #333;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
 }
 
-/* ================================
-   CHUK AN CHUKK - KOMENTAR
-================================ */
-
-.comment-box{
-    position:fixed;
-    inset:0;
-    z-index:99999;
-
-    display:flex;
-    align-items:flex-end;
-
-    background:rgba(0,0,0,.55);
-
-    pointer-events:auto;
-}
-
-.comment-panel{
-    position:relative;
-
-    width:100%;
-    max-height:80dvh;
-
-    background:#111;
-    color:#fff;
-
-    border-radius:22px 22px 0 0;
-
-    display:flex;
-    flex-direction:column;
-
-    pointer-events:auto;
-
-    z-index:100000;
-}
-
-.comment-header{
-    height:60px;
-    flex-shrink:0;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:0 18px;
-
-    border-bottom:1px solid #333;
-
-    font-size:1.15rem;
-}
-
-.comment-close{
-    border:0;
-    background:transparent;
-
-    color:#fff;
-
-    font-size:1.3rem;
-
-    padding:10px;
-
-    cursor:pointer;
-
-    pointer-events:auto;
-}
-
-.comments-list{
-    flex:1;
-
-    min-height:180px;
-
-    overflow-y:auto;
-
-    padding:15px;
-
-    pointer-events:auto;
-}
-
-.comment-item{
-    display:flex;
-
-    gap:10px;
-
-    margin-bottom:18px;
-}
-
-.comment-avatar{
-    width:42px;
-    height:42px;
-
-    flex-shrink:0;
-
-    border-radius:50%;
-
-    background:#292929;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.comment-content{
-    color:#fff;
-}
-
-.comment-content strong{
-    font-size:1rem;
-}
-
-.comment-content p{
-    margin-top:4px;
-
-    font-size:1rem;
-
-    line-height:1.4;
-}
 
 .comment-empty,
-.comment-loading{
-    text-align:center;
+.comment-loading {
+    padding: 35px 15px;
 
-    padding:35px 15px;
+    text-align: center;
 
-    color:#aaa;
+    color: #65676b;
 
-    font-size:1rem;
+    font-size: 14px;
 }
 
-/* ================================
-   INPUT KOMENTAR
-================================ */
 
-.comment-input{
-    position:relative;
+/* =========================================================
+   COMMENT INPUT
+   ========================================================= */
 
-    display:flex;
+.comment-input {
+    width: 100%;
 
-    gap:8px;
+    padding: 10px;
 
-    width:100%;
+    display: flex;
 
-    padding:12px;
+    gap: 8px;
 
-    background:#151515;
+    background: #ffffff;
 
-    border-top:1px solid #333;
-
-    z-index:100001;
-
-    pointer-events:auto;
+    border-top: 1px solid #ddd;
 }
 
-.comment-input input{
-    flex:1;
 
-    width:100%;
+.comment-input input {
+    flex: 1;
 
-    height:50px;
+    min-width: 0;
 
-    border:1px solid #555;
+    height: 44px;
 
-    border-radius:25px;
+    padding: 0 14px;
 
-    background:#252525;
+    border: none;
 
-    color:#fff;
+    border-radius: 22px;
 
-    padding:0 17px;
+    outline: none;
 
-    font-size:1rem;
+    background: #f0f2f5;
 
-    outline:none;
-
-    pointer-events:auto;
-
-    -webkit-user-select:text;
-    user-select:text;
-
-    -webkit-touch-callout:default;
+    font-size: 15px;
 }
 
-.comment-input input:focus{
-    border-color:#7b2cff;
+
+.comment-input button {
+    width: 70px;
+
+    height: 44px;
+
+    border: none;
+
+    border-radius: 22px;
+
+    background: #1877f2;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
 }
 
-.comment-input button{
-    height:50px;
 
-    flex-shrink:0;
+.comment-input button:disabled {
+    opacity: .55;
 
-    padding:0 18px;
-
-    border:0;
-
-    border-radius:25px;
-
-    background:#6d25ff;
-
-    color:#fff;
-
-    font-size:1rem;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    pointer-events:auto;
+    cursor: not-allowed;
 }
 
-.comment-input button:disabled{
-    opacity:.6;
+
+/* =========================================================
+   BOTTOM NAV
+   ========================================================= */
+
+.bottom-nav {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+
+    height: 66px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    padding-bottom: env(safe-area-inset-bottom);
+
+    background: rgba(255, 255, 255, .97);
+
+    border-top: 1px solid #ddd;
+
+    z-index: 5000;
 }
 
-/* =========================================
-   TULISAN BESAR
-   TETAP PRPROPORSIONALADA HP
-========================================= */
 
-@media(max-width:600px){
+.bottom-nav button {
+    flex: 1;
 
-    .post-info h3{
-        font-size:1.2rem;
+    height: 100%;
+
+    border: none;
+
+    background: transparent;
+
+    color: #555;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 2px;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+.bottom-nav button span {
+    font-size: 21px;
+
+    line-height: 1;
+}
+
+
+.bottom-nav button small {
+    font-size: 11px;
+
+    line-height: 1.2;
+}
+
+
+.bottom-nav button:active {
+    transform: scale(.94);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .header {
+        height: 58px;
+
+        padding: 7px 12px;
     }
 
-    .post-info p{
-        font-size:1.05rem;
+
+    .logo {
+        width: 38px;
+        height: 38px;
     }
 
-    .comment-panel{
-        max-height:80dvh;
+
+    .logo-title span {
+        font-size: 17px;
+    }
+
+
+    .header-icons button {
+        width: 38px;
+        height: 38px;
+
+        font-size: 18px;
+    }
+
+
+    .feed {
+        width: 100%;
+
+        padding-top: 6px;
+
+        padding-bottom: 78px;
+    }
+
+
+    .post {
+        margin-bottom: 8px;
+
+        border-left: none;
+        border-right: none;
+    }
+
+
+    .post-info {
+        padding: 12px 14px 9px;
+    }
+
+
+    .post-info h3 {
+        font-size: 15px;
+
+        margin-bottom: 5px;
+    }
+
+
+    .post-info p {
+        font-size: 15px;
+
+        line-height: 1.38;
+    }
+
+
+    .post-actions {
+        min-height: 50px;
+
+        padding: 3px 5px;
+    }
+
+
+    .post-actions button {
+        height: 44px;
+
+        font-size: 15px;
+    }
+
+
+    .sound-button {
+        right: 12px !important;
+        bottom: 12px !important;
+
+        width: 44px !important;
+        height: 44px !important;
+
+        min-width: 44px !important;
+
+        font-size: 20px !important;
+    }
+
+
+    .bottom-nav {
+        height: 62px;
     }
 }
 
-/* =========================================
-   AKSESIBILITAS FONT BESAR
-========================================= */
 
-@media (min-resolution:2dppx){
+/* =========================================================
+   TABLET / DESKTOP
+   ========================================================= */
 
-    .post-info p{
-        line-height:1.5;
+@media (min-width: 601px) {
+
+    .feed {
+        padding-top: 15px;
+    }
+
+
+    .post {
+        border-radius: 8px;
+
+        border: 1px solid #ddd;
+    }
+
+
+    .post > img.post-image,
+    .video-wrapper video.post-image {
+        max-height: 760px;
+    }
+
+
+    .post-info p {
+        font-size: 16px;
     }
 }
-/* FIX INPUT KOMENTAR HP */
-#commentBox{
-    position:fixed !important;
-    inset:0 !important;
-    z-index:999999 !important;
-    pointer-events:auto !important;
+
+
+/* =========================================================
+   SAFE AREA IPHONE / ANDROID
+   ========================================================= */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+
+    .bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
 }
 
-#commentBox .comment-panel{
-    position:relative !important;
-    z-index:1000000 !important;
-    pointer-events:auto !important;
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 5px;
 }
 
-#commentBox .comment-input{
-    position:relative !important;
-    z-index:1000001 !important;
-    pointer-events:auto !important;
+
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-#commentBox #commentText{
-    position:relative !important;
-    z-index:1000002 !important;
 
-    display:block !important;
-    visibility:visible !important;
-    opacity:1 !important;
+::-webkit-scrollbar-thumb {
+    background: #bbb;
 
-    pointer-events:auto !important;
+    border-radius: 10px;
+}
 
-    user-select:text !important;
-    -webkit-user-select:text !important;
 
-    touch-action:manipulation !important;
+/* =========================================================
+   SELECTION
+   ========================================================= */
 
-    color:#fff !important;
-    background:#252525 !important;
-    border:1px solid #777 !important;
+button,
+img,
+video {
+    -webkit-user-select: none;
+    user-select: none;
+}
 
-    width:100% !important;
-    min-height:50px !important;
+
+input,
+textarea {
+    -webkit-user-select: text;
+    user-select: text;
 }
