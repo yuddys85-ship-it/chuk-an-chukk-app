@@ -1,6 +1,7 @@
 /* =========================================================
    CHUK AN CHUKK
-   FULL SCREEN SOCIAL FEED
+   FACEBOOK STYLE FEED
+   FULL WIDTH
 ========================================================= */
 
 * {
@@ -24,8 +25,8 @@ body {
         Arial,
         sans-serif;
 
-    background: #ffffff;
-    color: #0f1419;
+    background: #f0f2f5;
+    color: #050505;
 
     overflow-x: hidden;
 }
@@ -50,29 +51,28 @@ body {
     top: 0;
 
     width: 100%;
-    height: 60px;
+    height: 58px;
 
-    background: rgba(255,255,255,.97);
+    background: #ffffff;
 
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #dddfe2;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 0 14px;
+    padding: 0 12px;
 
     z-index: 5000;
-
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
 
 .logo-title {
     display: flex;
     align-items: center;
 
-    gap: 9px;
+    gap: 8px;
+
+    min-width: 0;
 }
 
 .logo {
@@ -82,31 +82,38 @@ body {
     border-radius: 50%;
 
     object-fit: cover;
+
+    flex-shrink: 0;
 }
 
 .logo-title span {
     font-size: 17px;
-    font-weight: 800;
+
+    font-weight: 700;
 
     white-space: nowrap;
+
+    color: #050505;
 }
 
 .header-icons {
     display: flex;
     align-items: center;
-    gap: 3px;
+
+    gap: 4px;
 }
 
 .header-icons button {
-    width: 43px;
-    height: 43px;
+    width: 42px;
+    height: 42px;
 
     border: none;
+
     background: transparent;
 
     border-radius: 50%;
 
-    font-size: 23px;
+    font-size: 22px;
 
     display: flex;
     align-items: center;
@@ -118,7 +125,7 @@ body {
 }
 
 .header-icons button:active {
-    transform: scale(.9);
+    transform: scale(.92);
 }
 
 /* =========================================================
@@ -127,26 +134,12 @@ body {
 
 .feed {
     width: 100%;
+
     max-width: none;
 
     margin: 0;
+
     padding: 0;
-}
-
-/* =========================================================
-   EMPTY
-========================================================= */
-
-.empty-feed {
-    width: 100%;
-
-    text-align: center;
-
-    padding: 70px 20px;
-
-    color: #536471;
-
-    font-size: 16px;
 }
 
 /* =========================================================
@@ -156,30 +149,34 @@ body {
 .post {
     width: 100%;
 
+    max-width: none;
+
+    margin: 0 0 10px 0;
+
     background: #ffffff;
 
-    border-bottom: 1px solid #e1e8ed;
-
-    padding: 14px 0 8px;
+    border-bottom: 1px solid #dddfe2;
 
     overflow: hidden;
+
+    padding: 12px 0 0;
 }
 
 /* =========================================================
-   USER HEADER
+   USER
 ========================================================= */
 
 .post-user {
     width: 100%;
 
     display: flex;
-    align-items: flex-start;
+    align-items: center;
 
     gap: 10px;
 
-    padding: 0 14px;
+    padding: 0 12px;
 
-    margin-bottom: 7px;
+    margin-bottom: 8px;
 }
 
 .post-avatar {
@@ -192,7 +189,7 @@ body {
 
     object-fit: cover;
 
-    background: #e5e7eb;
+    background: #e4e6eb;
 }
 
 .post-user-details {
@@ -208,16 +205,16 @@ body {
     gap: 5px;
 
     min-width: 0;
-
-    line-height: 21px;
 }
 
 .post-username {
     font-size: 17px;
 
+    line-height: 21px;
+
     font-weight: 700;
 
-    color: #0f1419;
+    color: #050505;
 
     white-space: nowrap;
 
@@ -231,18 +228,20 @@ body {
 }
 
 .post-time {
-    color: #536471;
+    display: block;
 
-    font-size: 14px;
+    margin-top: 1px;
 
-    white-space: nowrap;
+    color: #65676b;
+
+    font-size: 13px;
+
+    line-height: 18px;
 }
 
 .post-more {
-    width: 38px;
-    height: 38px;
-
-    margin-left: auto;
+    width: 40px;
+    height: 40px;
 
     border: none;
 
@@ -250,9 +249,9 @@ body {
 
     border-radius: 50%;
 
-    color: #536471;
+    color: #65676b;
 
-    font-size: 22px;
+    font-size: 23px;
 
     display: flex;
     align-items: center;
@@ -263,8 +262,12 @@ body {
     flex-shrink: 0;
 }
 
+.post-more:hover {
+    background: #f0f2f5;
+}
+
 /* =========================================================
-   POST INFO
+   POST INFO / CAPTION
 ========================================================= */
 
 .post-info {
@@ -272,19 +275,19 @@ body {
 
     margin: 0;
 
-    padding: 0 14px 10px;
+    padding: 0 12px 10px;
 }
 
 .post-caption {
     width: 100%;
 
-    color: #0f1419;
-
     font-size: 18px;
 
-    line-height: 25px;
+    line-height: 26px;
 
     font-weight: 400;
+
+    color: #050505;
 
     word-break: break-word;
 }
@@ -308,7 +311,7 @@ body {
 }
 
 /* =========================================================
-   MORE TEXT
+   SELENGKAPNYA
 ========================================================= */
 
 .more-text-button {
@@ -318,11 +321,11 @@ body {
 
     background: transparent;
 
-    color: #1d9bf0;
+    color: #216fdb;
 
     font-size: 15px;
 
-    font-weight: 500;
+    font-weight: 600;
 
     padding: 0;
 
@@ -336,11 +339,11 @@ body {
 ========================================================= */
 
 .post-location {
-    color: #536471;
+    margin-top: 5px;
+
+    color: #65676b;
 
     font-size: 14px;
-
-    margin-top: 5px;
 }
 
 /* =========================================================
@@ -348,7 +351,7 @@ body {
 ========================================================= */
 
 .hashtag {
-    color: #1d9bf0;
+    color: #216fdb;
 
     text-decoration: none;
 
@@ -362,23 +365,25 @@ body {
 .translate-button {
     display: inline-block;
 
-    margin-top: 7px;
+    margin-top: 6px;
+
+    padding: 0;
 
     border: none;
 
     background: transparent;
 
-    color: #536471;
+    color: #65676b;
 
     font-size: 14px;
 
-    padding: 0;
+    font-weight: 500;
 
     cursor: pointer;
 }
 
 /* =========================================================
-   MEDIA FULL WIDTH
+   MEDIA - FULL WIDTH
 ========================================================= */
 
 .post-media {
@@ -390,15 +395,15 @@ body {
 
     padding: 0;
 
-    overflow: hidden;
-
     background: #000;
+
+    overflow: hidden;
 
     border-radius: 0;
 }
 
 /* =========================================================
-   IMAGE
+   FOTO
 ========================================================= */
 
 .post-media img {
@@ -408,7 +413,7 @@ body {
 
     height: auto;
 
-    max-height: 850px;
+    max-height: 900px;
 
     object-fit: cover;
 
@@ -428,20 +433,15 @@ body {
 
     height: auto;
 
-    max-height: 850px;
+    min-height: 280px;
 
-    min-height: 300px;
+    max-height: 900px;
 
     object-fit: contain;
 
     background: #000;
 
     pointer-events: auto;
-
-    /*
-       PENTING:
-       Jangan gunakan pointer-events:none
-    */
 }
 
 /* =========================================================
@@ -454,10 +454,10 @@ body {
     right: 14px;
     bottom: 14px;
 
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
 
-    border: 1px solid rgba(255,255,255,.45);
+    border: 1px solid rgba(255,255,255,.4);
 
     border-radius: 50%;
 
@@ -465,7 +465,7 @@ body {
 
     color: #ffffff;
 
-    font-size: 22px;
+    font-size: 23px;
 
     display: flex;
     align-items: center;
@@ -473,14 +473,15 @@ body {
 
     cursor: pointer;
 
-    z-index: 200;
+    z-index: 1000;
 
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    pointer-events: auto;
 
     touch-action: manipulation;
 
-    -webkit-tap-highlight-color: transparent;
+    backdrop-filter: blur(5px);
+
+    -webkit-backdrop-filter: blur(5px);
 }
 
 .sound-button:active {
@@ -488,24 +489,27 @@ body {
 }
 
 /* =========================================================
-   STATS
+   POST STATS
 ========================================================= */
 
 .post-stats {
     width: 100%;
 
+    min-height: 40px;
+
     display: flex;
+
     align-items: center;
 
     justify-content: space-between;
 
-    padding: 9px 16px 6px;
+    padding: 7px 14px 5px;
 
-    color: #536471;
+    color: #65676b;
 
     font-size: 15px;
 
-    border-bottom: 1px solid #eef1f3;
+    border-bottom: 1px solid #dddfe2;
 }
 
 .post-stats span {
@@ -513,22 +517,21 @@ body {
 }
 
 /* =========================================================
-   ACTIONS
+   ACTION BUTTONS
 ========================================================= */
 
 .post-actions {
     width: 100%;
 
     display: flex;
+
     align-items: center;
 
-    padding: 4px 6px 2px;
+    padding: 3px 5px;
 }
 
 .post-actions button {
     flex: 1;
-
-    min-width: 0;
 
     height: 48px;
 
@@ -536,17 +539,21 @@ body {
 
     background: transparent;
 
-    color: #536471;
+    color: #65676b;
 
-    border-radius: 8px;
-
-    font-size: 21px;
+    border-radius: 7px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     gap: 6px;
+
+    font-size: 21px;
+
+    font-weight: 500;
 
     cursor: pointer;
 
@@ -557,14 +564,16 @@ body {
 
 .post-actions button span {
     font-size: 15px;
-}
 
-.post-actions button:active {
-    transform: scale(.94);
+    font-weight: 600;
 }
 
 .post-actions button:hover {
     background: #f0f2f5;
+}
+
+.post-actions button:active {
+    transform: scale(.95);
 }
 
 /* =========================================================
@@ -572,7 +581,7 @@ body {
 ========================================================= */
 
 .like-button.liked {
-    color: #f91880;
+    color: #1877f2;
 }
 
 /* =========================================================
@@ -580,7 +589,7 @@ body {
 ========================================================= */
 
 .save-button.saved {
-    color: #1d9bf0;
+    color: #1877f2;
 }
 
 /* =========================================================
@@ -597,6 +606,7 @@ body {
     display: none;
 
     align-items: flex-end;
+
     justify-content: center;
 
     z-index: 10000;
@@ -609,13 +619,16 @@ body {
 .comments-box {
     width: 100%;
 
+    max-width: 700px;
+
     max-height: 85vh;
 
     background: #ffffff;
 
-    border-radius: 20px 20px 0 0;
+    border-radius: 18px 18px 0 0;
 
     display: flex;
+
     flex-direction: column;
 
     overflow: hidden;
@@ -625,14 +638,16 @@ body {
     height: 58px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     padding: 0 16px;
 
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #dddfe2;
 
-    font-size: 17px;
+    font-size: 18px;
 
     font-weight: 700;
 }
@@ -643,9 +658,9 @@ body {
 
     border: none;
 
-    background: transparent;
-
     border-radius: 50%;
+
+    background: transparent;
 
     font-size: 23px;
 
@@ -657,7 +672,7 @@ body {
 
     overflow-y: auto;
 
-    padding: 10px 16px;
+    padding: 10px 14px;
 }
 
 .comment-item {
@@ -665,14 +680,14 @@ body {
 
     gap: 10px;
 
-    padding: 11px 0;
+    padding: 10px 0;
 
-    border-bottom: 1px solid #eef1f3;
+    border-bottom: 1px solid #eef0f2;
 }
 
 .comment-avatar {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
 
     border-radius: 50%;
 
@@ -694,7 +709,7 @@ body {
 }
 
 .comment-text {
-    margin-top: 3px;
+    margin-top: 2px;
 
     font-size: 15px;
 
@@ -706,11 +721,15 @@ body {
 .comment-form {
     display: flex;
 
+    align-items: center;
+
     gap: 8px;
 
     padding: 10px 12px;
 
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #dddfe2;
+
+    background: #ffffff;
 }
 
 .comment-input {
@@ -718,15 +737,19 @@ body {
 
     height: 44px;
 
-    border: 1px solid #cfd9de;
+    border: 1px solid #ccd0d5;
 
     border-radius: 22px;
 
-    padding: 0 16px;
-
     outline: none;
 
+    padding: 0 16px;
+
     font-size: 15px;
+}
+
+.comment-input:focus {
+    border-color: #1877f2;
 }
 
 .comment-submit {
@@ -737,43 +760,49 @@ body {
 
     border-radius: 50%;
 
-    background: #1d9bf0;
+    background: #1877f2;
 
     color: #ffffff;
 
     font-size: 19px;
+
+    cursor: pointer;
 }
 
 /* =========================================================
-   FLOATING CREATE
+   FLOATING CREATE CONTENT
 ========================================================= */
 
 .compose-button {
     position: fixed;
 
-    right: 18px;
+    right: 16px;
     bottom: 82px;
 
-    width: 60px;
-    height: 60px;
+    width: 58px;
+    height: 58px;
 
     border: none;
 
     border-radius: 50%;
 
-    background: #1d9bf0;
+    background: #1877f2;
 
     color: #ffffff;
 
-    font-size: 36px;
+    font-size: 34px;
+
+    font-weight: 300;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     cursor: pointer;
 
-    box-shadow: 0 5px 16px rgba(0,0,0,.28);
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
 
     z-index: 6000;
 
@@ -785,7 +814,7 @@ body {
 }
 
 /* =========================================================
-   BOTTOM NAV
+   BOTTOM NAVIGATION
 ========================================================= */
 
 .bottom-nav {
@@ -795,21 +824,21 @@ body {
     right: 0;
     bottom: 0;
 
+    width: 100%;
+
     height: 66px;
 
-    background: rgba(255,255,255,.97);
+    background: #ffffff;
 
-    border-top: 1px solid #e1e8ed;
+    border-top: 1px solid #dddfe2;
 
     display: flex;
 
     align-items: center;
+
     justify-content: space-around;
 
     z-index: 5000;
-
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
 
 .bottom-nav button {
@@ -821,18 +850,21 @@ body {
 
     background: transparent;
 
-    color: #536471;
+    color: #65676b;
 
     display: flex;
 
     flex-direction: column;
 
     align-items: center;
+
     justify-content: center;
 
     gap: 2px;
 
     cursor: pointer;
+
+    touch-action: manipulation;
 }
 
 .bottom-nav button span {
@@ -847,11 +879,19 @@ body {
     font-weight: 500;
 }
 
+.bottom-nav button:active {
+    transform: scale(.94);
+}
+
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 600px) {
+
+    body {
+        background: #f0f2f5;
+    }
 
     .header {
         height: 56px;
@@ -869,13 +909,14 @@ body {
     }
 
     .post {
-        padding-top: 12px;
+        margin-bottom: 8px;
+
+        padding-top: 11px;
     }
 
     .post-user {
-        padding: 0 12px;
-
-        gap: 10px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
     .post-avatar {
@@ -890,7 +931,7 @@ body {
     }
 
     .post-time {
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .post-info {
@@ -905,36 +946,39 @@ body {
         line-height: 26px;
     }
 
-    .post-media img,
-    .post-media video {
-        width: 100%;
+    .post-media img {
+        width: 100vw;
 
-        max-height: 760px;
+        max-height: 850px;
     }
 
     .post-media video {
+        width: 100vw;
+
         min-height: 300px;
+
+        max-height: 850px;
     }
 
     .sound-button {
-        width: 46px;
-        height: 46px;
+        width: 48px;
+        height: 48px;
 
         right: 12px;
         bottom: 12px;
 
-        font-size: 21px;
+        font-size: 22px;
     }
 
     .post-stats {
-        padding: 9px 12px 6px;
+        padding-left: 12px;
+        padding-right: 12px;
 
         font-size: 14px;
     }
 
     .post-actions {
-        padding-left: 4px;
-        padding-right: 4px;
+        padding: 3px 4px;
     }
 
     .post-actions button {
@@ -948,18 +992,16 @@ body {
     }
 
     .compose-button {
-        width: 58px;
-        height: 58px;
-
         right: 15px;
         bottom: 78px;
 
-        font-size: 34px;
+        width: 58px;
+        height: 58px;
     }
 }
 
 /* =========================================================
-   VERY SMALL PHONE
+   VERY SMALL SCREEN
 ========================================================= */
 
 @media (max-width: 380px) {
@@ -984,253 +1026,21 @@ body {
 }
 
 /* =========================================================
-   CHUK AN CHUKK - FORCE FULL SCREEN FEED
-   OVERRIDE
+   DESKTOP
 ========================================================= */
 
-/* HILANGKAN SEMUA BATAS LEBAR */
-html,
-body {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
+@media (min-width: 900px) {
 
-.app {
-    width: 100vw !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-.feed {
-    width: 100vw !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-/* =========================================================
-   POST FULL WIDTH
-========================================================= */
-
-.post {
-    width: 100vw !important;
-    max-width: none !important;
-
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-
-    border-radius: 0 !important;
-
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-/* =========================================================
-   USER
-========================================================= */
-
-.post-user {
-    width: 100% !important;
-
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-/* =========================================================
-   CAPTION
-========================================================= */
-
-.post-info {
-    width: 100% !important;
-
-    margin-left: 0 !important;
-
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-}
-
-/* =========================================================
-   FOTO / VIDEO BENAR-BENAR FULL WIDTH
-========================================================= */
-
-.post-media {
-    position: relative !important;
-
-    width: 100vw !important;
-    max-width: none !important;
-
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-
-    padding: 0 !important;
-
-    border-radius: 0 !important;
-
-    left: 0 !important;
-}
-
-/* FOTO */
-.post-media img {
-    display: block !important;
-
-    width: 100vw !important;
-    max-width: none !important;
-
-    height: auto !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    object-fit: cover !important;
-}
-
-/* VIDEO */
-.post-media video {
-    display: block !important;
-
-    width: 100vw !important;
-    max-width: none !important;
-
-    height: auto !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    object-fit: contain !important;
-
-    background: #000 !important;
-
-    pointer-events: auto !important;
-}
-
-/* =========================================================
-   STATISTIK
-========================================================= */
-
-.post-stats {
-    width: 100% !important;
-
-    margin-left: 0 !important;
-
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-}
-
-/* =========================================================
-   LIKE / KOMENTAR / BAGIKAN / SIMPAN
-========================================================= */
-
-.post-actions {
-    width: 100% !important;
-
-    margin-left: 0 !important;
-
-    padding-left: 5px !important;
-    padding-right: 5px !important;
-}
-
-.post-actions button {
-    min-height: 50px !important;
-
-    font-size: 21px !important;
-}
-
-.post-actions button span {
-    font-size: 15px !important;
-}
-
-/* =========================================================
-   SOUND
-========================================================= */
-
-.sound-button {
-    position: absolute !important;
-
-    right: 14px !important;
-    bottom: 14px !important;
-
-    width: 46px !important;
-    height: 46px !important;
-
-    z-index: 999 !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    pointer-events: auto !important;
-
-    background: rgba(0,0,0,.72) !important;
-
-    color: #fff !important;
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 600px) {
-
-    .app,
-    .feed,
-    .post {
-        width: 100vw !important;
-        max-width: none !important;
+    .feed {
+        width: 100%;
     }
 
     .post {
-        padding: 12px 0 8px !important;
+        width: 100%;
     }
 
-    .post-user {
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-    }
-
-    .post-info {
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-    }
-
-    .post-caption {
-        font-size: 18px !important;
-        line-height: 26px !important;
-    }
-
-    .post-media,
     .post-media img,
     .post-media video {
-        width: 100vw !important;
-        max-width: none !important;
-    }
-
-    .post-stats {
-        padding-left: 12px !important;
-        padding-right: 12px !important;
-
-        font-size: 15px !important;
-    }
-
-    .post-actions {
-        width: 100vw !important;
-    }
-
-    .post-actions button {
-        height: 52px !important;
-        font-size: 22px !important;
-    }
-
-    .post-actions button span {
-        font-size: 15px !important;
+        max-height: 900px;
     }
 }
