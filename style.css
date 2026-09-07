@@ -982,3 +982,255 @@ body {
         font-size: 13px;
     }
 }
+
+/* =========================================================
+   CHUK AN CHUKK - FORCE FULL SCREEN FEED
+   OVERRIDE
+========================================================= */
+
+/* HILANGKAN SEMUA BATAS LEBAR */
+html,
+body {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.app {
+    width: 100vw !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.feed {
+    width: 100vw !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* =========================================================
+   POST FULL WIDTH
+========================================================= */
+
+.post {
+    width: 100vw !important;
+    max-width: none !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    border-radius: 0 !important;
+
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* =========================================================
+   USER
+========================================================= */
+
+.post-user {
+    width: 100% !important;
+
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* =========================================================
+   CAPTION
+========================================================= */
+
+.post-info {
+    width: 100% !important;
+
+    margin-left: 0 !important;
+
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+}
+
+/* =========================================================
+   FOTO / VIDEO BENAR-BENAR FULL WIDTH
+========================================================= */
+
+.post-media {
+    position: relative !important;
+
+    width: 100vw !important;
+    max-width: none !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    padding: 0 !important;
+
+    border-radius: 0 !important;
+
+    left: 0 !important;
+}
+
+/* FOTO */
+.post-media img {
+    display: block !important;
+
+    width: 100vw !important;
+    max-width: none !important;
+
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    object-fit: cover !important;
+}
+
+/* VIDEO */
+.post-media video {
+    display: block !important;
+
+    width: 100vw !important;
+    max-width: none !important;
+
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    object-fit: contain !important;
+
+    background: #000 !important;
+
+    pointer-events: auto !important;
+}
+
+/* =========================================================
+   STATISTIK
+========================================================= */
+
+.post-stats {
+    width: 100% !important;
+
+    margin-left: 0 !important;
+
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+}
+
+/* =========================================================
+   LIKE / KOMENTAR / BAGIKAN / SIMPAN
+========================================================= */
+
+.post-actions {
+    width: 100% !important;
+
+    margin-left: 0 !important;
+
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.post-actions button {
+    min-height: 50px !important;
+
+    font-size: 21px !important;
+}
+
+.post-actions button span {
+    font-size: 15px !important;
+}
+
+/* =========================================================
+   SOUND
+========================================================= */
+
+.sound-button {
+    position: absolute !important;
+
+    right: 14px !important;
+    bottom: 14px !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    z-index: 999 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    pointer-events: auto !important;
+
+    background: rgba(0,0,0,.72) !important;
+
+    color: #fff !important;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .app,
+    .feed,
+    .post {
+        width: 100vw !important;
+        max-width: none !important;
+    }
+
+    .post {
+        padding: 12px 0 8px !important;
+    }
+
+    .post-user {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .post-info {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .post-caption {
+        font-size: 18px !important;
+        line-height: 26px !important;
+    }
+
+    .post-media,
+    .post-media img,
+    .post-media video {
+        width: 100vw !important;
+        max-width: none !important;
+    }
+
+    .post-stats {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+
+        font-size: 15px !important;
+    }
+
+    .post-actions {
+        width: 100vw !important;
+    }
+
+    .post-actions button {
+        height: 52px !important;
+        font-size: 22px !important;
+    }
+
+    .post-actions button span {
+        font-size: 15px !important;
+    }
+}
