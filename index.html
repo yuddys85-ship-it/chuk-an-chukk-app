@@ -1,30 +1,25 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
+    <title>CHUK AN CHUKK</title>
 
-<title>CHUK AN CHUKK</title>
-
-<link
-    rel="stylesheet"
-    href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="app">
 
-    <!-- =========================
-         HEADER
-    ========================== -->
-
+    <!-- ==========================================
+         HEADER APP
+         ========================================== -->
     <header class="header">
 
         <div class="logo-title">
@@ -32,11 +27,10 @@
             <img
                 src="assets/logo.png"
                 class="logo"
-                alt="Chuk an Chukk">
+                alt="CHUK AN CHUKK"
+            >
 
-            <span>
-                CHUK AN CHUKK
-            </span>
+            <span>CHUK AN CHUKK</span>
 
         </div>
 
@@ -45,19 +39,17 @@
             <button
                 type="button"
                 onclick="searchPost()"
-                aria-label="Cari">
-
+                aria-label="Cari"
+            >
                 🔍
-
             </button>
 
             <button
                 type="button"
                 onclick="showNotifications()"
-                aria-label="Notifikasi">
-
+                aria-label="Notifikasi"
+            >
                 🔔
-
             </button>
 
         </div>
@@ -65,91 +57,65 @@
     </header>
 
 
-    <!-- =========================
-         FEED
-    ========================== -->
+    <!-- ==========================================
+         FEED POSTINGAN
+         ========================================== -->
 
     <main
         class="feed"
-        id="feed">
+        id="feed"
+    >
 
-        <div
-            style="
-                width:100%;
-                min-height:100dvh;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                text-align:center;
-                color:#fff;
-                background:#000;
-                font-size:1.1rem;
-            ">
-
+        <div class="empty-feed">
             ⏳ Memuat postingan...
-
         </div>
 
     </main>
 
 
-    <!-- =========================
-         BOTTOM NAV
-    ========================== -->
+    <!-- ==========================================
+         BOTTOM NAVIGATION
+         ========================================== -->
 
     <nav class="bottom-nav">
 
         <button
             type="button"
-            onclick="goHome()">
-
-            🏠
-
-            <span>
-                Home
-            </span>
-
+            onclick="goHome()"
+            aria-label="Home"
+        >
+            <span>🏠</span>
+            <small>Home</small>
         </button>
 
 
         <button
             type="button"
-            onclick="
-                window.location.href='post.html'
-            ">
-
-            ➕
-
-            <span>
-                Post
-            </span>
-
+            onclick="window.location.href='post.html'"
+            aria-label="Post"
+        >
+            <span>➕</span>
+            <small>Post</small>
         </button>
 
 
         <button
             type="button"
-            onclick="goChat()">
-
-            💬
-
-            <span>
-                Chat
-            </span>
-
+            onclick="goChat()"
+            aria-label="Chat"
+        >
+            <span>💬</span>
+            <small>Chat</small>
         </button>
 
 
         <button
             type="button"
-            onclick="goProfile()">
-
-            👤
-
-            <span>
-                Profile
-            </span>
-
+            onclick="goProfile()"
+            aria-label="Profile"
+        >
+            <span>👤</span>
+            <small>Profile</small>
         </button>
 
     </nav>
@@ -157,43 +123,25 @@
 </div>
 
 
-<!-- =========================
-     SUPABASE LIBRARY
-========================== -->
+<!-- ==========================================
+     SUPABASE
+     ========================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-<!-- =========================
-     CHUK SUPABASE CLIENT
-========================== -->
 
 <script src="supabase.js"></script>
 
 
-<!-- =========================
-     FIX SUPABASE CLIENT
-========================== -->
-
 <script>
-
     /*
-     * supabase.js membuat:
-     *
-     * window.chukSupabase
-     *
-     * Sedangkan script.js menggunakan:
-     *
-     * supabase.from(...)
-     *
-     * Jadi kita arahkan supabase
-     * ke client Chuk an Chukk.
-     */
+    ==========================================
+    AKTIFKAN CLIENT CHUK AN CHUKK
+    ==========================================
+    */
 
     if (window.chukSupabase) {
 
-        window.supabase =
-            window.chukSupabase;
+        window.supabase = window.chukSupabase;
 
         console.log(
             "✅ CHUK Supabase Client aktif"
@@ -206,16 +154,14 @@
         );
 
     }
-
 </script>
 
 
-<!-- =========================
-     MAIN SCRIPT
-========================== -->
+<!-- ==========================================
+     SCRIPT UTAMA
+     ========================================== -->
 
 <script src="script.js"></script>
-
 
 </body>
 </html>
