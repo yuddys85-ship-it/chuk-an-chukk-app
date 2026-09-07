@@ -1,24 +1,25 @@
 /* =========================================================
    CHUK AN CHUKK
-   SCRIPT.JS v7.0
-   UUID COMMENT + LIKE + SHARE + VIDEO SOUND
-========================================================= */
-
-
-/* =========================================================
-   STATE
-========================================================= */
+   SCRIPT.JS
+   SOCIAL FEED VERSION
+   ========================================================= */
 
 let likedPosts = new Set();
 
+let commentCounts = {};
+
+let shareCounts = {};
+
+let savedPosts = new Set();
+
 
 /* =========================================================
-   START APP
-========================================================= */
+   START
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("🚀 CHUK AN CHUKK v7.0 START");
+    console.log("🚀 CHUK AN CHUKK SOCIAL FEED START");
 
     if (!window.supabase) {
 
@@ -26,10 +27,25 @@ document.addEventListener("DOMContentLoaded", () => {
             "❌ Supabase Client tidak ditemukan"
         );
 
+        const feed = document.getElementById("feed");
+
+        if (feed) {
+            feed.innerHTML = `
+                <div class="empty-feed">
+                    ❌ Supabase tidak terhubung.
+                </div>
+            `;
+        }
+
         return;
     }
 
+
     loadSavedLikes();
+
+    loadSavedPosts();
+
+    loadShareCounts();
 
     loadPosts();
 
@@ -37,8 +53,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /* =========================================================
-   LOAD SAVED LIKES
-========================================================= */
+   UUID VALIDATOR
+   ========================================================= */
+
+function isValidUUID(value) {
+
+    if (
+        value === undefined ||
+        value === null
+    ) {
+        return false;
+    }
+
+    const uuid = String(value).trim();
+
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid);
+
+}
+
+
+/* =========================================================
+   LIKE STORAGE
+   ========================================================= */
 
 function loadSavedLikes() {
 
@@ -54,7 +90,11 @@ function loadSavedLikes() {
         if (Array.isArray(saved)) {
 
             likedPosts =
-                new Set(saved);
+                new Set(
+                    saved.map(item =>
+                        String(item)
+                    )
+                );
 
         }
 
@@ -69,10 +109,6 @@ function loadSavedLikes() {
 
 }
 
-
-/* =========================================================
-   SAVE LIKES
-========================================================= */
 
 function saveLikes() {
 
@@ -98,37 +134,123 @@ function saveLikes() {
 
 
 /* =========================================================
-   UUID VALIDATION
-========================================================= */
+   SAVED POSTS
+   ========================================================= */
 
-function isValidUUID(value) {
+function loadSavedPosts() {
 
-    if (
-        value === undefined ||
-        value === null
-    ) {
+    try {
 
-        return false;
+        const saved = [];
+
+        for (
+            let i = 0;
+            i < localStorage.length;
+            i++
+        ) {
+
+            const key =
+                localStorage.key(i);
+
+            if (
+                key &&
+                key.startsWith("saved_")
+            ) {
+
+                saved.push(
+                    key.replace(
+                        "saved_",
+                        ""
+                    )
+                );
+
+            }
+
+        }
+
+        savedPosts =
+            new Set(saved);
+
+    } catch (error) {
+
+        console.error(
+            "❌ Gagal membaca saved posts:",
+            error
+        );
 
     }
 
-    const uuid =
-        String(value).trim();
+}
 
-    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-        .test(uuid);
+
+/* =========================================================
+   SHARE COUNTS
+   ========================================================= */
+
+function loadShareCounts() {
+
+    try {
+
+        const saved =
+            JSON.parse(
+                localStorage.getItem(
+                    "chuk_share_counts"
+                ) || "{}"
+            );
+
+        if (
+            saved &&
+            typeof saved === "object"
+        ) {
+
+            shareCounts = saved;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "❌ Gagal membaca share count:",
+            error
+        );
+
+    }
+
+}
+
+
+function saveShareCounts() {
+
+    try {
+
+        localStorage.setItem(
+            "chuk_share_counts",
+            JSON.stringify(
+                shareCounts
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ Gagal menyimpan share count:",
+            error
+        );
+
+    }
 
 }
 
 
 /* =========================================================
    LOAD POSTS
-========================================================= */
+   ========================================================= */
 
 async function loadPosts() {
 
     const feed =
         document.getElementById("feed");
+
 
     if (!feed) {
 
@@ -148,6 +270,12 @@ async function loadPosts() {
 
 
     try {
+
+        /*
+        ==========================================
+        AMBIL POSTINGAN
+        ==========================================
+        */
 
         const {
             data,
@@ -184,8 +312,11 @@ async function loadPosts() {
         }
 
 
-        feed.innerHTML = "";
-
+        /*
+        ==========================================
+        POST KOSONG
+        ==========================================
+        */
 
         if (
             !data ||
@@ -195,6 +326,8 @@ async function loadPosts() {
             feed.innerHTML = `
                 <div class="empty-feed">
                     📭 Belum ada postingan.
+                    <br><br>
+                    Jadilah yang pertama membuat postingan.
                 </div>
             `;
 
@@ -202,26 +335,33 @@ async function loadPosts() {
         }
 
 
-        console.log(
-            "✅ POSTS:",
-            data
-        );
+        /*
+        ==========================================
+        HITUNG KOMENTAR
+        ==========================================
+        */
+
+        await loadCommentCounts();
+
+
+        /*
+        ==========================================
+        RENDER
+        ==========================================
+        */
+
+        feed.innerHTML = "";
 
 
         data.forEach(post => {
 
-            /* =====================================
-               POST ID
-            ===================================== */
-
             if (
-                post.id === undefined ||
-                post.id === null ||
-                String(post.id).trim() === ""
+                !post.id ||
+                !isValidUUID(post.id)
             ) {
 
                 console.error(
-                    "❌ POST TANPA ID:",
+                    "❌ POST ID INVALID:",
                     post
                 );
 
@@ -233,17 +373,54 @@ async function loadPosts() {
                 String(post.id).trim();
 
 
-            /* =====================================
-               LIKE STATE
-            ===================================== */
-
             const isLiked =
                 likedPosts.has(postId);
 
 
-            /* =====================================
-               MEDIA
-            ===================================== */
+            const isSaved =
+                savedPosts.has(postId);
+
+
+            /*
+            ======================================
+            USERNAME
+            ======================================
+            */
+
+            const username =
+                post.username ||
+                post.user_name ||
+                post.author ||
+                "ChukOfficial";
+
+
+            /*
+            ======================================
+            CAPTION
+            ======================================
+            */
+
+            const caption =
+                post.caption || "";
+
+
+            /*
+            ======================================
+            WAKTU
+            ======================================
+            */
+
+            const timeText =
+                formatPostTime(
+                    post.created_at
+                );
+
+
+            /*
+            ======================================
+            MEDIA
+            ======================================
+            */
 
             let media = "";
 
@@ -255,21 +432,17 @@ async function loadPosts() {
 
 
                 const isVideo =
-                    /\.(mp4|webm|mov|m4v)(\?.*)?$/i
-                    .test(mediaUrl);
+                    /\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(
+                        mediaUrl
+                    );
 
 
                 if (isVideo) {
 
                     media = `
-
                         <div
                             class="video-wrapper"
-                            style="
-                                position:relative;
-                                width:100%;
-                                height:100%;
-                            ">
+                        >
 
                             <video
                                 id="video-${escapeHTML(postId)}"
@@ -278,53 +451,33 @@ async function loadPosts() {
                                 autoplay
                                 muted
                                 loop
-                                playsinline>
-                            </video>
+                                playsinline
+                                preload="metadata"
+                            ></video>
 
 
                             <button
                                 type="button"
                                 class="sound-button"
-                                onclick="toggleVideoSound(
-                                    '${escapeJS(postId)}'
-                                )"
+                                data-sound-post="${escapeHTML(postId)}"
+                                onclick="toggleVideoSound('${escapeJS(postId)}')"
                                 aria-label="Suara video"
-                                style="
-                                    position:absolute;
-                                    right:18px;
-                                    top:80px;
-                                    z-index:20;
-                                    width:48px;
-                                    height:48px;
-                                    border:0;
-                                    border-radius:50%;
-                                    background:rgba(0,0,0,.65);
-                                    color:white;
-                                    font-size:22px;
-                                    display:flex;
-                                    align-items:center;
-                                    justify-content:center;
-                                    cursor:pointer;
-                                ">
-
+                            >
                                 🔇
-
                             </button>
 
                         </div>
-
                     `;
 
                 } else {
 
                     media = `
-
                         <img
                             class="post-image"
                             src="${escapeHTML(mediaUrl)}"
                             alt="Postingan"
-                            loading="lazy">
-
+                            loading="lazy"
+                        >
                     `;
 
                 }
@@ -332,110 +485,229 @@ async function loadPosts() {
             }
 
 
-            /* =====================================
-               POST HTML
-            ===================================== */
+            /*
+            ======================================
+            JUMLAH KOMENTAR
+            ======================================
+            */
+
+            const commentCount =
+                commentCounts[postId] || 0;
+
+
+            /*
+            ======================================
+            JUMLAH SHARE
+            ======================================
+            */
+
+            const shareCount =
+                getShareCount(
+                    post,
+                    postId
+                );
+
+
+            /*
+            ======================================
+            JUMLAH LIKE
+            ======================================
+            */
+
+            const likeCount =
+                getLikeCount(
+                    post,
+                    postId
+                );
+
+
+            /*
+            ======================================
+            CARD POST
+            ======================================
+            */
 
             feed.innerHTML += `
 
                 <article
                     class="post"
-                    data-post-id="${escapeHTML(postId)}">
+                    data-post-id="${escapeHTML(postId)}"
+                >
+
+                    <!-- =========================
+                         POST HEADER + CAPTION
+                         ========================= -->
+
+                    <div class="post-overlay">
+
+                        <div class="post-info">
+
+                            <div
+                                class="post-user"
+                                style="
+                                    display:flex;
+                                    align-items:center;
+                                    gap:10px;
+                                    margin-bottom:8px;
+                                "
+                            >
+
+                                <div
+                                    class="post-avatar"
+                                    style="
+                                        width:42px;
+                                        height:42px;
+                                        min-width:42px;
+                                        border-radius:50%;
+                                        background:#e4e6eb;
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        font-size:21px;
+                                    "
+                                >
+                                    👤
+                                </div>
+
+
+                                <div>
+
+                                    <h3>
+                                        @${escapeHTML(username)}
+                                    </h3>
+
+                                    <div
+                                        style="
+                                            color:#65676b;
+                                            font-size:12px;
+                                            margin-top:2px;
+                                        "
+                                    >
+                                        ${escapeHTML(timeText)}
+                                        · 🌐
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            ${
+                                caption
+                                ? `
+                                    <p>
+                                        ${escapeHTML(caption)}
+                                    </p>
+                                `
+                                : ""
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                         MEDIA
+                         ========================= -->
 
                     ${media}
 
 
-                    <div class="gradient"></div>
+                    <!-- =========================
+                         STATISTICS
+                         ========================= -->
+
+                    <div
+                        class="post-stats"
+                        style="
+                            width:100%;
+                            min-height:42px;
+                            padding:8px 14px;
+                            display:flex;
+                            align-items:center;
+                            justify-content:space-between;
+                            gap:10px;
+                            background:#fff;
+                            color:#65676b;
+                            font-size:14px;
+                            border-bottom:1px solid #eee;
+                        "
+                    >
+
+                        <span>
+                            👍 ${likeCount}
+                        </span>
+
+                        <span
+                            style="
+                                margin-left:auto;
+                            "
+                        >
+                            ${commentCount}
+                            komentar
+                            &nbsp;&nbsp;
+                            ${shareCount}
+                            dibagikan
+                        </span>
+
+                    </div>
 
 
-                    <div class="post-overlay">
+                    <!-- =========================
+                         ACTION BUTTONS
+                         ========================= -->
+
+                    <div class="post-actions">
+
+                        <button
+                            type="button"
+                            class="${isLiked ? "liked" : ""}"
+                            onclick="likePost(
+                                '${escapeJS(postId)}',
+                                this
+                            )"
+                            aria-label="Suka"
+                        >
+                            ${isLiked ? "❤️" : "👍"}
+                            <span>Suka</span>
+                        </button>
 
 
-                        <div class="post-info">
-
-                            <h3>
-                                @ChukOfficial
-                            </h3>
-
-                            <p>
-                                ${escapeHTML(
-                                    post.caption || ""
-                                )}
-                            </p>
-
-                        </div>
+                        <button
+                            type="button"
+                            onclick="commentPost(
+                                '${escapeJS(postId)}'
+                            )"
+                            aria-label="Komentar"
+                        >
+                            💬
+                            <span>Komentar</span>
+                        </button>
 
 
-                        <div class="post-actions">
+                        <button
+                            type="button"
+                            onclick="sharePost(
+                                '${escapeJS(postId)}'
+                            )"
+                            aria-label="Bagikan"
+                        >
+                            ↗️
+                            <span>Bagikan</span>
+                        </button>
 
 
-                            <!-- LIKE -->
-
-                            <button
-                                type="button"
-                                class="like-button ${
-                                    isLiked
-                                        ? "liked"
-                                        : ""
-                                }"
-                                onclick="likePost(
-                                    '${escapeJS(postId)}',
-                                    this
-                                )"
-                                aria-label="Like">
-
-                                ${
-                                    isLiked
-                                        ? "❤️"
-                                        : "🤍"
-                                }
-
-                            </button>
-
-
-                            <!-- KOMENTAR -->
-
-                            <button
-                                type="button"
-                                onclick="commentPost(
-                                    '${escapeJS(postId)}'
-                                )"
-                                aria-label="Komentar">
-
-                                💬
-
-                            </button>
-
-
-                            <!-- BAGIKAN -->
-
-                            <button
-                                type="button"
-                                onclick="sharePost(
-                                    '${escapeJS(postId)}'
-                                )"
-                                aria-label="Bagikan">
-
-                                ↗️
-
-                            </button>
-
-
-                            <!-- SIMPAN -->
-
-                            <button
-                                type="button"
-                                onclick="savePost(
-                                    '${escapeJS(postId)}'
-                                )"
-                                aria-label="Simpan">
-
-                                🔖
-
-                            </button>
-
-
-                        </div>
+                        <button
+                            type="button"
+                            onclick="savePost(
+                                '${escapeJS(postId)}'
+                            )"
+                            aria-label="Simpan"
+                        >
+                            ${isSaved ? "🔖" : "🔖"}
+                            <span>Simpan</span>
+                        </button>
 
                     </div>
 
@@ -444,11 +716,6 @@ async function loadPosts() {
             `;
 
         });
-
-
-        console.log(
-            "✅ FEED BERHASIL DIMUAT"
-        );
 
 
     } catch (error) {
@@ -460,19 +727,13 @@ async function loadPosts() {
 
 
         feed.innerHTML = `
-
             <div class="empty-feed">
-
                 ❌ System error.
-
                 <br><br>
-
                 ${escapeHTML(
                     error.message
                 )}
-
             </div>
-
         `;
 
     }
@@ -481,12 +742,248 @@ async function loadPosts() {
 
 
 /* =========================================================
-   LIKE POST
-========================================================= */
+   COMMENT COUNTS
+   ========================================================= */
 
-function likePost(postId, button) {
+async function loadCommentCounts() {
 
-    if (!isValidUUID(postId)) {
+    commentCounts = {};
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabase
+            .from("comments")
+            .select("post_id");
+
+
+        if (error) {
+
+            console.warn(
+                "⚠️ Comment count tidak tersedia:",
+                error.message
+            );
+
+            return;
+        }
+
+
+        if (!data) return;
+
+
+        data.forEach(row => {
+
+            if (!row.post_id) return;
+
+
+            const id =
+                String(row.post_id).trim();
+
+
+            commentCounts[id] =
+                (commentCounts[id] || 0) + 1;
+
+        });
+
+
+    } catch (error) {
+
+        console.warn(
+            "⚠️ Gagal menghitung komentar:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LIKE COUNT
+   ========================================================= */
+
+function getLikeCount(
+    post,
+    postId
+) {
+
+    /*
+    Jika database nanti punya kolom:
+    likes / like_count / likes_count
+    otomatis akan digunakan.
+    */
+
+    const value =
+        post.like_count ??
+        post.likes_count ??
+        post.likes;
+
+
+    if (
+        typeof value === "number"
+    ) {
+
+        return value;
+
+    }
+
+
+    /*
+    Untuk sementara:
+    like lokal user = 1
+    */
+
+    return likedPosts.has(postId)
+        ? 1
+        : 0;
+
+}
+
+
+/* =========================================================
+   SHARE COUNT
+   ========================================================= */
+
+function getShareCount(
+    post,
+    postId
+) {
+
+    const databaseValue =
+        post.share_count ??
+        post.shares_count ??
+        post.shares;
+
+
+    if (
+        typeof databaseValue === "number"
+    ) {
+
+        return databaseValue;
+
+    }
+
+
+    return Number(
+        shareCounts[postId] || 0
+    );
+
+}
+
+
+/* =========================================================
+   FORMAT TIME
+   ========================================================= */
+
+function formatPostTime(
+    createdAt
+) {
+
+    if (!createdAt) {
+
+        return "Baru saja";
+
+    }
+
+
+    const date =
+        new Date(createdAt);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "Baru saja";
+
+    }
+
+
+    const now =
+        new Date();
+
+
+    const diff =
+        Math.floor(
+            (
+                now.getTime() -
+                date.getTime()
+            ) / 1000
+        );
+
+
+    if (diff < 60) {
+
+        return "Baru saja";
+
+    }
+
+
+    if (diff < 3600) {
+
+        return (
+            Math.floor(
+                diff / 60
+            ) +
+            " mnt"
+        );
+
+    }
+
+
+    if (diff < 86400) {
+
+        return (
+            Math.floor(
+                diff / 3600
+            ) +
+            " jam"
+        );
+
+    }
+
+
+    if (diff < 604800) {
+
+        return (
+            Math.floor(
+                diff / 86400
+            ) +
+            " hari"
+        );
+
+    }
+
+
+    return date.toLocaleDateString(
+        "id-ID",
+        {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   LIKE
+   ========================================================= */
+
+function likePost(
+    postId,
+    button
+) {
+
+    if (
+        !isValidUUID(postId)
+    ) {
 
         console.error(
             "❌ LIKE UUID INVALID:",
@@ -515,7 +1012,7 @@ function likePost(postId, button) {
             );
 
             button.innerHTML =
-                "🤍";
+                "👍 <span>Suka</span>";
 
         }
 
@@ -538,7 +1035,7 @@ function likePost(postId, button) {
             );
 
             button.innerHTML =
-                "❤️";
+                "❤️ <span>Suka</span>";
 
         }
 
@@ -553,19 +1050,86 @@ function likePost(postId, button) {
 
     saveLikes();
 
+
+    /*
+    Update statistik tanpa reload
+    */
+
+    updatePostLikeStat(
+        uuid
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE LIKE STAT
+   ========================================================= */
+
+function updatePostLikeStat(
+    postId
+) {
+
+    const post =
+        document.querySelector(
+            `.post[data-post-id="${postId}"]`
+        );
+
+
+    if (!post) return;
+
+
+    const stats =
+        post.querySelector(
+            ".post-stats"
+        );
+
+
+    if (!stats) return;
+
+
+    const count =
+        likedPosts.has(postId)
+            ? 1
+            : 0;
+
+
+    const spans =
+        stats.querySelectorAll(
+            "span"
+        );
+
+
+    if (spans[0]) {
+
+        spans[0].textContent =
+            "👍 " + count;
+
+    }
+
 }
 
 
 /* =========================================================
    VIDEO SOUND
-========================================================= */
+   ========================================================= */
 
-function toggleVideoSound(postId) {
+async function toggleVideoSound(
+    postId
+) {
 
-    if (!isValidUUID(postId)) {
+    console.log(
+        "🔊 SOUND BUTTON:",
+        postId
+    );
+
+
+    if (
+        !isValidUUID(postId)
+    ) {
 
         console.error(
-            "❌ VIDEO UUID INVALID:",
+            "❌ UUID VIDEO INVALID:",
             postId
         );
 
@@ -582,7 +1146,7 @@ function toggleVideoSound(postId) {
     if (!video) {
 
         console.error(
-            "❌ Video tidak ditemukan:",
+            "❌ VIDEO TIDAK DITEMUKAN:",
             postId
         );
 
@@ -592,45 +1156,65 @@ function toggleVideoSound(postId) {
 
     const button =
         document.querySelector(
-            `[onclick*="toggleVideoSound('${postId}')"]`
+            `[data-sound-post="${postId}"]`
         );
 
 
-    if (video.muted) {
+    try {
 
-        video.muted = false;
+        if (video.muted) {
 
-        video.volume = 1;
+            video.muted = false;
+
+            video.volume = 1.0;
+
+            await video.play();
 
 
-        if (button) {
+            if (button) {
 
-            button.innerHTML =
-                "🔊";
+                button.textContent =
+                    "🔊";
+
+            }
+
+
+            console.log(
+                "🔊 SUARA VIDEO ON"
+            );
+
+
+        } else {
+
+            video.muted = true;
+
+
+            if (button) {
+
+                button.textContent =
+                    "🔇";
+
+            }
+
+
+            console.log(
+                "🔇 SUARA VIDEO OFF"
+            );
 
         }
 
 
-        console.log(
-            "🔊 SUARA VIDEO ON"
+    } catch (error) {
+
+        console.error(
+            "❌ VIDEO SOUND ERROR:",
+            error
         );
 
 
-    } else {
-
-        video.muted = true;
-
-
-        if (button) {
-
-            button.innerHTML =
-                "🔇";
-
-        }
-
-
-        console.log(
-            "🔇 SUARA VIDEO OFF"
+        alert(
+            "⚠️ Suara video belum bisa diaktifkan.\n\n" +
+            "Coba tekan tombol 🔊 sekali lagi."
         );
 
     }
@@ -639,18 +1223,16 @@ function toggleVideoSound(postId) {
 
 
 /* =========================================================
-   COMMENT
-========================================================= */
+   COMMENTS
+   ========================================================= */
 
-async function commentPost(postId) {
+async function commentPost(
+    postId
+) {
 
-    console.log(
-        "💬 COMMENT POST ID:",
-        postId
-    );
-
-
-    if (!isValidUUID(postId)) {
+    if (
+        !isValidUUID(postId)
+    ) {
 
         alert(
             "❌ ID postingan tidak valid:\n\n" +
@@ -679,7 +1261,9 @@ async function commentPost(postId) {
 
 
     const box =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     box.id =
@@ -694,21 +1278,18 @@ async function commentPost(postId) {
 
         <div class="comment-panel">
 
-
             <div class="comment-header">
 
                 <strong>
                     Komentar
                 </strong>
 
-
                 <button
                     type="button"
                     class="comment-close"
-                    onclick="closeComments()">
-
+                    onclick="closeComments()"
+                >
                     ✕
-
                 </button>
 
             </div>
@@ -716,12 +1297,11 @@ async function commentPost(postId) {
 
             <div
                 id="commentsList"
-                class="comments-list">
+                class="comments-list"
+            >
 
                 <div class="comment-loading">
-
                     ⏳ Memuat komentar...
-
                 </div>
 
             </div>
@@ -734,26 +1314,27 @@ async function commentPost(postId) {
                     type="text"
                     placeholder="Tulis komentar..."
                     autocomplete="off"
-                    enterkeyhint="send">
+                    enterkeyhint="send"
+                >
 
 
                 <button
                     id="sendCommentButton"
-                    type="button">
-
+                    type="button"
+                >
                     Kirim
-
                 </button>
 
             </div>
-
 
         </div>
 
     `;
 
 
-    document.body.appendChild(box);
+    document.body.appendChild(
+        box
+    );
 
 
     const sendButton =
@@ -765,9 +1346,11 @@ async function commentPost(postId) {
     if (sendButton) {
 
         sendButton.onclick =
-            function() {
+            function () {
 
-                sendComment(uuid);
+                sendComment(
+                    uuid
+                );
 
             };
 
@@ -784,7 +1367,7 @@ async function commentPost(postId) {
 
         input.addEventListener(
             "keydown",
-            function(event) {
+            function (event) {
 
                 if (
                     event.key === "Enter"
@@ -792,7 +1375,9 @@ async function commentPost(postId) {
 
                     event.preventDefault();
 
-                    sendComment(uuid);
+                    sendComment(
+                        uuid
+                    );
 
                 }
 
@@ -808,16 +1393,20 @@ async function commentPost(postId) {
     }
 
 
-    await loadComments(uuid);
+    await loadComments(
+        uuid
+    );
 
 }
 
 
 /* =========================================================
    LOAD COMMENTS
-========================================================= */
+   ========================================================= */
 
-async function loadComments(postId) {
+async function loadComments(
+    postId
+) {
 
     const list =
         document.getElementById(
@@ -828,7 +1417,9 @@ async function loadComments(postId) {
     if (!list) return;
 
 
-    if (!isValidUUID(postId)) {
+    if (
+        !isValidUUID(postId)
+    ) {
 
         list.innerHTML = `
             <div class="comment-empty">
@@ -873,19 +1464,13 @@ async function loadComments(postId) {
 
 
             list.innerHTML = `
-
                 <div class="comment-empty">
-
                     ❌ Gagal memuat komentar.
-
                     <br><br>
-
                     ${escapeHTML(
                         error.message
                     )}
-
                 </div>
-
             `;
 
             return;
@@ -898,16 +1483,11 @@ async function loadComments(postId) {
         ) {
 
             list.innerHTML = `
-
                 <div class="comment-empty">
-
                     💬 Belum ada komentar.
                     <br>
-                    Jadilah yang pertama
-                    berkomentar.
-
+                    Jadilah yang pertama berkomentar.
                 </div>
-
             `;
 
             return;
@@ -915,37 +1495,39 @@ async function loadComments(postId) {
 
 
         list.innerHTML =
-            data.map(comment => `
+            data.map(
+                comment => `
 
-                <div class="comment-item">
+                    <div class="comment-item">
 
-                    <div class="comment-avatar">
-                        👤
+                        <div class="comment-avatar">
+                            👤
+                        </div>
+
+
+                        <div class="comment-content">
+
+                            <strong>
+                                @${escapeHTML(
+                                    comment.username ||
+                                    "User"
+                                )}
+                            </strong>
+
+
+                            <p>
+                                ${escapeHTML(
+                                    comment.comment ||
+                                    ""
+                                )}
+                            </p>
+
+                        </div>
+
                     </div>
 
-
-                    <div class="comment-content">
-
-                        <strong>
-                            @${escapeHTML(
-                                comment.username ||
-                                "User"
-                            )}
-                        </strong>
-
-
-                        <p>
-                            ${escapeHTML(
-                                comment.comment ||
-                                ""
-                            )}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            `).join("");
+                `
+            ).join("");
 
 
     } catch (error) {
@@ -962,9 +1544,11 @@ async function loadComments(postId) {
 
 /* =========================================================
    SEND COMMENT
-========================================================= */
+   ========================================================= */
 
-async function sendComment(postId) {
+async function sendComment(
+    postId
+) {
 
     console.log(
         "📤 SEND COMMENT:",
@@ -972,7 +1556,9 @@ async function sendComment(postId) {
     );
 
 
-    if (!isValidUUID(postId)) {
+    if (
+        !isValidUUID(postId)
+    ) {
 
         alert(
             "❌ ID postingan tidak valid:\n\n" +
@@ -1052,9 +1638,7 @@ async function sendComment(postId) {
                 {
                     post_id: uuid,
                     username:
-                        String(
-                            username
-                        ).trim(),
+                        String(username).trim(),
                     comment: text
                 }
             ])
@@ -1087,7 +1671,25 @@ async function sendComment(postId) {
         input.value = "";
 
 
-        await loadComments(uuid);
+        /*
+        Update jumlah komentar
+        */
+
+        commentCounts[uuid] =
+            (
+                commentCounts[uuid] ||
+                0
+            ) + 1;
+
+
+        updatePostCommentStat(
+            uuid
+        );
+
+
+        await loadComments(
+            uuid
+        );
 
 
     } catch (error) {
@@ -1121,33 +1723,69 @@ async function sendComment(postId) {
 
 
 /* =========================================================
-   CLOSE COMMENTS
-========================================================= */
+   UPDATE COMMENT STAT
+   ========================================================= */
 
-function closeComments() {
+function updatePostCommentStat(
+    postId
+) {
 
-    const box =
-        document.getElementById(
-            "commentBox"
+    const post =
+        document.querySelector(
+            `.post[data-post-id="${postId}"]`
         );
 
 
-    if (box) {
+    if (!post) return;
 
-        box.remove();
 
+    const stats =
+        post.querySelector(
+            ".post-stats"
+        );
+
+
+    if (!stats) return;
+
+
+    const spans =
+        stats.querySelectorAll(
+            "span"
+        );
+
+
+    if (
+        spans.length < 2
+    ) {
+        return;
     }
+
+
+    const commentCount =
+        commentCounts[postId] || 0;
+
+
+    const shareCount =
+        shareCounts[postId] || 0;
+
+
+    spans[1].textContent =
+        `${commentCount} komentar    ${shareCount} dibagikan`;
 
 }
 
 
 /* =========================================================
-   SHARE POST
-========================================================= */
+   SHARE
+   ========================================================= */
 
-async function sharePost(postId) {
+async function sharePost(
+    postId
+) {
 
-    if (!isValidUUID(postId)) {
+    if (
+        !isValidUUID(postId)
+    ) {
 
         console.error(
             "❌ SHARE UUID INVALID:",
@@ -1187,23 +1825,47 @@ async function sharePost(postId) {
             });
 
 
-            console.log(
-                "✅ SHARE BERHASIL"
-            );
-
-
         } else {
 
-            await copyToClipboard(
-                shareUrl
-            );
+            const copied =
+                await copyToClipboard(
+                    shareUrl
+                );
 
 
-            alert(
-                "🔗 Link postingan berhasil disalin."
-            );
+            if (copied) {
+
+                alert(
+                    "🔗 Link postingan berhasil disalin."
+                );
+
+            }
 
         }
+
+
+        /*
+        Tambah share count
+        */
+
+        shareCounts[postId] =
+            Number(
+                shareCounts[postId] ||
+                0
+            ) + 1;
+
+
+        saveShareCounts();
+
+
+        updatePostShareStat(
+            postId
+        );
+
+
+        console.log(
+            "✅ SHARE BERHASIL"
+        );
 
 
     } catch (error) {
@@ -1219,10 +1881,67 @@ async function sharePost(postId) {
 
 
 /* =========================================================
-   COPY LINK
-========================================================= */
+   UPDATE SHARE STAT
+   ========================================================= */
 
-async function copyToClipboard(text) {
+function updatePostShareStat(
+    postId
+) {
+
+    const post =
+        document.querySelector(
+            `.post[data-post-id="${postId}"]`
+        );
+
+
+    if (!post) return;
+
+
+    const stats =
+        post.querySelector(
+            ".post-stats"
+        );
+
+
+    if (!stats) return;
+
+
+    const spans =
+        stats.querySelectorAll(
+            "span"
+        );
+
+
+    if (
+        spans.length < 2
+    ) {
+        return;
+    }
+
+
+    const comments =
+        commentCounts[postId] ||
+        0;
+
+
+    const shares =
+        shareCounts[postId] ||
+        0;
+
+
+    spans[1].textContent =
+        `${comments} komentar    ${shares} dibagikan`;
+
+}
+
+
+/* =========================================================
+   COPY CLIPBOARD
+   ========================================================= */
+
+async function copyToClipboard(
+    text
+) {
 
     try {
 
@@ -1295,11 +2014,15 @@ async function copyToClipboard(text) {
 
 /* =========================================================
    SAVE POST
-========================================================= */
+   ========================================================= */
 
-function savePost(postId) {
+function savePost(
+    postId
+) {
 
-    if (!isValidUUID(postId)) {
+    if (
+        !isValidUUID(postId)
+    ) {
 
         console.error(
             "❌ SAVE UUID INVALID:",
@@ -1310,9 +2033,18 @@ function savePost(postId) {
     }
 
 
+    const key =
+        "saved_" + postId;
+
+
     localStorage.setItem(
-        "saved_" + postId,
+        key,
         "true"
+    );
+
+
+    savedPosts.add(
+        postId
     );
 
 
@@ -1320,12 +2052,18 @@ function savePost(postId) {
         "🔖 Postingan disimpan."
     );
 
+
+    console.log(
+        "🔖 POST DISIMPAN:",
+        postId
+    );
+
 }
 
 
 /* =========================================================
    SEARCH
-========================================================= */
+   ========================================================= */
 
 function searchPost() {
 
@@ -1337,8 +2075,8 @@ function searchPost() {
 
 
 /* =========================================================
-   NOTIFICATIONS
-========================================================= */
+   NOTIFICATION
+   ========================================================= */
 
 function showNotifications() {
 
@@ -1350,8 +2088,8 @@ function showNotifications() {
 
 
 /* =========================================================
-   NAVIGATION
-========================================================= */
+   HOME
+   ========================================================= */
 
 function goHome() {
 
@@ -1361,6 +2099,10 @@ function goHome() {
 }
 
 
+/* =========================================================
+   CHAT
+   ========================================================= */
+
 function goChat() {
 
     alert(
@@ -1369,6 +2111,10 @@ function goChat() {
 
 }
 
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
 
 function goProfile() {
 
@@ -1380,10 +2126,33 @@ function goProfile() {
 
 
 /* =========================================================
-   ESCAPE HTML
-========================================================= */
+   CLOSE COMMENTS
+   ========================================================= */
 
-function escapeHTML(text) {
+function closeComments() {
+
+    const box =
+        document.getElementById(
+            "commentBox"
+        );
+
+
+    if (box) {
+
+        box.remove();
+
+    }
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHTML(
+    text
+) {
 
     const div =
         document.createElement(
@@ -1402,9 +2171,11 @@ function escapeHTML(text) {
 
 /* =========================================================
    ESCAPE JAVASCRIPT
-========================================================= */
+   ========================================================= */
 
-function escapeJS(text) {
+function escapeJS(
+    text
+) {
 
     return String(text)
 
@@ -1433,10 +2204,10 @@ function escapeJS(text) {
 
 /* =========================================================
    READY
-========================================================= */
+   ========================================================= */
 
 console.log(
-    "✅ CHUK AN CHUKK v7.0 READY"
+    "✅ CHUK AN CHUKK SOCIAL FEED READY"
 );
 
 console.log(
@@ -1449,6 +2220,10 @@ console.log(
 
 console.log(
     "↗️ SHARE: ON"
+);
+
+console.log(
+    "🔖 SAVE: ON"
 );
 
 console.log(
