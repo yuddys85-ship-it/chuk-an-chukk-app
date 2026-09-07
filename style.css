@@ -1,13 +1,8 @@
 /* =========================================================
    CHUK AN CHUKK
    STYLE.CSS
-   SOCIAL FEED STYLE
-   ========================================================= */
-
-
-/* =========================================================
-   RESET
-   ========================================================= */
+   X / SOCIAL FEED STYLE
+========================================================= */
 
 * {
     box-sizing: border-box;
@@ -16,114 +11,108 @@
 }
 
 html {
-    width: 100%;
-    min-height: 100%;
-    background: #f0f2f5;
+    scroll-behavior: smooth;
 }
 
 body {
-    width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
-
-    margin: 0;
-
-    background: #f0f2f5;
-    color: #111;
-
     font-family:
-        Arial,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
         Helvetica,
+        Arial,
         sans-serif;
+
+    background: #f5f5f5;
+    color: #0f1419;
+
+    min-height: 100vh;
 
     overflow-x: hidden;
 }
 
-
 /* =========================================================
    APP
-   ========================================================= */
+========================================================= */
 
 .app {
     width: 100%;
     min-height: 100vh;
-    min-height: 100dvh;
-
-    background: #f0f2f5;
+    padding-bottom: 70px;
 }
 
-
 /* =========================================================
-   HEADER APP
-   ========================================================= */
+   HEADER
+========================================================= */
 
 .header {
     position: sticky;
     top: 0;
 
     width: 100%;
-    height: 62px;
+    height: 60px;
+
+    background: rgba(255, 255, 255, .94);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid #e5e7eb;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 8px 15px;
+    padding: 0 16px;
 
-    background: #ffffff;
-
-    border-bottom: 1px solid #ddd;
-
-    z-index: 1000;
+    z-index: 3000;
 }
-
 
 .logo-title {
     display: flex;
     align-items: center;
-
-    gap: 9px;
+    gap: 10px;
 
     min-width: 0;
 }
 
-
 .logo {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
 
     border-radius: 50%;
 
     object-fit: cover;
-}
 
+    flex-shrink: 0;
+}
 
 .logo-title span {
-    font-size: 19px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 800;
 
     white-space: nowrap;
-}
 
+    letter-spacing: -.3px;
+}
 
 .header-icons {
     display: flex;
     align-items: center;
-
-    gap: 8px;
+    gap: 4px;
 }
 
-
 .header-icons button {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
 
     border: none;
+    background: transparent;
+
     border-radius: 50%;
 
-    background: #f0f2f5;
-
-    font-size: 20px;
+    font-size: 21px;
 
     display: flex;
     align-items: center;
@@ -131,18 +120,20 @@ body {
 
     cursor: pointer;
 
-    -webkit-tap-highlight-color: transparent;
+    transition: background .15s ease;
 }
 
+.header-icons button:hover {
+    background: #eff3f4;
+}
 
 .header-icons button:active {
     transform: scale(.92);
 }
 
-
 /* =========================================================
    FEED
-   ========================================================= */
+========================================================= */
 
 .feed {
     width: 100%;
@@ -150,856 +141,678 @@ body {
 
     margin: 0 auto;
 
-    padding: 10px 0 90px;
+    padding: 10px 0 30px;
 }
 
+/* =========================================================
+   EMPTY FEED
+========================================================= */
+
+.empty-feed {
+    text-align: center;
+
+    padding: 60px 20px;
+
+    color: #536471;
+
+    font-size: 15px;
+}
 
 /* =========================================================
-   POST CARD
-   ========================================================= */
+   POST
+========================================================= */
 
 .post {
     position: relative;
 
     width: 100%;
 
-    margin: 0 0 12px;
-
     background: #ffffff;
 
-    overflow: hidden;
+    border-bottom: 1px solid #e1e8ed;
 
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    padding: 14px 16px 8px;
+
+    overflow: hidden;
 }
 
+/* =========================================================
+   POST USER
+========================================================= */
+
+.post-user {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-bottom: 8px;
+}
+
+.post-avatar {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    background: #e5e7eb;
+
+    flex-shrink: 0;
+}
+
+.post-user-details {
+    min-width: 0;
+    flex: 1;
+}
+
+.post-user-line {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    min-width: 0;
+
+    line-height: 20px;
+}
+
+.post-username {
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #0f1419;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.post-verified {
+    font-size: 13px;
+}
+
+.post-time {
+    color: #536471;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+}
+
+.post-more {
+    margin-left: auto;
+
+    width: 34px;
+    height: 34px;
+
+    border: none;
+
+    background: transparent;
+
+    border-radius: 50%;
+
+    color: #536471;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.post-more:hover {
+    background: #eff3f4;
+}
+
+/* =========================================================
+   POST CONTENT
+========================================================= */
+
+.post-info {
+    width: 100%;
+
+    margin-left: 52px;
+
+    width: calc(100% - 52px);
+
+    margin-bottom: 10px;
+}
+
+.post-caption {
+    font-size: 15px;
+
+    line-height: 22px;
+
+    color: #0f1419;
+
+    word-break: break-word;
+
+    position: relative;
+}
+
+.caption-text {
+    display: -webkit-box;
+
+    -webkit-box-orient: vertical;
+
+    -webkit-line-clamp: 3;
+
+    overflow: hidden;
+}
+
+.post-caption.expanded .caption-text {
+    display: block;
+
+    -webkit-line-clamp: unset;
+
+    overflow: visible;
+}
+
+.more-text-button {
+    display: none;
+
+    border: none;
+
+    background: transparent;
+
+    color: #1d9bf0;
+
+    font-size: 14px;
+
+    padding: 0;
+
+    margin-left: 3px;
+
+    cursor: pointer;
+}
+
+.more-text-button:hover {
+    text-decoration: underline;
+}
+
+/* =========================================================
+   HASHTAGS
+========================================================= */
+
+.hashtag {
+    color: #1d9bf0;
+
+    text-decoration: none;
+
+    font-weight: 500;
+}
+
+.hashtag:hover {
+    text-decoration: underline;
+}
+
+/* =========================================================
+   LOCATION
+========================================================= */
+
+.post-location {
+    color: #536471;
+
+    font-size: 13px;
+
+    margin-top: 5px;
+}
+
+/* =========================================================
+   TRANSLATE
+========================================================= */
+
+.translate-button {
+    display: inline-block;
+
+    margin-top: 7px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #536471;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+.translate-button:hover {
+    color: #1d9bf0;
+
+    text-decoration: underline;
+}
 
 /* =========================================================
    MEDIA
-   ========================================================= */
+========================================================= */
 
-.post > img.post-image,
-.post > .video-wrapper {
+.post-media {
+    position: relative;
+
+    width: calc(100% - 52px);
+
+    margin-left: 52px;
+
+    margin-top: 8px;
+
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    background: #000;
+}
+
+.post-media img,
+.post-media video {
     display: block;
 
     width: 100%;
-}
 
-
-/*
-   Foto
-*/
-
-.post > img.post-image {
-    width: 100%;
-    height: auto;
-
-    max-height: 720px;
+    max-height: 620px;
 
     object-fit: cover;
 
     background: #000;
 }
 
+/* =========================================================
+   IMAGE
+========================================================= */
 
-/*
-   Video
-*/
-
-.video-wrapper {
-    position: relative;
-
-    width: 100% !important;
-
-    height: auto !important;
-
-    background: #000;
-
-    overflow: hidden;
+.post-media img {
+    cursor: pointer;
 }
 
+/* =========================================================
+   VIDEO
+========================================================= */
 
-.video-wrapper video.post-image {
-    display: block;
-
+.post-media video {
     width: 100%;
+
     height: auto;
 
-    max-height: 720px;
+    min-height: 250px;
 
     object-fit: contain;
-
-    background: #000;
 }
-
 
 /* =========================================================
-   GRADIENT
-   ========================================================= */
-
-/*
-   Script lama membuat .gradient setelah media.
-   Kita sembunyikan karena model baru tidak membutuhkan
-   overlay gelap.
-*/
-
-.post > .gradient {
-    display: none;
-}
-
-
-/* =========================================================
-   POST OVERLAY
-   ========================================================= */
-
-/*
-   PENTING:
-   Jangan lagi dibuat absolute.
-   Sekarang menjadi bagian normal dari kartu.
-*/
-
-.post-overlay {
-    position: relative;
-
-    inset: auto;
-
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
-
-    background: #ffffff;
-
-    color: #111;
-
-    z-index: 10;
-}
-
-
-/* =========================================================
-   POST INFO / CAPTION
-   ========================================================= */
-
-.post-info {
-    position: relative;
-
-    left: auto;
-    right: auto;
-    bottom: auto;
-
-    width: 100%;
-
-    padding: 13px 16px 10px;
-
-    order: 1;
-
-    background: #ffffff;
-
-    z-index: 20;
-}
-
-
-/*
-   Username
-*/
-
-.post-info h3 {
-    margin: 0 0 6px;
-
-    color: #111;
-
-    font-size: 16px;
-    line-height: 1.25;
-
-    font-weight: 700;
-}
-
-
-/*
-   Caption
-*/
-
-.post-info p {
-    margin: 0;
-
-    color: #222;
-
-    font-size: 16px;
-
-    line-height: 1.4;
-
-    white-space: pre-wrap;
-
-    overflow-wrap: anywhere;
-
-    word-break: break-word;
-}
-
-
-/* =========================================================
-   ACTION BUTTONS
-   ========================================================= */
-
-.post-actions {
-    position: relative;
-
-    right: auto;
-    bottom: auto;
-
-    width: 100%;
-
-    min-height: 52px;
-
-    padding: 4px 8px;
-
-    display: flex;
-
-    flex-direction: row;
-
-    align-items: center;
-
-    justify-content: space-around;
-
-    gap: 4px;
-
-    background: #ffffff;
-
-    border-top: 1px solid #e1e1e1;
-
-    order: 2;
-
-    z-index: 30;
-}
-
-
-/*
-   Tombol
-*/
-
-.post-actions button {
-    flex: 1;
-
-    min-width: 0;
-
-    height: 46px;
-
-    border: none;
-    border-radius: 8px;
-
-    background: transparent;
-
-    color: #555;
-
-    font-size: 16px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 5px;
-
-    cursor: pointer;
-
-    touch-action: manipulation;
-
-    -webkit-tap-highlight-color: transparent;
-}
-
-
-/*
-   Hover
-*/
-
-.post-actions button:hover {
-    background: #f0f2f5;
-}
-
-
-/*
-   Tekan
-*/
-
-.post-actions button:active {
-    transform: scale(.96);
-
-    background: #e4e6eb;
-}
-
-
-/*
-   Like aktif
-*/
-
-.post-actions button.liked {
-    color: #1877f2;
-
-    background: transparent;
-
-    transform: none;
-}
-
-
-/* =========================================================
-   SOUND BUTTON
-   ========================================================= */
-
-/*
-   Tetap berada di dalam video.
-*/
+   VIDEO SOUND
+========================================================= */
 
 .sound-button {
-    position: absolute !important;
+    position: absolute;
 
-    right: 14px !important;
-    top: auto !important;
-    bottom: 14px !important;
+    right: 12px;
+    bottom: 12px;
 
-    width: 46px !important;
-    height: 46px !important;
+    width: 38px;
+    height: 38px;
 
-    min-width: 46px !important;
+    border: 1px solid rgba(255,255,255,.25);
 
-    border: none !important;
-    border-radius: 50% !important;
+    border-radius: 50%;
 
-    background: rgba(0, 0, 0, .70) !important;
+    background: rgba(0,0,0,.65);
 
-    color: #ffffff !important;
+    color: #ffffff;
 
-    font-size: 21px !important;
+    font-size: 18px;
 
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    z-index: 9999 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     cursor: pointer;
 
-    touch-action: manipulation;
+    z-index: 50;
 
-    -webkit-tap-highlight-color: transparent;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
-
 
 .sound-button:active {
-    transform: scale(.90);
+    transform: scale(.9);
 }
 
-
 /* =========================================================
-   EMPTY FEED
-   ========================================================= */
+   POST STATS
+========================================================= */
 
-.empty-feed {
-    width: 100%;
+.post-stats {
+    width: calc(100% - 52px);
 
-    padding: 50px 20px;
+    margin-left: 52px;
 
-    text-align: center;
-
-    color: #65676b;
-
-    font-size: 16px;
-
-    background: #ffffff;
-}
-
-
-/* =========================================================
-   COMMENT BOX
-   ========================================================= */
-
-#commentBox {
-    position: fixed;
-
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background: rgba(0, 0, 0, .45);
-
-    z-index: 10000;
+    padding: 8px 2px 5px;
 
     display: flex;
+    align-items: center;
 
-    align-items: flex-end;
+    gap: 18px;
 
-    justify-content: center;
+    color: #536471;
+
+    font-size: 13px;
 }
 
-
-/* =========================================================
-   COMMENT PANEL
-   ========================================================= */
-
-.comment-panel {
-    width: 100%;
-    max-width: 680px;
-
-    max-height: 78vh;
-
-    background: #ffffff;
-
-    border-radius: 18px 18px 0 0;
-
-    overflow: hidden;
-
-    display: flex;
-    flex-direction: column;
+.post-stats span {
+    white-space: nowrap;
 }
 
-
 /* =========================================================
-   COMMENT HEADER
-   ========================================================= */
+   POST ACTIONS
+========================================================= */
 
-.comment-header {
-    height: 54px;
+.post-actions {
+    width: calc(100% - 52px);
 
-    padding: 0 15px;
+    margin-left: 52px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #eef1f3;
+
+    padding-top: 5px;
+}
+
+.post-actions button {
+    flex: 1;
+
+    height: 42px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #536471;
+
+    border-radius: 50%;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    transition:
+        background .15s ease,
+        transform .1s ease;
+}
+
+.post-actions button:hover {
+    background: #f0f7ff;
+}
+
+.post-actions button:active {
+    transform: scale(.9);
+}
+
+.post-actions button span {
+    font-size: 13px;
+}
+
+/* =========================================================
+   LIKE
+========================================================= */
+
+.like-button.liked {
+    color: #f91880;
+}
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+.save-button.saved {
+    color: #1d9bf0;
+}
+
+/* =========================================================
+   SHARE
+========================================================= */
+
+.share-button {
+    color: #536471;
+}
+
+/* =========================================================
+   COMMENTS
+========================================================= */
+
+.comments-button {
+    color: #536471;
+}
+
+/* =========================================================
+   COMMENT MODAL
+========================================================= */
+
+.comments-modal {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.45);
+
+    display: none;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    z-index: 10000;
+}
+
+.comments-modal.active {
+    display: flex;
+}
+
+.comments-box {
+    width: 100%;
+
+    max-width: 680px;
+
+    max-height: 80vh;
 
     background: #ffffff;
+
+    border-radius: 20px 20px 0 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+    animation: commentsUp .2s ease;
 }
 
+@keyframes commentsUp {
+    from {
+        transform: translateY(100%);
+    }
 
-.comment-header strong {
-    font-size: 17px;
+    to {
+        transform: translateY(0);
+    }
 }
 
+.comments-header {
+    height: 55px;
 
-.comment-close {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 16px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    font-weight: 700;
+}
+
+.comments-close {
     width: 36px;
     height: 36px;
 
     border: none;
+
     border-radius: 50%;
 
-    background: #f0f2f5;
+    background: transparent;
 
-    font-size: 18px;
+    font-size: 22px;
 
     cursor: pointer;
 }
 
-
-/* =========================================================
-   COMMENT LIST
-   ========================================================= */
+.comments-close:hover {
+    background: #eff3f4;
+}
 
 .comments-list {
     flex: 1;
 
-    min-height: 120px;
-
-    max-height: 55vh;
-
     overflow-y: auto;
 
-    padding: 10px 14px;
-
-    background: #ffffff;
+    padding: 10px 16px;
 }
-
 
 .comment-item {
     display: flex;
 
-    gap: 9px;
+    gap: 10px;
 
-    margin-bottom: 13px;
+    padding: 10px 0;
+
+    border-bottom: 1px solid #eef1f3;
 }
 
-
 .comment-avatar {
-    flex: 0 0 38px;
-
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
 
     border-radius: 50%;
 
-    background: #e4e6eb;
+    object-fit: cover;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 18px;
+    flex-shrink: 0;
 }
-
 
 .comment-content {
+    flex: 1;
+
     min-width: 0;
-
-    padding: 8px 11px;
-
-    border-radius: 14px;
-
-    background: #f0f2f5;
 }
 
-
-.comment-content strong {
-    display: block;
-
-    margin-bottom: 3px;
-
+.comment-username {
     font-size: 14px;
+
+    font-weight: 700;
 }
 
-
-.comment-content p {
-    margin: 0;
-
-    color: #333;
+.comment-text {
+    margin-top: 2px;
 
     font-size: 14px;
 
-    line-height: 1.4;
+    line-height: 20px;
 
-    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
-
-.comment-empty,
-.comment-loading {
-    padding: 35px 15px;
-
-    text-align: center;
-
-    color: #65676b;
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   COMMENT INPUT
-   ========================================================= */
-
-.comment-input {
-    width: 100%;
-
-    padding: 10px;
-
+.comment-form {
     display: flex;
+
+    align-items: center;
 
     gap: 8px;
 
-    background: #ffffff;
+    padding: 10px 12px;
 
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #e5e7eb;
+
+    background: #ffffff;
 }
 
-
-.comment-input input {
+.comment-input {
     flex: 1;
 
     min-width: 0;
 
-    height: 44px;
+    height: 42px;
 
-    padding: 0 14px;
-
-    border: none;
+    border: 1px solid #cfd9de;
 
     border-radius: 22px;
+
+    padding: 0 15px;
 
     outline: none;
 
-    background: #f0f2f5;
-
-    font-size: 15px;
+    font-size: 14px;
 }
 
+.comment-input:focus {
+    border-color: #1d9bf0;
+}
 
-.comment-input button {
-    width: 70px;
-
-    height: 44px;
+.comment-submit {
+    width: 42px;
+    height: 42px;
 
     border: none;
 
-    border-radius: 22px;
+    border-radius: 50%;
 
-    background: #1877f2;
+    background: #1d9bf0;
 
     color: #ffffff;
 
-    font-size: 14px;
-
-    font-weight: 600;
+    font-size: 18px;
 
     cursor: pointer;
 }
 
-
-.comment-input button:disabled {
-    opacity: .55;
-
-    cursor: not-allowed;
+.comment-submit:active {
+    transform: scale(.9);
 }
-
 
 /* =========================================================
-   BOTTOM NAV
-   ========================================================= */
+   FLOATING CREATE CONTENT BUTTON
+========================================================= */
 
-.bottom-nav {
+.compose-button {
     position: fixed;
 
-    left: 0;
-    right: 0;
-    bottom: 0;
+    right: 18px;
+    bottom: 82px;
 
-    width: 100%;
-
-    height: 66px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-
-    padding-bottom: env(safe-area-inset-bottom);
-
-    background: rgba(255, 255, 255, .97);
-
-    border-top: 1px solid #ddd;
-
-    z-index: 5000;
-}
-
-
-.bottom-nav button {
-    flex: 1;
-
-    height: 100%;
+    width: 58px;
+    height: 58px;
 
     border: none;
 
-    background: transparent;
-
-    color: #555;
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 2px;
-
-    cursor: pointer;
-
-    -webkit-tap-highlight-color: transparent;
-}
-
-
-.bottom-nav button span {
-    font-size: 21px;
-
-    line-height: 1;
-}
-
-
-.bottom-nav button small {
-    font-size: 11px;
-
-    line-height: 1.2;
-}
-
-
-.bottom-nav button:active {
-    transform: scale(.94);
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-    .header {
-        height: 58px;
-
-        padding: 7px 12px;
-    }
-
-
-    .logo {
-        width: 38px;
-        height: 38px;
-    }
-
-
-    .logo-title span {
-        font-size: 17px;
-    }
-
-
-    .header-icons button {
-        width: 38px;
-        height: 38px;
-
-        font-size: 18px;
-    }
-
-
-    .feed {
-        width: 100%;
-
-        padding-top: 6px;
-
-        padding-bottom: 78px;
-    }
-
-
-    .post {
-        margin-bottom: 8px;
-
-        border-left: none;
-        border-right: none;
-    }
-
-
-    .post-info {
-        padding: 12px 14px 9px;
-    }
-
-
-    .post-info h3 {
-        font-size: 15px;
-
-        margin-bottom: 5px;
-    }
-
-
-    .post-info p {
-        font-size: 15px;
-
-        line-height: 1.38;
-    }
-
-
-    .post-actions {
-        min-height: 50px;
-
-        padding: 3px 5px;
-    }
-
-
-    .post-actions button {
-        height: 44px;
-
-        font-size: 15px;
-    }
-
-
-    .sound-button {
-        right: 12px !important;
-        bottom: 12px !important;
-
-        width: 44px !important;
-        height: 44px !important;
-
-        min-width: 44px !important;
-
-        font-size: 20px !important;
-    }
-
-
-    .bottom-nav {
-        height: 62px;
-    }
-}
-
-
-/* =========================================================
-   TABLET / DESKTOP
-   ========================================================= */
-
-@media (min-width: 601px) {
-
-    .feed {
-        padding-top: 15px;
-    }
-
-
-    .post {
-        border-radius: 8px;
-
-        border: 1px solid #ddd;
-    }
-
-
-    .post > img.post-image,
-    .video-wrapper video.post-image {
-        max-height: 760px;
-    }
-
-
-    .post-info p {
-        font-size: 16px;
-    }
-}
-
-
-/* =========================================================
-   SAFE AREA IPHONE / ANDROID
-   ========================================================= */
-
-@supports (padding: env(safe-area-inset-bottom)) {
-
-    .bottom-nav {
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-}
-
-
-/* =========================================================
-   SCROLLBAR
-   ========================================================= */
-
-::-webkit-scrollbar {
-    width: 5px;
-}
-
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-
-::-webkit-scrollbar-thumb {
-    background: #bbb;
-
-    border-radius: 10px;
-}
-
-
-/* =========================================================
-   SELECTION
-   ========================================================= */
-
-button,
-img,
-video {
-    -webkit-user-select: none;
-    user-select: none;
-}
-
-
-input,
-textarea {
-    -webkit-user-select: text;
-    user-select: text;
-}
+    border-radius
