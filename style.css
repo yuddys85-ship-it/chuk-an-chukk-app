@@ -1,7 +1,7 @@
 /* =========================================================
    CHUK AN CHUKK
    STYLE.CSS
-   X / SOCIAL FEED STYLE
+   SOCIAL FEED - READABLE VERSION
 ========================================================= */
 
 * {
@@ -28,7 +28,6 @@ body {
     color: #0f1419;
 
     min-height: 100vh;
-
     overflow-x: hidden;
 }
 
@@ -39,7 +38,7 @@ body {
 .app {
     width: 100%;
     min-height: 100vh;
-    padding-bottom: 70px;
+    padding-bottom: 72px;
 }
 
 /* =========================================================
@@ -51,14 +50,14 @@ body {
     top: 0;
 
     width: 100%;
-    height: 60px;
+    height: 62px;
 
-    background: rgba(255, 255, 255, .94);
+    background: rgba(255,255,255,.96);
 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e1e8ed;
 
     display: flex;
     align-items: center;
@@ -78,22 +77,20 @@ body {
 }
 
 .logo {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
 
     border-radius: 50%;
-
     object-fit: cover;
 
     flex-shrink: 0;
 }
 
 .logo-title span {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 800;
 
     white-space: nowrap;
-
     letter-spacing: -.3px;
 }
 
@@ -104,15 +101,15 @@ body {
 }
 
 .header-icons button {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
 
     border: none;
     background: transparent;
 
     border-radius: 50%;
 
-    font-size: 21px;
+    font-size: 22px;
 
     display: flex;
     align-items: center;
@@ -120,7 +117,7 @@ body {
 
     cursor: pointer;
 
-    transition: background .15s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .header-icons button:hover {
@@ -137,7 +134,7 @@ body {
 
 .feed {
     width: 100%;
-    max-width: 680px;
+    max-width: 700px;
 
     margin: 0 auto;
 
@@ -145,21 +142,21 @@ body {
 }
 
 /* =========================================================
-   EMPTY FEED
+   EMPTY
 ========================================================= */
 
 .empty-feed {
     text-align: center;
 
-    padding: 60px 20px;
+    padding: 70px 20px;
 
     color: #536471;
 
-    font-size: 15px;
+    font-size: 16px;
 }
 
 /* =========================================================
-   POST
+   POST CARD
 ========================================================= */
 
 .post {
@@ -171,13 +168,13 @@ body {
 
     border-bottom: 1px solid #e1e8ed;
 
-    padding: 14px 16px 8px;
+    padding: 16px 16px 10px;
 
     overflow: hidden;
 }
 
 /* =========================================================
-   POST USER
+   USER
 ========================================================= */
 
 .post-user {
@@ -186,14 +183,14 @@ body {
     display: flex;
     align-items: flex-start;
 
-    gap: 10px;
+    gap: 11px;
 
-    margin-bottom: 8px;
+    margin-bottom: 9px;
 }
 
 .post-avatar {
-    width: 42px;
-    height: 42px;
+    width: 46px;
+    height: 46px;
 
     border-radius: 50%;
 
@@ -213,17 +210,17 @@ body {
     display: flex;
     align-items: center;
 
-    gap: 5px;
+    gap: 6px;
 
     min-width: 0;
 
-    line-height: 20px;
+    line-height: 22px;
 }
 
 .post-username {
-    font-size: 15px;
+    font-size: 17px;
 
-    font-weight: 700;
+    font-weight: 750;
 
     color: #0f1419;
 
@@ -234,7 +231,7 @@ body {
 }
 
 .post-verified {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .post-time {
@@ -248,8 +245,8 @@ body {
 .post-more {
     margin-left: auto;
 
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
 
     border: none;
 
@@ -259,7 +256,7 @@ body {
 
     color: #536471;
 
-    font-size: 20px;
+    font-size: 21px;
 
     cursor: pointer;
 
@@ -268,6 +265,8 @@ body {
     justify-content: center;
 
     flex-shrink: 0;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 .post-more:hover {
@@ -275,29 +274,29 @@ body {
 }
 
 /* =========================================================
-   POST CONTENT
+   POST TEXT
 ========================================================= */
 
 .post-info {
-    width: 100%;
+    width: calc(100% - 57px);
 
-    margin-left: 52px;
+    margin-left: 57px;
 
-    width: calc(100% - 52px);
-
-    margin-bottom: 10px;
+    margin-bottom: 11px;
 }
 
 .post-caption {
-    font-size: 15px;
+    font-size: 17px;
 
-    line-height: 22px;
+    line-height: 25px;
 
     color: #0f1419;
 
+    font-weight: 400;
+
     word-break: break-word;
 
-    position: relative;
+    letter-spacing: -.05px;
 }
 
 .caption-text {
@@ -327,7 +326,9 @@ body {
 
     color: #1d9bf0;
 
-    font-size: 14px;
+    font-size: 15px;
+
+    font-weight: 500;
 
     padding: 0;
 
@@ -341,7 +342,7 @@ body {
 }
 
 /* =========================================================
-   HASHTAGS
+   HASHTAG
 ========================================================= */
 
 .hashtag {
@@ -363,9 +364,9 @@ body {
 .post-location {
     color: #536471;
 
-    font-size: 13px;
+    font-size: 14px;
 
-    margin-top: 5px;
+    margin-top: 6px;
 }
 
 /* =========================================================
@@ -375,7 +376,7 @@ body {
 .translate-button {
     display: inline-block;
 
-    margin-top: 7px;
+    margin-top: 8px;
 
     padding: 0;
 
@@ -385,7 +386,7 @@ body {
 
     color: #536471;
 
-    font-size: 13px;
+    font-size: 14px;
 
     cursor: pointer;
 }
@@ -403,28 +404,15 @@ body {
 .post-media {
     position: relative;
 
-    width: calc(100% - 52px);
+    width: calc(100% - 57px);
 
-    margin-left: 52px;
+    margin-left: 57px;
 
-    margin-top: 8px;
+    margin-top: 9px;
 
     overflow: hidden;
 
     border-radius: 16px;
-
-    background: #000;
-}
-
-.post-media img,
-.post-media video {
-    display: block;
-
-    width: 100%;
-
-    max-height: 620px;
-
-    object-fit: cover;
 
     background: #000;
 }
@@ -434,6 +422,16 @@ body {
 ========================================================= */
 
 .post-media img {
+    display: block;
+
+    width: 100%;
+
+    max-height: 650px;
+
+    object-fit: cover;
+
+    background: #000;
+
     cursor: pointer;
 }
 
@@ -442,17 +440,29 @@ body {
 ========================================================= */
 
 .post-media video {
+    display: block;
+
     width: 100%;
 
-    height: auto;
+    max-height: 650px;
 
     min-height: 250px;
 
     object-fit: contain;
+
+    background: #000;
+
+    /*
+       PENTING:
+       Jangan gunakan pointer-events:none
+       agar kontrol video tetap bisa disentuh.
+    */
+
+    pointer-events: auto;
 }
 
 /* =========================================================
-   VIDEO SOUND
+   VIDEO SOUND BUTTON
 ========================================================= */
 
 .sound-button {
@@ -461,18 +471,18 @@ body {
     right: 12px;
     bottom: 12px;
 
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
 
-    border: 1px solid rgba(255,255,255,.25);
+    border: 1px solid rgba(255,255,255,.35);
 
     border-radius: 50%;
 
-    background: rgba(0,0,0,.65);
+    background: rgba(0,0,0,.70);
 
     color: #ffffff;
 
-    font-size: 18px;
+    font-size: 19px;
 
     display: flex;
     align-items: center;
@@ -480,14 +490,22 @@ body {
 
     cursor: pointer;
 
-    z-index: 50;
+    z-index: 100;
 
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sound-button:hover {
+    background: rgba(0,0,0,.85);
 }
 
 .sound-button:active {
-    transform: scale(.9);
+    transform: scale(.90);
 }
 
 /* =========================================================
@@ -495,20 +513,20 @@ body {
 ========================================================= */
 
 .post-stats {
-    width: calc(100% - 52px);
+    width: calc(100% - 57px);
 
-    margin-left: 52px;
+    margin-left: 57px;
 
-    padding: 8px 2px 5px;
+    padding: 9px 3px 6px;
 
     display: flex;
     align-items: center;
 
-    gap: 18px;
+    gap: 20px;
 
     color: #536471;
 
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .post-stats span {
@@ -516,13 +534,13 @@ body {
 }
 
 /* =========================================================
-   POST ACTIONS
+   ACTION BUTTONS
 ========================================================= */
 
 .post-actions {
-    width: calc(100% - 52px);
+    width: calc(100% - 57px);
 
-    margin-left: 52px;
+    margin-left: 57px;
 
     display: flex;
     align-items: center;
@@ -536,7 +554,9 @@ body {
 .post-actions button {
     flex: 1;
 
-    height: 42px;
+    min-width: 42px;
+
+    height: 46px;
 
     border: none;
 
@@ -546,7 +566,7 @@ body {
 
     border-radius: 50%;
 
-    font-size: 18px;
+    font-size: 20px;
 
     cursor: pointer;
 
@@ -554,11 +574,11 @@ body {
     align-items: center;
     justify-content: center;
 
-    gap: 4px;
+    gap: 5px;
 
-    transition:
-        background .15s ease,
-        transform .1s ease;
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 .post-actions button:hover {
@@ -566,11 +586,11 @@ body {
 }
 
 .post-actions button:active {
-    transform: scale(.9);
+    transform: scale(.90);
 }
 
 .post-actions button span {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 /* =========================================================
@@ -590,23 +610,7 @@ body {
 }
 
 /* =========================================================
-   SHARE
-========================================================= */
-
-.share-button {
-    color: #536471;
-}
-
-/* =========================================================
-   COMMENTS
-========================================================= */
-
-.comments-button {
-    color: #536471;
-}
-
-/* =========================================================
-   COMMENT MODAL
+   COMMENTS MODAL
 ========================================================= */
 
 .comments-modal {
@@ -619,7 +623,6 @@ body {
     display: none;
 
     align-items: flex-end;
-
     justify-content: center;
 
     z-index: 10000;
@@ -632,13 +635,13 @@ body {
 .comments-box {
     width: 100%;
 
-    max-width: 680px;
+    max-width: 700px;
 
-    max-height: 80vh;
+    max-height: 82vh;
 
     background: #ffffff;
 
-    border-radius: 20px 20px 0 0;
+    border-radius: 22px 22px 0 0;
 
     display: flex;
 
@@ -646,7 +649,7 @@ body {
 
     overflow: hidden;
 
-    animation: commentsUp .2s ease;
+    animation: commentsUp .22s ease;
 }
 
 @keyframes commentsUp {
@@ -660,7 +663,7 @@ body {
 }
 
 .comments-header {
-    height: 55px;
+    height: 58px;
 
     display: flex;
     align-items: center;
@@ -670,12 +673,14 @@ body {
 
     border-bottom: 1px solid #e5e7eb;
 
+    font-size: 17px;
+
     font-weight: 700;
 }
 
 .comments-close {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
 
     border: none;
 
@@ -683,7 +688,7 @@ body {
 
     background: transparent;
 
-    font-size: 22px;
+    font-size: 23px;
 
     cursor: pointer;
 }
@@ -705,14 +710,14 @@ body {
 
     gap: 10px;
 
-    padding: 10px 0;
+    padding: 11px 0;
 
     border-bottom: 1px solid #eef1f3;
 }
 
 .comment-avatar {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
 
     border-radius: 50%;
 
@@ -728,17 +733,17 @@ body {
 }
 
 .comment-username {
-    font-size: 14px;
+    font-size: 15px;
 
     font-weight: 700;
 }
 
 .comment-text {
-    margin-top: 2px;
+    margin-top: 3px;
 
-    font-size: 14px;
+    font-size: 15px;
 
-    line-height: 20px;
+    line-height: 21px;
 
     word-break: break-word;
 }
@@ -750,7 +755,7 @@ body {
 
     gap: 8px;
 
-    padding: 10px 12px;
+    padding: 11px 12px;
 
     border-top: 1px solid #e5e7eb;
 
@@ -762,17 +767,17 @@ body {
 
     min-width: 0;
 
-    height: 42px;
+    height: 44px;
 
     border: 1px solid #cfd9de;
 
-    border-radius: 22px;
+    border-radius: 23px;
 
-    padding: 0 15px;
+    padding: 0 16px;
 
     outline: none;
 
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .comment-input:focus {
@@ -780,8 +785,8 @@ body {
 }
 
 .comment-submit {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
 
     border: none;
 
@@ -791,28 +796,377 @@ body {
 
     color: #ffffff;
 
-    font-size: 18px;
+    font-size: 19px;
 
     cursor: pointer;
 }
 
 .comment-submit:active {
-    transform: scale(.9);
+    transform: scale(.90);
 }
 
 /* =========================================================
-   FLOATING CREATE CONTENT BUTTON
+   FLOATING CREATE BUTTON
 ========================================================= */
 
 .compose-button {
     position: fixed;
 
     right: 18px;
-    bottom: 82px;
+    bottom: 84px;
 
-    width: 58px;
-    height: 58px;
+    width: 60px;
+    height: 60px;
 
     border: none;
 
-    border-radius
+    border-radius: 50%;
+
+    background: #1d9bf0;
+
+    color: #ffffff;
+
+    font-size: 35px;
+
+    font-weight: 300;
+
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 16px rgba(0,0,0,.28);
+
+    z-index: 6000;
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.compose-button:hover {
+    background: #1a8cd8;
+}
+
+.compose-button:active {
+    transform: scale(.90);
+}
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
+
+.bottom-nav {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 66px;
+
+    background: rgba(255,255,255,.97);
+
+    border-top: 1px solid #e1e8ed;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-around;
+
+    z-index: 5000;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav button {
+    flex: 1;
+
+    max-width: 125px;
+
+    height: 60px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #536471;
+
+    cursor: pointer;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 2px;
+
+    border-radius: 12px;
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav button:hover {
+    background: #f0f3f5;
+}
+
+.bottom-nav button:active {
+    transform: scale(.94);
+}
+
+.bottom-nav button span {
+    font-size: 22px;
+
+    line-height: 24px;
+}
+
+.bottom-nav button small {
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5db;
+
+    border-radius: 10px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    body {
+        background: #ffffff;
+    }
+
+    .app {
+        padding-bottom: 67px;
+    }
+
+    .header {
+        height: 58px;
+
+        padding: 0 12px;
+    }
+
+    .logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .logo-title {
+        gap: 8px;
+    }
+
+    .logo-title span {
+        font-size: 16px;
+    }
+
+    .header-icons button {
+        width: 40px;
+        height: 40px;
+
+        font-size: 20px;
+    }
+
+    .feed {
+        padding: 0;
+    }
+
+    .post {
+        padding: 14px 12px 9px;
+    }
+
+    .post-user {
+        gap: 10px;
+    }
+
+    .post-avatar {
+        width: 44px;
+        height: 44px;
+    }
+
+    .post-username {
+        font-size: 17px;
+    }
+
+    .post-time {
+        font-size: 14px;
+    }
+
+    .post-info {
+        width: calc(100% - 54px);
+
+        margin-left: 54px;
+    }
+
+    .post-caption {
+        font-size: 17px;
+
+        line-height: 25px;
+    }
+
+    .post-media {
+        width: calc(100% - 54px);
+
+        margin-left: 54px;
+
+        border-radius: 15px;
+    }
+
+    .post-media img,
+    .post-media video {
+        max-height: 520px;
+    }
+
+    .post-media video {
+        min-height: 220px;
+    }
+
+    .post-stats {
+        width: calc(100% - 54px);
+
+        margin-left: 54px;
+
+        gap: 13px;
+
+        font-size: 13px;
+    }
+
+    .post-actions {
+        width: calc(100% - 54px);
+
+        margin-left: 54px;
+    }
+
+    .post-actions button {
+        height: 43px;
+
+        font-size: 19px;
+    }
+
+    .post-actions button span {
+        font-size: 13px;
+    }
+
+    .sound-button {
+        width: 40px;
+        height: 40px;
+
+        right: 10px;
+        bottom: 10px;
+
+        font-size: 18px;
+    }
+
+    .compose-button {
+        right: 16px;
+
+        bottom: 78px;
+
+        width: 58px;
+        height: 58px;
+
+        font-size: 33px;
+    }
+
+    .comments-box {
+        max-height: 86vh;
+    }
+}
+
+/* =========================================================
+   SMALL PHONE
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .logo-title span {
+        font-size: 15px;
+    }
+
+    .post {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .post-avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .post-info {
+        width: calc(100% - 51px);
+
+        margin-left: 51px;
+    }
+
+    .post-media {
+        width: calc(100% - 51px);
+
+        margin-left: 51px;
+    }
+
+    .post-stats,
+    .post-actions {
+        width: calc(100% - 51px);
+
+        margin-left: 51px;
+    }
+
+    .post-caption {
+        font-size: 16px;
+
+        line-height: 24px;
+    }
+}
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 900px) {
+
+    .feed {
+        padding-top: 15px;
+    }
+
+    .post {
+        border: 1px solid #e1e8ed;
+
+        border-radius: 12px;
+
+        margin-bottom: 12px;
+    }
+
+    .header {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
