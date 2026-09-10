@@ -2116,7 +2116,9 @@ function goChat() {
    PROFILE
    ========================================================= */
 
-function goProfile() {
+function goProfile(){
+    window.location.href = "profile.html";
+}
 
     alert(
         "👤 Profile segera hadir."
