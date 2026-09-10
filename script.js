@@ -2116,16 +2116,9 @@ function goChat() {
    PROFILE
    ========================================================= */
 
-function goProfile(){
+functfunction goProfile() {
     window.location.href = "profile.html";
 }
-
-    alert(
-        "👤 Profile segera hadir."
-    );
-
-}
-
 
 /* =========================================================
    CLOSE COMMENTS
