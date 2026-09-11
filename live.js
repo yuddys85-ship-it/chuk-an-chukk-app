@@ -1,18 +1,17 @@
 /* =========================================================
    CHUK AN CHUKK
    LIVE.JS
-   LIVE CAMERA + MIC + FLIP + TIMER + FILTER
-   ANTI ZOOM / ANTI DISTORTION
+   FULL SCREEN LIVE CAMERA
+   NON-MIRROR CAMERA
    ========================================================= */
 
-(() => {
+(function () {
 
     "use strict";
 
-
     /* =====================================================
-       ELEMENTS
-    ===================================================== */
+       DOM
+       ===================================================== */
 
     const video =
         document.getElementById("camera");
@@ -26,20 +25,17 @@
     const lightStatus =
         document.getElementById("lightStatus");
 
-    const liveTime =
-        document.getElementById("liveTime");
-
     const viewerCount =
         document.getElementById("viewerCount");
+
+    const liveTime =
+        document.getElementById("liveTime");
 
     const likeButton =
         document.getElementById("likeButton");
 
     const likeCount =
         document.getElementById("likeCount");
-
-    const closeLive =
-        document.getElementById("closeLive");
 
     const cameraButton =
         document.getElementById("cameraButton");
@@ -55,6 +51,9 @@
 
     const filterButton =
         document.getElementById("filterButton");
+
+    const closeLive =
+        document.getElementById("closeLive");
 
     const filterPanel =
         document.getElementById("filterPanel");
@@ -104,7 +103,7 @@
 
     /* =====================================================
        STATE
-    ===================================================== */
+       ===================================================== */
 
     let stream = null;
 
@@ -118,58 +117,68 @@
 
     let liveSeconds = 0;
 
-    let timerInterval = null;
+    let liveTimer = null;
 
-    let likeTotal = 0;
+    let likes = 0;
 
-    let viewerTotal = 1;
+    let viewers = 0;
 
-    let autoLightEnabled = true;
+    let viewerTimer = null;
 
-    let renderFrame = null;
-
-
-    /* =====================================================
-       DREAM FILTER
-    ===================================================== */
+    let autoLight = true;
 
     let dreamFilter = null;
 
 
     /* =====================================================
-       DEFAULT FILTER SETTINGS
-    ===================================================== */
+       DEFAULT FILTER
+       ===================================================== */
 
     const DEFAULT_FILTER = {
+
         plastic: 90,
+
         glow: 65,
+
         brightness: 35,
+
         softFocus: 55,
+
         detail: 25,
+
         strength: 90
     };
 
 
     /* =====================================================
-       INITIALIZE
-    ===================================================== */
+       INIT
+       ===================================================== */
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeLive
-    );
-
-
-    async function initializeLive() {
+    function init() {
 
         console.log(
-            "🎥 CHUK AN CHUKK LIVE starting..."
+            "🎥 CHUK AN CHUKK LIVE initializing..."
         );
 
+        setupFilter();
 
-        /* ---------------------------------------------
-           FILTER ENGINE
-        --------------------------------------------- */
+        setupEvents();
+
+        updateButtons();
+
+        updateFilterLabels();
+
+        resizeFilter();
+
+        startCamera();
+    }
+
+
+    /* =====================================================
+       FILTER INIT
+       ===================================================== */
+
+    function setupFilter() {
 
         if (
             window.DreamLikePlastic &&
@@ -188,105 +197,221 @@
             );
 
             dreamFilter.setAutoLight(
-                autoLightEnabled
+                true
             );
 
+            dreamFilter.enabled = true;
+
+            console.log(
+                "✨ Dream Like Filter Ready"
+            );
+
+        } else {
+
+            console.warn(
+                "⚠️ DreamLikePlastic belum tersedia"
+            );
+        }
+    }
+
+
+    /* =====================================================
+       EVENTS
+       ===================================================== */
+
+    function setupEvents() {
+
+        if (cameraButton) {
+
+            cameraButton.addEventListener(
+                "click",
+                toggleCamera
+            );
+        }
+
+        if (micButton) {
+
+            micButton.addEventListener(
+                "click",
+                toggleMic
+            );
+        }
+
+        if (flipButton) {
+
+            flipButton.addEventListener(
+                "click",
+                flipCamera
+            );
+        }
+
+        if (startLiveButton) {
+
+            startLiveButton.addEventListener(
+                "click",
+                toggleLive
+            );
+        }
+
+        if (filterButton) {
+
+            filterButton.addEventListener(
+                "click",
+                toggleFilterPanel
+            );
+        }
+
+        if (resetFilter) {
+
+            resetFilter.addEventListener(
+                "click",
+                resetDreamFilter
+            );
+        }
+
+        if (dreamLikeButton) {
+
+            dreamLikeButton.addEventListener(
+                "click",
+                toggleDreamFilter
+            );
+        }
+
+        if (likeButton) {
+
+            likeButton.addEventListener(
+                "click",
+                addLike
+            );
+        }
+
+        if (autoLightButton) {
+
+            autoLightButton.addEventListener(
+                "click",
+                toggleAutoLight
+            );
         }
 
 
-        /* ---------------------------------------------
-           BUTTON EVENTS
-        --------------------------------------------- */
-
-        closeLive?.addEventListener(
-            "click",
-            closeLivePage
-        );
-
-        cameraButton?.addEventListener(
-            "click",
-            toggleCamera
-        );
-
-        micButton?.addEventListener(
-            "click",
-            toggleMic
-        );
-
-        startLiveButton?.addEventListener(
-            "click",
-            toggleLive
-        );
-
-        flipButton?.addEventListener(
-            "click",
-            flipCamera
-        );
-
-        filterButton?.addEventListener(
-            "click",
-            toggleFilterPanel
-        );
-
-        resetFilter?.addEventListener(
-            "click",
-            resetDreamFilter
-        );
-
-        dreamLikeButton?.addEventListener(
-            "click",
-            toggleDreamFilter
-        );
-
-        likeButton?.addEventListener(
-            "click",
-            sendLike
-        );
-
-        autoLightButton?.addEventListener(
-            "click",
-            toggleAutoLight
-        );
-
-
-        /* ---------------------------------------------
+        /* -----------------------------------------------
            FILTER SLIDERS
-        --------------------------------------------- */
+           ----------------------------------------------- */
 
-        bindFilterRange(
-            plasticRange,
-            plasticValue,
-            "plastic"
-        );
+        if (plasticRange) {
 
-        bindFilterRange(
-            glowRange,
-            glowValue,
-            "glow"
-        );
+            plasticRange.addEventListener(
+                "input",
+                function () {
 
-        bindFilterRange(
-            brightnessRange,
-            brightnessValue,
-            "brightness"
-        );
+                    updateFilter(
+                        "plastic",
+                        this.value
+                    );
+                }
+            );
+        }
 
-        bindFilterRange(
-            softFocusRange,
-            softFocusValue,
-            "softFocus"
-        );
+        if (glowRange) {
 
-        bindFilterRange(
-            detailRange,
-            detailValue,
-            "detail"
-        );
+            glowRange.addEventListener(
+                "input",
+                function () {
+
+                    updateFilter(
+                        "glow",
+                        this.value
+                    );
+                }
+            );
+        }
+
+        if (brightnessRange) {
+
+            brightnessRange.addEventListener(
+                "input",
+                function () {
+
+                    updateFilter(
+                        "brightness",
+                        this.value
+                    );
+                }
+            );
+        }
+
+        if (softFocusRange) {
+
+            softFocusRange.addEventListener(
+                "input",
+                function () {
+
+                    updateFilter(
+                        "softFocus",
+                        this.value
+                    );
+                }
+            );
+        }
+
+        if (detailRange) {
+
+            detailRange.addEventListener(
+                "input",
+                function () {
+
+                    updateFilter(
+                        "detail",
+                        this.value
+                    );
+                }
+            );
+        }
 
 
-        /* ---------------------------------------------
-           WINDOW RESIZE
-        --------------------------------------------- */
+        /* -----------------------------------------------
+           CLOSE LIVE
+           ----------------------------------------------- */
+
+        if (closeLive) {
+
+            closeLive.addEventListener(
+                "click",
+                function () {
+
+                    stopEverything();
+
+                    window.location.href =
+                        "index.html";
+                }
+            );
+        }
+
+
+        /* -----------------------------------------------
+           CAMERA / CANVAS TAP
+           ----------------------------------------------- */
+
+        if (video) {
+
+            video.addEventListener(
+                "click",
+                closeFilterPanel
+            );
+        }
+
+        if (canvas) {
+
+            canvas.addEventListener(
+                "click",
+                closeFilterPanel
+            );
+        }
+
+
+        /* -----------------------------------------------
+           RESIZE
+           ----------------------------------------------- */
 
         window.addEventListener(
             "resize",
@@ -295,78 +420,88 @@
 
         window.addEventListener(
             "orientationchange",
-            () => {
+            function () {
 
                 setTimeout(
                     resizeFilter,
-                    250
+                    300
                 );
-
             }
         );
 
 
-        /* ---------------------------------------------
-           START CAMERA
-        --------------------------------------------- */
+        /* -----------------------------------------------
+           ESC
+           ----------------------------------------------- */
 
-        await startCamera();
+        document.addEventListener(
+            "keydown",
+            function (event) {
 
+                if (
+                    event.key === "Escape"
+                ) {
 
-        /* ---------------------------------------------
-           VIEWER SIMULATION
-           Placeholder sampai backend
-        --------------------------------------------- */
-
-        startViewerSimulation();
-
-
-        console.log(
-            "✅ CHUK LIVE ready"
+                    closeFilterPanel();
+                }
+            }
         );
-
     }
 
 
     /* =====================================================
        START CAMERA
-    ===================================================== */
+       ===================================================== */
 
     async function startCamera() {
 
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+
+            showCameraStatus(
+                "❌ Kamera tidak didukung browser ini"
+            );
+
+            return;
+        }
+
         try {
 
-            stopCurrentStream();
+            showCameraStatus(
+                "📷 Menyiapkan kamera..."
+            );
 
-            cameraStatus.textContent =
-                "📷 Meminta izin kamera...";
+            /*
+             * Hentikan stream lama
+             */
+
+            stopStream();
 
 
-            if (
-                !navigator.mediaDevices ||
-                !navigator.mediaDevices.getUserMedia
-            ) {
-
-                throw new Error(
-                    "Browser tidak mendukung kamera."
-                );
-
-            }
-
+            /*
+             * PENTING:
+             *
+             * Jangan mirror kamera.
+             *
+             * Kita memakai resolusi kamera normal.
+             * Tampilan full-screen dilakukan dengan
+             * object-fit: cover + canvas cover.
+             */
 
             stream =
                 await navigator.mediaDevices.getUserMedia({
 
                     video: {
+
                         facingMode:
                             currentFacingMode,
 
                         width: {
-                            ideal: 720
+                            ideal: 1280
                         },
 
                         height: {
-                            ideal: 1280
+                            ideal: 720
                         },
 
                         frameRate: {
@@ -376,7 +511,6 @@
                     },
 
                     audio: true
-
                 });
 
 
@@ -387,34 +521,55 @@
             await video.play();
 
 
-            cameraStatus.textContent =
-                "🟢 Kamera siap";
+            cameraEnabled = true;
+
+            micEnabled = true;
 
 
-            setTimeout(() => {
+            /*
+             * Pastikan kamera TIDAK mirror
+             */
 
-                if (cameraStatus) {
+            video.style.transform =
+                "none";
 
-                    cameraStatus.classList.add(
-                        "hidden"
-                    );
-
-                }
-
-            }, 1800);
+            canvas.style.transform =
+                "none";
 
 
-            resizeFilter();
+            /*
+             * Resize setelah video memiliki
+             * ukuran asli.
+             */
 
+            if (video.readyState >= 2) {
+
+                resizeFilter();
+
+            }
+
+
+            /*
+             * Mulai filter
+             */
 
             if (dreamFilter) {
 
                 dreamFilter.start();
 
+                dreamFilter.enabled = true;
             }
 
 
-            updateCameraButtons();
+            hideCameraStatus();
+
+
+            console.log(
+                "✅ Kamera aktif:",
+                video.videoWidth,
+                "x",
+                video.videoHeight
+            );
 
         } catch (error) {
 
@@ -423,50 +578,92 @@
                 error
             );
 
-
-            cameraStatus.textContent =
-                "❌ Kamera tidak dapat digunakan";
-
-            cameraStatus.classList.remove(
-                "hidden"
+            showCameraStatus(
+                getCameraErrorMessage(error)
             );
+        }
+    }
 
 
-            showCameraHelp(error);
+    /* =====================================================
+       CAMERA ERROR
+       ===================================================== */
 
+    function getCameraErrorMessage(error) {
+
+        if (!error) {
+
+            return "❌ Kamera gagal dibuka";
         }
 
+        if (
+            error.name ===
+            "NotAllowedError"
+        ) {
+
+            return "❌ Izin kamera ditolak";
+        }
+
+        if (
+            error.name ===
+            "NotFoundError"
+        ) {
+
+            return "❌ Kamera tidak ditemukan";
+        }
+
+        if (
+            error.name ===
+            "NotReadableError"
+        ) {
+
+            return "❌ Kamera sedang digunakan aplikasi lain";
+        }
+
+        if (
+            error.name ===
+            "SecurityError"
+        ) {
+
+            return "❌ Kamera membutuhkan HTTPS / izin aman";
+        }
+
+        return (
+            "❌ Kamera gagal: " +
+            error.message
+        );
     }
 
 
     /* =====================================================
        STOP STREAM
-    ===================================================== */
+       ===================================================== */
 
-    function stopCurrentStream() {
+    function stopStream() {
 
         if (!stream) {
             return;
         }
 
-
-        stream
-            .getTracks()
-            .forEach(track => {
+        stream.getTracks().forEach(
+            function (track) {
 
                 track.stop();
-
-            });
-
+            }
+        );
 
         stream = null;
 
+        if (video) {
+
+            video.srcObject = null;
+        }
     }
 
 
     /* =====================================================
-       CAMERA TOGGLE
-    ===================================================== */
+       CAMERA ON / OFF
+       ===================================================== */
 
     function toggleCamera() {
 
@@ -474,56 +671,39 @@
             return;
         }
 
-
-        const tracks =
-            stream.getVideoTracks();
-
-
-        tracks.forEach(track => {
-
-            track.enabled =
-                !cameraEnabled;
-
-        });
-
-
         cameraEnabled =
             !cameraEnabled;
 
 
-        updateCameraButtons();
+        stream.getVideoTracks()
+            .forEach(
+                function (track) {
 
-
-        if (!cameraEnabled) {
-
-            cameraStatus.textContent =
-                "📷 Kamera dimatikan";
-
-            cameraStatus.classList.remove(
-                "hidden"
+                    track.enabled =
+                        cameraEnabled;
+                }
             );
+
+
+        if (cameraEnabled) {
+
+            hideCameraStatus();
 
         } else {
 
-            cameraStatus.textContent =
-                "🟢 Kamera aktif";
-
-            setTimeout(() => {
-
-                cameraStatus.classList.add(
-                    "hidden"
-                );
-
-            }, 1200);
-
+            showCameraStatus(
+                "📷 Kamera OFF"
+            );
         }
 
+
+        updateButtons();
     }
 
 
     /* =====================================================
-       MIC TOGGLE
-    ===================================================== */
+       MIC ON / OFF
+       ===================================================== */
 
     function toggleMic() {
 
@@ -531,31 +711,27 @@
             return;
         }
 
-
-        const tracks =
-            stream.getAudioTracks();
-
-
-        tracks.forEach(track => {
-
-            track.enabled =
-                !micEnabled;
-
-        });
-
-
         micEnabled =
             !micEnabled;
 
 
-        updateMicButton();
+        stream.getAudioTracks()
+            .forEach(
+                function (track) {
 
+                    track.enabled =
+                        micEnabled;
+                }
+            );
+
+
+        updateButtons();
     }
 
 
     /* =====================================================
        FLIP CAMERA
-    ===================================================== */
+       ===================================================== */
 
     async function flipCamera() {
 
@@ -565,23 +741,17 @@
                 : "user";
 
 
-        cameraStatus.classList.remove(
-            "hidden"
-        );
-
-
-        cameraStatus.textContent =
-            "🔄 Mengganti kamera...";
-
+        /*
+         * Kamera tidak pernah dibuat mirror.
+         */
 
         await startCamera();
-
     }
 
 
     /* =====================================================
-       START / STOP LIVE
-    ===================================================== */
+       LIVE ON / OFF
+       ===================================================== */
 
     function toggleLive() {
 
@@ -592,128 +762,80 @@
         } else {
 
             startLive();
-
         }
-
     }
 
+
+    /* =====================================================
+       START LIVE
+       ===================================================== */
 
     function startLive() {
 
-        if (!stream) {
+        liveStarted = true;
 
-            alert(
-                "Kamera belum siap."
-            );
+        liveSeconds = 0;
 
-            return;
+        viewers = 1;
 
-        }
+        updateLiveButton();
 
+        updateLiveTimer();
 
-        liveStarted =
-            true;
+        liveTimer =
+            setInterval(
+                function () {
 
-        liveSeconds =
-            0;
+                    liveSeconds++;
 
+                    updateLiveTimer();
 
-        startTimer();
-
-
-        startLiveButton.classList.add(
-            "is-live"
-        );
-
-
-        startLiveButton.innerHTML =
-            "⏹️<small>Stop Live</small>";
-
-
-        /* ---------------------------------------------
-           Placeholder viewer
-        --------------------------------------------- */
-
-        viewerTotal =
-            Math.max(
-                1,
-                viewerTotal
+                },
+                1000
             );
 
 
-        viewerCount.textContent =
-            viewerTotal;
-
+        startViewerSimulation();
 
         console.log(
-            "🔴 LIVE STARTED"
+            "🔴 CHUK LIVE STARTED"
         );
-
     }
 
 
+    /* =====================================================
+       STOP LIVE
+       ===================================================== */
+
     function stopLive() {
 
-        liveStarted =
-            false;
+        liveStarted = false;
 
-
-        stopTimer();
-
-
-        startLiveButton.classList.remove(
-            "is-live"
+        clearInterval(
+            liveTimer
         );
 
+        liveTimer = null;
 
-        startLiveButton.innerHTML =
-            "🔴<small>Mulai Live</small>";
+        stopViewerSimulation();
 
+        updateLiveButton();
 
         console.log(
-            "⏹️ LIVE STOPPED"
+            "⏹️ CHUK LIVE STOPPED"
         );
-
     }
 
 
     /* =====================================================
        LIVE TIMER
-    ===================================================== */
+       ===================================================== */
 
-    function startTimer() {
+    function updateLiveTimer() {
 
-        stopTimer();
-
-
-        timerInterval =
-            setInterval(() => {
-
-                liveSeconds++;
-
-                updateLiveTime();
-
-            }, 1000);
-
-    }
-
-
-    function stopTimer() {
-
-        if (timerInterval) {
-
-            clearInterval(
-                timerInterval
-            );
-
-            timerInterval = null;
-
+        if (!liveTime) {
+            return;
         }
-
-    }
-
-
-    function updateLiveTime() {
 
         const minutes =
             Math.floor(
@@ -724,103 +846,169 @@
             liveSeconds % 60;
 
 
-        const mm =
+        liveTime.textContent =
             String(minutes)
-                .padStart(2, "0");
-
-        const ss =
+                .padStart(2, "0") +
+            ":" +
             String(seconds)
                 .padStart(2, "0");
-
-
-        if (liveTime) {
-
-            liveTime.textContent =
-                `${mm}:${ss}`;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       LIKE
-    ===================================================== */
-
-    function sendLike() {
-
-        likeTotal++;
-
-
-        if (likeCount) {
-
-            likeCount.textContent =
-                formatNumber(likeTotal);
-
-        }
-
-
-        likeButton.classList.add(
-            "liked"
-        );
-
-
-        setTimeout(() => {
-
-            likeButton.classList.remove(
-                "liked"
-            );
-
-        }, 300);
-
     }
 
 
     /* =====================================================
        VIEWER SIMULATION
-       TEMPORARY UNTIL BACKEND LIVE
-    ===================================================== */
+       ===================================================== */
 
     function startViewerSimulation() {
 
-        viewerTotal =
-            Math.floor(
-                Math.random() * 8
-            ) + 1;
+        stopViewerSimulation();
 
+
+        viewerTimer =
+            setInterval(
+                function () {
+
+                    if (!liveStarted) {
+                        return;
+                    }
+
+                    const change =
+                        Math.random() > .5
+                            ? 1
+                            : -1;
+
+                    viewers += change;
+
+                    if (viewers < 1) {
+                        viewers = 1;
+                    }
+
+                    if (viewers > 9999) {
+                        viewers = 9999;
+                    }
+
+                    updateViewerCount();
+
+                },
+                3000
+            );
+    }
+
+
+    function stopViewerSimulation() {
+
+        clearInterval(
+            viewerTimer
+        );
+
+        viewerTimer = null;
+    }
+
+
+    function updateViewerCount() {
+
+        if (!viewerCount) {
+            return;
+        }
 
         viewerCount.textContent =
-            viewerTotal;
+            formatNumber(viewers);
+    }
 
 
-        setInterval(() => {
+    function formatNumber(number) {
 
-            if (!liveStarted) {
-                return;
-            }
+        if (number >= 1000000) {
+
+            return (
+                (number / 1000000)
+                    .toFixed(1) +
+                "M"
+            );
+        }
+
+        if (number >= 1000) {
+
+            return (
+                (number / 1000)
+                    .toFixed(1) +
+                "K"
+            );
+        }
+
+        return String(number);
+    }
 
 
-            const change =
-                Math.random() > 0.65
-                    ? 1
-                    : 0;
+    /* =====================================================
+       LIKE
+       ===================================================== */
+
+    function addLike() {
+
+        likes++;
+
+        if (likeCount) {
+
+            likeCount.textContent =
+                formatNumber(likes);
+        }
 
 
-            viewerTotal +=
-                change;
+        if (likeButton) {
 
+            likeButton.animate(
+                [
+                    {
+                        transform:
+                            "scale(1)"
+                    },
 
-            viewerCount.textContent =
-                viewerTotal;
+                    {
+                        transform:
+                            "scale(1.3)"
+                    },
 
-        }, 8000);
-
+                    {
+                        transform:
+                            "scale(1)"
+                    }
+                ],
+                {
+                    duration: 220
+                }
+            );
+        }
     }
 
 
     /* =====================================================
        FILTER PANEL
-    ===================================================== */
+       ===================================================== */
+
+    function openFilterPanel() {
+
+        if (!filterPanel) {
+            return;
+        }
+
+        filterPanel.classList.add(
+            "open"
+        );
+    }
+
+
+    function closeFilterPanel() {
+
+        if (!filterPanel) {
+            return;
+        }
+
+        filterPanel.classList.remove(
+            "open"
+        );
+    }
+
 
     function toggleFilterPanel() {
 
@@ -828,13 +1016,24 @@
             return;
         }
 
+        if (
+            filterPanel.classList.contains(
+                "open"
+            )
+        ) {
 
-        filterPanel.classList.toggle(
-            "open"
-        );
+            closeFilterPanel();
 
+        } else {
+
+            openFilterPanel();
+        }
     }
 
+
+    /* =====================================================
+       DREAM FILTER
+       ===================================================== */
 
     function toggleDreamFilter() {
 
@@ -843,401 +1042,338 @@
         }
 
 
-        const active =
-            dreamFilter.enabled;
-
-
         dreamFilter.enabled =
-            !active;
+            true;
 
 
-        dreamLikeButton.classList.toggle(
-            "active",
-            !active
-        );
+        if (dreamLikeButton) {
 
-    }
-
-
-    function resetDreamFilter() {
-
-        plasticRange.value =
-            DEFAULT_FILTER.plastic;
-
-        glowRange.value =
-            DEFAULT_FILTER.glow;
-
-        brightnessRange.value =
-            DEFAULT_FILTER.brightness;
-
-        softFocusRange.value =
-            DEFAULT_FILTER.softFocus;
-
-        detailRange.value =
-            DEFAULT_FILTER.detail;
-
-
-        updateRangeLabel(
-            plasticRange,
-            plasticValue
-        );
-
-        updateRangeLabel(
-            glowRange,
-            glowValue
-        );
-
-        updateRangeLabel(
-            brightnessRange,
-            brightnessValue
-        );
-
-        updateRangeLabel(
-            softFocusRange,
-            softFocusValue
-        );
-
-        updateRangeLabel(
-            detailRange,
-            detailValue
-        );
-
-
-        if (dreamFilter) {
-
-            dreamFilter.setSettings(
-                DEFAULT_FILTER
+            dreamLikeButton.classList.add(
+                "active"
             );
-
-            dreamFilter.enabled =
-                true;
-
         }
 
 
-        dreamLikeButton?.classList.add(
-            "active"
-        );
+        /*
+         * Setelah filter dipilih,
+         * panel otomatis ditutup.
+         */
 
+        closeFilterPanel();
     }
 
 
     /* =====================================================
-       FILTER RANGE
-    ===================================================== */
+       RESET FILTER
+       ===================================================== */
 
-    function bindFilterRange(
-        range,
-        output,
-        setting
-    ) {
+    function resetDreamFilter() {
 
-        if (!range) {
+        if (!dreamFilter) {
             return;
         }
 
 
-        range.addEventListener(
-            "input",
-            () => {
-
-                const value =
-                    Number(
-                        range.value
-                    );
-
-
-                if (output) {
-
-                    output.textContent =
-                        `${value}%`;
-
-                }
-
-
-                if (dreamFilter) {
-
-                    dreamFilter.setSetting(
-                        setting,
-                        value
-                    );
-
-                }
-
-            }
+        dreamFilter.setSettings(
+            DEFAULT_FILTER
         );
 
+        dreamFilter.enabled =
+            true;
+
+        dreamFilter.setAutoLight(
+            true
+        );
+
+
+        if (plasticRange) {
+            plasticRange.value = 90;
+        }
+
+        if (glowRange) {
+            glowRange.value = 65;
+        }
+
+        if (brightnessRange) {
+            brightnessRange.value = 35;
+        }
+
+        if (softFocusRange) {
+            softFocusRange.value = 55;
+        }
+
+        if (detailRange) {
+            detailRange.value = 25;
+        }
+
+
+        autoLight = true;
+
+
+        updateFilterLabels();
+
+        updateAutoLightUI();
+
+
+        if (dreamLikeButton) {
+
+            dreamLikeButton.classList.add(
+                "active"
+            );
+        }
+
+
+        closeFilterPanel();
     }
 
 
-    function updateRangeLabel(
-        range,
-        output
+    /* =====================================================
+       UPDATE FILTER
+       ===================================================== */
+
+    function updateFilter(
+        name,
+        value
     ) {
 
-        if (
-            range &&
-            output
-        ) {
+        const numericValue =
+            Number(value);
 
-            output.textContent =
-                `${range.value}%`;
 
+        if (dreamFilter) {
+
+            dreamFilter.setSetting(
+                name,
+                numericValue
+            );
+
+            dreamFilter.enabled =
+                true;
         }
 
+
+        updateFilterLabels();
+    }
+
+
+    /* =====================================================
+       FILTER LABELS
+       ===================================================== */
+
+    function updateFilterLabels() {
+
+        if (plasticValue &&
+            plasticRange) {
+
+            plasticValue.textContent =
+                plasticRange.value +
+                "%";
+        }
+
+        if (glowValue &&
+            glowRange) {
+
+            glowValue.textContent =
+                glowRange.value +
+                "%";
+        }
+
+        if (
+            brightnessValue &&
+            brightnessRange
+        ) {
+
+            brightnessValue.textContent =
+                brightnessRange.value +
+                "%";
+        }
+
+        if (
+            softFocusValue &&
+            softFocusRange
+        ) {
+
+            softFocusValue.textContent =
+                softFocusRange.value +
+                "%";
+        }
+
+        if (
+            detailValue &&
+            detailRange
+        ) {
+
+            detailValue.textContent =
+                detailRange.value +
+                "%";
+        }
     }
 
 
     /* =====================================================
        AUTO LIGHT
-    ===================================================== */
+       ===================================================== */
 
     function toggleAutoLight() {
 
-        autoLightEnabled =
-            !autoLightEnabled;
-
-
-        autoLightButton?.classList.toggle(
-            "active",
-            autoLightEnabled
-        );
-
-
-        if (autoLightText) {
-
-            autoLightText.textContent =
-                autoLightEnabled
-                    ? "Aktif — menyesuaikan cahaya otomatis"
-                    : "Nonaktif — cahaya manual";
-
-        }
+        autoLight =
+            !autoLight;
 
 
         if (dreamFilter) {
 
             dreamFilter.setAutoLight(
-                autoLightEnabled
+                autoLight
             );
-
         }
 
 
-        updateLightStatus();
-
+        updateAutoLightUI();
     }
 
 
-    function updateLightStatus() {
+    function updateAutoLightUI() {
 
-        if (!lightStatus) {
-            return;
+        if (autoLightButton) {
+
+            autoLightButton.classList.toggle(
+                "active",
+                autoLight
+            );
         }
 
 
-        if (!autoLightEnabled) {
+        if (autoLightText) {
+
+            autoLightText.textContent =
+                autoLight
+                    ? "Aktif — menyesuaikan cahaya otomatis"
+                    : "Nonaktif — cahaya manual";
+        }
+
+
+        if (lightStatus) {
 
             lightStatus.textContent =
-                "☀️ AUTO LIGHT OFF";
-
-            return;
-
+                autoLight
+                    ? "☀️ AUTO LIGHT"
+                    : "☀️ MANUAL LIGHT";
         }
-
-
-        lightStatus.textContent =
-            "☀️🌙 AUTO LIGHT";
-
     }
 
 
     /* =====================================================
        RESIZE FILTER
-       ANTI ZOOM
-    ===================================================== */
+       ===================================================== */
 
     function resizeFilter() {
 
-        if (!canvas) {
-            return;
-        }
-
-
-        const width =
-            video.videoWidth ||
-            window.innerWidth;
-
-
-        const height =
-            video.videoHeight ||
-            window.innerHeight;
-
-
-        if (
-            width <= 0 ||
-            height <= 0
-        ) {
+        if (!video || !canvas) {
             return;
         }
 
 
         /*
-         * Canvas mengikuti rasio asli kamera.
-         * Ini penting agar wajah tidak ter-zoom
-         * atau melebar.
+         * Canvas memakai ukuran video asli.
+         *
+         * CSS akan membuat canvas memenuhi
+         * seluruh layar dengan object-fit: cover.
          */
 
-        canvas.width =
-            width;
+        const width =
+            video.videoWidth ||
+            720;
 
-        canvas.height =
-            height;
+        const height =
+            video.videoHeight ||
+            1280;
+
+
+        if (
+            canvas.width !== width ||
+            canvas.height !== height
+        ) {
+
+            canvas.width =
+                width;
+
+            canvas.height =
+                height;
+        }
 
 
         if (dreamFilter) {
 
             dreamFilter.resize();
-
         }
-
     }
 
 
     /* =====================================================
        BUTTON STATES
-    ===================================================== */
+       ===================================================== */
 
-    function updateCameraButtons() {
+    function updateButtons() {
 
-        if (!cameraButton) {
-            return;
+        if (cameraButton) {
+
+            cameraButton.innerHTML =
+                cameraEnabled
+                    ? "📹<small>Kamera</small>"
+                    : "🚫<small>Kamera</small>";
         }
 
 
-        cameraButton.classList.toggle(
-            "off",
-            !cameraEnabled
-        );
+        if (micButton) {
 
-
-        cameraButton.innerHTML =
-            cameraEnabled
-                ? "📹<small>Kamera</small>"
-                : "🚫<small>Kamera</small>";
-
-    }
-
-
-    function updateMicButton() {
-
-        if (!micButton) {
-            return;
+            micButton.innerHTML =
+                micEnabled
+                    ? "🎤<small>Mic</small>"
+                    : "🔇<small>Mic</small>";
         }
 
 
-        micButton.classList.toggle(
-            "off",
-            !micEnabled
-        );
+        updateLiveButton();
 
-
-        micButton.innerHTML =
-            micEnabled
-                ? "🎤<small>Mic</small>"
-                : "🔇<small>Mic</small>";
-
+        updateAutoLightUI();
     }
 
 
     /* =====================================================
-       CLOSE LIVE
-    ===================================================== */
+       LIVE BUTTON
+       ===================================================== */
 
-    function closeLivePage() {
+    function updateLiveButton() {
+
+        if (!startLiveButton) {
+            return;
+        }
+
 
         if (liveStarted) {
 
-            const confirmClose =
-                confirm(
-                    "Live masih berjalan. Tutup Live?"
-                );
+            startLiveButton.innerHTML =
+                "⏹️<small>Stop Live</small>";
 
+        } else {
 
-            if (!confirmClose) {
-                return;
-            }
-
+            startLiveButton.innerHTML =
+                "🔴<small>Mulai Live</small>";
         }
-
-
-        liveStarted =
-            false;
-
-
-        stopTimer();
-
-
-        if (dreamFilter) {
-
-            dreamFilter.stop();
-
-        }
-
-
-        stopCurrentStream();
-
-
-        window.location.href =
-            "index.html";
-
     }
 
 
     /* =====================================================
-       CAMERA ERROR HELP
-    ===================================================== */
+       CAMERA STATUS
+       ===================================================== */
 
-    function showCameraHelp(error) {
+    function showCameraStatus(
+        message
+    ) {
 
-        let message =
-            "❌ Kamera tidak tersedia.";
-
-
-        if (
-            error &&
-            error.name ===
-            "NotAllowedError"
-        ) {
-
-            message =
-                "🔒 Izin kamera ditolak. Izinkan kamera di Pi Browser.";
-
+        if (!cameraStatus) {
+            return;
         }
-
-
-        if (
-            error &&
-            error.name ===
-            "NotFoundError"
-        ) {
-
-            message =
-                "📷 Kamera tidak ditemukan.";
-
-        }
-
-
-        if (
-            error &&
-            error.name ===
-            "NotReadableError"
-        ) {
-
-            message =
-                "⚠️ Kamera sedang digunakan aplikasi lain.";
-
-        }
-
 
         cameraStatus.textContent =
             message;
@@ -1245,43 +1381,85 @@
         cameraStatus.classList.remove(
             "hidden"
         );
+    }
 
+
+    function hideCameraStatus() {
+
+        if (!cameraStatus) {
+            return;
+        }
+
+        cameraStatus.classList.add(
+            "hidden"
+        );
     }
 
 
     /* =====================================================
-       NUMBER FORMAT
-    ===================================================== */
+       STOP EVERYTHING
+       ===================================================== */
 
-    function formatNumber(number) {
+    function stopEverything() {
 
-        return new Intl.NumberFormat(
-            "id-ID"
-        ).format(number);
+        stopLive();
 
+        stopViewerSimulation();
+
+        if (dreamFilter) {
+
+            dreamFilter.stop();
+        }
+
+        stopStream();
     }
 
 
     /* =====================================================
-       PAGE CLEANUP
-    ===================================================== */
+       PAGE EXIT
+       ===================================================== */
 
     window.addEventListener(
         "beforeunload",
-        () => {
+        function () {
 
-            stopTimer();
-
-            if (dreamFilter) {
-
-                dreamFilter.stop();
-
-            }
-
-            stopCurrentStream();
-
+            stopEverything();
         }
     );
 
 
+    /* =====================================================
+       START
+       ===================================================== */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            init
+        );
+
+    } else {
+
+        init();
+    }
+
+
 })();
+
+Catatan penting bro: di versi ini saya sengaja pakai:
+
+video.style.transform = "none";
+canvas.style.transform = "none";
+
+Jadi kamera benar-benar non-mirror. Kalau tangan asli bergerak 👉 ke kanan, di layar juga bergerak 👉 ke kanan.
+
+Dan bagian kamera memakai:
+
+width: { ideal: 1280 },
+height: { ideal: 720 }
+
+bukan dipaksa "720 × 1280", supaya HP yang punya sensor kamera landscape tidak menghasilkan efek zoom/crop yang aneh. CSS "cover" yang mengatur supaya hasil akhirnya tetap memenuhi layar portrait.
