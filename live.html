@@ -1,0 +1,423 @@
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    font-family:Arial,sans-serif;
+}
+
+.live-app{
+    width:100%;
+    height:100%;
+    position:relative;
+    background:#000;
+    color:#fff;
+}
+
+
+/* HEADER */
+
+.live-header{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:62px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 15px;
+
+    z-index:20;
+
+    background:linear-gradient(
+        rgba(0,0,0,.65),
+        transparent
+    );
+}
+
+.live-header button{
+    border:0;
+    background:rgba(0,0,0,.35);
+    color:#fff;
+
+    width:40px;
+    height:40px;
+
+    border-radius:50%;
+    font-size:20px;
+
+    cursor:pointer;
+}
+
+.live-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    font-size:17px;
+}
+
+.live-dot{
+    width:10px;
+    height:10px;
+    background:#ff1744;
+    border-radius:50%;
+
+    box-shadow:0 0 12px #ff1744;
+
+    animation:livePulse 1s infinite;
+}
+
+@keyframes livePulse{
+    50%{
+        opacity:.35;
+    }
+}
+
+.viewer-count{
+    background:rgba(0,0,0,.45);
+    padding:8px 12px;
+    border-radius:20px;
+
+    font-size:13px;
+}
+
+
+/* CAMERA */
+
+.camera-area{
+    position:absolute;
+    inset:0;
+
+    background:#111;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    overflow:hidden;
+}
+
+#camera{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transform:scaleX(-1);
+
+    transition:
+        filter .25s ease,
+        transform .3s ease;
+}
+
+
+/* GLOW */
+
+.face-glow{
+    position:absolute;
+    inset:0;
+
+    pointer-events:none;
+
+    opacity:.2;
+
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(255,220,180,.45),
+            transparent 45%
+        );
+
+    mix-blend-mode:screen;
+}
+
+
+/* STATUS */
+
+.camera-status{
+    position:absolute;
+
+    top:75px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    background:rgba(0,0,0,.65);
+
+    padding:9px 15px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    z-index:10;
+}
+
+
+/* LIVE INFO */
+
+.live-info{
+    position:absolute;
+
+    left:15px;
+    right:15px;
+    bottom:110px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    z-index:10;
+}
+
+.host-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.host-info img{
+    width:43px;
+    height:43px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:2px solid #fff;
+}
+
+.host-info b{
+    display:block;
+    font-size:14px;
+}
+
+.host-info small{
+    display:block;
+    margin-top:3px;
+    opacity:.75;
+}
+
+.live-actions{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.live-actions button{
+    width:46px;
+    height:46px;
+
+    border:0;
+    border-radius:50%;
+
+    background:rgba(0,0,0,.45);
+
+    font-size:22px;
+
+    cursor:pointer;
+}
+
+#likeCount{
+    font-size:13px;
+}
+
+
+/* FILTER PANEL */
+
+.filter-panel{
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:72px;
+
+    z-index:30;
+
+    padding:12px 14px;
+
+    background:
+        linear-gradient(
+            transparent,
+            rgba(0,0,0,.92) 25%
+        );
+
+    transform:translateY(100%);
+    transition:.3s ease;
+}
+
+.filter-panel.show{
+    transform:translateY(0);
+}
+
+.panel-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:10px;
+}
+
+.panel-title button{
+    border:0;
+
+    background:rgba(255,255,255,.15);
+
+    color:#fff;
+
+    padding:6px 12px;
+
+    border-radius:15px;
+
+    cursor:pointer;
+}
+
+.filter-list{
+    display:flex;
+    gap:10px;
+
+    overflow-x:auto;
+
+    padding-bottom:8px;
+}
+
+.filter-btn{
+    flex:0 0 auto;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    background:rgba(255,255,255,.08);
+
+    color:#fff;
+
+    border-radius:12px;
+
+    min-width:62px;
+
+    padding:8px 6px;
+
+    cursor:pointer;
+}
+
+.filter-btn span{
+    display:block;
+    font-size:22px;
+}
+
+.filter-btn small{
+    display:block;
+    margin-top:3px;
+}
+
+.filter-btn.active{
+    background:#fff;
+    color:#111;
+}
+
+
+/* BEAUTY */
+
+.beauty-controls{
+    display:grid;
+    gap:8px;
+
+    margin-top:8px;
+}
+
+.beauty-controls label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    font-size:12px;
+}
+
+.beauty-controls span{
+    width:90px;
+}
+
+.beauty-controls input{
+    flex:1;
+}
+
+
+/* BOTTOM */
+
+.live-controls{
+    position:absolute;
+
+    bottom:0;
+    left:0;
+    right:0;
+
+    height:72px;
+
+    z-index:40;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    background:rgba(0,0,0,.82);
+}
+
+.live-controls button{
+    border:0;
+    background:none;
+
+    color:#fff;
+
+    min-width:55px;
+
+    font-size:22px;
+
+    cursor:pointer;
+}
+
+.live-controls small{
+    display:block;
+    font-size:10px;
+    margin-top:3px;
+}
+
+.start-live{
+    width:70px;
+    height:58px;
+
+    border-radius:18px !important;
+
+    background:#ff1744 !important;
+
+    box-shadow:
+        0 5px 20px rgba(255,23,68,.35);
+}
+
+.start-live.live-active{
+    background:#333 !important;
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .live-info{
+        bottom:90px;
+    }
+
+    .filter-panel{
+        bottom:70px;
+    }
+
+}
