@@ -1,423 +1,286 @@
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-    font-family:Arial,sans-serif;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
 
-.live-app{
-    width:100%;
-    height:100%;
-    position:relative;
-    background:#000;
-    color:#fff;
-}
+    <meta name="viewport"
+          content="width=device-width,
+          initial-scale=1.0,
+          maximum-scale=1.0,
+          user-scalable=no">
 
+    <title>CHUK AN CHUKK - LIVE</title>
 
-/* HEADER */
+    <link rel="stylesheet" href="live.css">
+</head>
 
-.live-header{
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:62px;
+<body>
 
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+<div class="live-app">
 
-    padding:0 15px;
+    <header class="live-header">
 
-    z-index:20;
+        <button id="closeLive" type="button">
+            ✕
+        </button>
 
-    background:linear-gradient(
-        rgba(0,0,0,.65),
-        transparent
-    );
-}
+        <div class="live-title">
+            <span class="live-dot"></span>
+            <b>LIVE</b>
+        </div>
 
-.live-header button{
-    border:0;
-    background:rgba(0,0,0,.35);
-    color:#fff;
+        <div class="viewer-count">
+            👁️ <span id="viewerCount">0</span>
+        </div>
 
-    width:40px;
-    height:40px;
+    </header>
 
-    border-radius:50%;
-    font-size:20px;
 
-    cursor:pointer;
-}
+    <main class="camera-area">
 
-.live-title{
-    display:flex;
-    align-items:center;
-    gap:8px;
+        <video
+            id="camera"
+            autoplay
+            muted
+            playsinline>
+        </video>
 
-    font-size:17px;
-}
+        <div id="faceGlow"
+             class="face-glow">
+        </div>
 
-.live-dot{
-    width:10px;
-    height:10px;
-    background:#ff1744;
-    border-radius:50%;
+        <div id="cameraStatus"
+             class="camera-status">
+            📷 Menyiapkan kamera...
+        </div>
 
-    box-shadow:0 0 12px #ff1744;
 
-    animation:livePulse 1s infinite;
-}
+        <div class="live-info">
 
-@keyframes livePulse{
-    50%{
-        opacity:.35;
-    }
-}
+            <div class="host-info">
 
-.viewer-count{
-    background:rgba(0,0,0,.45);
-    padding:8px 12px;
-    border-radius:20px;
+                <img
+                    src="assets/logo.png"
+                    alt="Host">
 
-    font-size:13px;
-}
+                <div>
+                    <b>CHUK USER</b>
+                    <small id="liveTime">
+                        00:00
+                    </small>
+                </div>
 
+            </div>
 
-/* CAMERA */
 
-.camera-area{
-    position:absolute;
-    inset:0;
+            <div class="live-actions">
 
-    background:#111;
+                <button
+                    type="button"
+                    id="likeButton">
+                    ❤️
+                </button>
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+                <span id="likeCount">
+                    0
+                </span>
 
-    overflow:hidden;
-}
+            </div>
 
-#camera{
-    width:100%;
-    height:100%;
+        </div>
 
-    object-fit:cover;
+    </main>
 
-    transform:scaleX(-1);
 
-    transition:
-        filter .25s ease,
-        transform .3s ease;
-}
+    <section class="filter-panel">
 
+        <div class="panel-title">
 
-/* GLOW */
+            <b>✨ CHUK Beauty Pro</b>
 
-.face-glow{
-    position:absolute;
-    inset:0;
+            <button
+                id="resetFilter"
+                type="button">
+                Reset
+            </button>
 
-    pointer-events:none;
+        </div>
 
-    opacity:.2;
 
-    background:
-        radial-gradient(
-            circle at 50% 40%,
-            rgba(255,220,180,.45),
-            transparent 45%
-        );
+        <div class="filter-list">
 
-    mix-blend-mode:screen;
-}
+            <button
+                class="filter-btn active"
+                data-filter="beauty">
 
+                <span>✨</span>
+                <small>Beauty</small>
 
-/* STATUS */
+            </button>
 
-.camera-status{
-    position:absolute;
 
-    top:75px;
-    left:50%;
+            <button
+                class="filter-btn"
+                data-filter="smooth">
 
-    transform:translateX(-50%);
+                <span>🌸</span>
+                <small>Smooth</small>
 
-    background:rgba(0,0,0,.65);
+            </button>
 
-    padding:9px 15px;
 
-    border-radius:20px;
+            <button
+                class="filter-btn"
+                data-filter="glow">
 
-    font-size:13px;
+                <span>🌟</span>
+                <small>Glow</small>
 
-    z-index:10;
-}
+            </button>
 
 
-/* LIVE INFO */
+            <button
+                class="filter-btn"
+                data-filter="warm">
 
-.live-info{
-    position:absolute;
+                <span>☀️</span>
+                <small>Warm</small>
 
-    left:15px;
-    right:15px;
-    bottom:110px;
+            </button>
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
 
-    z-index:10;
-}
+            <button
+                class="filter-btn"
+                data-filter="cool">
 
-.host-info{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+                <span>❄️</span>
+                <small>Cool</small>
 
-.host-info img{
-    width:43px;
-    height:43px;
+            </button>
 
-    border-radius:50%;
 
-    object-fit:cover;
+            <button
+                class="filter-btn"
+                data-filter="dramatic">
 
-    border:2px solid #fff;
-}
+                <span>🎬</span>
+                <small>Dramatic</small>
 
-.host-info b{
-    display:block;
-    font-size:14px;
-}
+            </button>
 
-.host-info small{
-    display:block;
-    margin-top:3px;
-    opacity:.75;
-}
 
-.live-actions{
-    display:flex;
-    align-items:center;
-    gap:5px;
-}
+            <button
+                class="filter-btn"
+                data-filter="bw">
 
-.live-actions button{
-    width:46px;
-    height:46px;
+                <span>⚫</span>
+                <small>B&W</small>
 
-    border:0;
-    border-radius:50%;
+            </button>
 
-    background:rgba(0,0,0,.45);
+        </div>
 
-    font-size:22px;
 
-    cursor:pointer;
-}
+        <div class="beauty-controls">
 
-#likeCount{
-    font-size:13px;
-}
+            <label>
+                <span>✨ Smooth</span>
 
+                <input
+                    id="smoothRange"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="35">
+            </label>
 
-/* FILTER PANEL */
 
-.filter-panel{
-    position:absolute;
+            <label>
+                <span>💡 Brightness</span>
 
-    left:0;
-    right:0;
-    bottom:72px;
+                <input
+                    id="brightnessRange"
+                    type="range"
+                    min="70"
+                    max="140"
+                    value="105">
+            </label>
 
-    z-index:30;
 
-    padding:12px 14px;
+            <label>
+                <span>🌟 Glow</span>
 
-    background:
-        linear-gradient(
-            transparent,
-            rgba(0,0,0,.92) 25%
-        );
+                <input
+                    id="glowRange"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="20">
+            </label>
 
-    transform:translateY(100%);
-    transition:.3s ease;
-}
+        </div>
 
-.filter-panel.show{
-    transform:translateY(0);
-}
+    </section>
 
-.panel-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
 
-    margin-bottom:10px;
-}
+    <footer class="live-controls">
 
-.panel-title button{
-    border:0;
+        <button
+            id="cameraButton"
+            type="button">
 
-    background:rgba(255,255,255,.15);
+            📹
+            <small>Kamera</small>
 
-    color:#fff;
+        </button>
 
-    padding:6px 12px;
 
-    border-radius:15px;
+        <button
+            id="micButton"
+            type="button">
 
-    cursor:pointer;
-}
+            🎤
+            <small>Mic</small>
 
-.filter-list{
-    display:flex;
-    gap:10px;
+        </button>
 
-    overflow-x:auto;
 
-    padding-bottom:8px;
-}
+        <button
+            id="startLiveButton"
+            class="start-live"
+            type="button">
 
-.filter-btn{
-    flex:0 0 auto;
+            🔴
+            <small>Mulai Live</small>
 
-    border:1px solid rgba(255,255,255,.15);
+        </button>
 
-    background:rgba(255,255,255,.08);
 
-    color:#fff;
+        <button
+            id="flipButton"
+            type="button">
 
-    border-radius:12px;
+            🔄
+            <small>Flip</small>
 
-    min-width:62px;
+        </button>
 
-    padding:8px 6px;
 
-    cursor:pointer;
-}
+        <button
+            id="filterButton"
+            type="button">
 
-.filter-btn span{
-    display:block;
-    font-size:22px;
-}
+            ✨
+            <small>Filter</small>
 
-.filter-btn small{
-    display:block;
-    margin-top:3px;
-}
+        </button>
 
-.filter-btn.active{
-    background:#fff;
-    color:#111;
-}
+    </footer>
 
+</div>
 
-/* BEAUTY */
 
-.beauty-controls{
-    display:grid;
-    gap:8px;
+<script src="live.js"></script>
 
-    margin-top:8px;
-}
-
-.beauty-controls label{
-    display:flex;
-    align-items:center;
-    gap:10px;
-
-    font-size:12px;
-}
-
-.beauty-controls span{
-    width:90px;
-}
-
-.beauty-controls input{
-    flex:1;
-}
-
-
-/* BOTTOM */
-
-.live-controls{
-    position:absolute;
-
-    bottom:0;
-    left:0;
-    right:0;
-
-    height:72px;
-
-    z-index:40;
-
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-
-    background:rgba(0,0,0,.82);
-}
-
-.live-controls button{
-    border:0;
-    background:none;
-
-    color:#fff;
-
-    min-width:55px;
-
-    font-size:22px;
-
-    cursor:pointer;
-}
-
-.live-controls small{
-    display:block;
-    font-size:10px;
-    margin-top:3px;
-}
-
-.start-live{
-    width:70px;
-    height:58px;
-
-    border-radius:18px !important;
-
-    background:#ff1744 !important;
-
-    box-shadow:
-        0 5px 20px rgba(255,23,68,.35);
-}
-
-.start-live.live-active{
-    background:#333 !important;
-}
-
-
-/* MOBILE */
-
-@media(max-width:600px){
-
-    .live-info{
-        bottom:90px;
-    }
-
-    .filter-panel{
-        bottom:70px;
-    }
-
-}
+</body>
+</html>
