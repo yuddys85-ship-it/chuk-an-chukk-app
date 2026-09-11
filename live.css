@@ -21,9 +21,6 @@ body{
     color:#fff;
 }
 
-
-/* HEADER */
-
 .live-header{
     position:absolute;
     top:0;
@@ -63,13 +60,13 @@ body{
     display:flex;
     align-items:center;
     gap:8px;
-
     font-size:17px;
 }
 
 .live-dot{
     width:10px;
     height:10px;
+
     background:#ff1744;
     border-radius:50%;
 
@@ -88,12 +85,8 @@ body{
     background:rgba(0,0,0,.45);
     padding:8px 12px;
     border-radius:20px;
-
     font-size:13px;
 }
-
-
-/* CAMERA */
 
 .camera-area{
     position:absolute;
@@ -121,9 +114,6 @@ body{
         transform .3s ease;
 }
 
-
-/* GLOW */
-
 .face-glow{
     position:absolute;
     inset:0;
@@ -141,9 +131,6 @@ body{
 
     mix-blend-mode:screen;
 }
-
-
-/* STATUS */
 
 .camera-status{
     position:absolute;
@@ -163,9 +150,6 @@ body{
 
     z-index:10;
 }
-
-
-/* LIVE INFO */
 
 .live-info{
     position:absolute;
@@ -192,7 +176,6 @@ body{
     height:43px;
 
     border-radius:50%;
-
     object-fit:cover;
 
     border:2px solid #fff;
@@ -225,16 +208,7 @@ body{
     background:rgba(0,0,0,.45);
 
     font-size:22px;
-
-    cursor:pointer;
 }
-
-#likeCount{
-    font-size:13px;
-}
-
-
-/* FILTER PANEL */
 
 .filter-panel{
     position:absolute;
@@ -254,6 +228,7 @@ body{
         );
 
     transform:translateY(100%);
+
     transition:.3s ease;
 }
 
@@ -279,8 +254,6 @@ body{
     padding:6px 12px;
 
     border-radius:15px;
-
-    cursor:pointer;
 }
 
 .filter-list{
@@ -306,8 +279,6 @@ body{
     min-width:62px;
 
     padding:8px 6px;
-
-    cursor:pointer;
 }
 
 .filter-btn span{
@@ -325,13 +296,9 @@ body{
     color:#111;
 }
 
-
-/* BEAUTY */
-
 .beauty-controls{
     display:grid;
     gap:8px;
-
     margin-top:8px;
 }
 
@@ -339,7 +306,6 @@ body{
     display:flex;
     align-items:center;
     gap:10px;
-
     font-size:12px;
 }
 
@@ -350,9 +316,6 @@ body{
 .beauty-controls input{
     flex:1;
 }
-
-
-/* BOTTOM */
 
 .live-controls{
     position:absolute;
@@ -381,8 +344,6 @@ body{
     min-width:55px;
 
     font-size:22px;
-
-    cursor:pointer;
 }
 
 .live-controls small{
@@ -406,9 +367,6 @@ body{
 .start-live.live-active{
     background:#333 !important;
 }
-
-
-/* MOBILE */
 
 @media(max-width:600px){
 
