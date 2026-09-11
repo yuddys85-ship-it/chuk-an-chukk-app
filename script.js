@@ -2111,12 +2111,11 @@ function goChat() {
 
 }
 
-
 /* =========================================================
    PROFILE
    ========================================================= */
 
-functfunction goProfile() {
+function goProfile() {
     window.location.href = "profile.html";
 }
 
