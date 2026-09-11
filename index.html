@@ -2,7 +2,6 @@
 <html lang="id">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,30 +9,22 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
-    <meta
-        name="theme-color"
-        content="#ffffff"
-    >
+    <meta name="theme-color" content="#ffffff">
 
     <title>CHUK AN CHUKK</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 
 <body>
 
-
 <div class="app">
 
 
-    <!-- =====================================================
+    <!-- =====================================
          HEADER
-    ====================================================== -->
+    ====================================== -->
 
     <header class="header">
 
@@ -45,15 +36,26 @@
                 alt="CHUK AN CHUKK"
             >
 
-            <span>
-                CHUK AN CHUKK
-            </span>
+            <span>CHUK AN CHUKK</span>
 
         </div>
 
 
         <div class="header-icons">
 
+            <!-- LIVE -->
+            <button
+                type="button"
+                class="live-header-button"
+                onclick="window.location.href='live.html'"
+                aria-label="Live"
+                title="Mulai Live"
+            >
+                🔴 LIVE
+            </button>
+
+
+            <!-- SEARCH -->
             <button
                 type="button"
                 onclick="searchPost()"
@@ -63,6 +65,7 @@
             </button>
 
 
+            <!-- NOTIFICATION -->
             <button
                 type="button"
                 onclick="showNotifications()"
@@ -77,9 +80,9 @@
 
 
 
-    <!-- =====================================================
+    <!-- =====================================
          FEED
-    ====================================================== -->
+    ====================================== -->
 
     <main
         id="feed"
@@ -87,18 +90,16 @@
     >
 
         <div class="empty-feed">
-
             ⏳ Memuat postingan...
-
         </div>
 
     </main>
 
 
 
-    <!-- =====================================================
-         FLOATING CREATE CONTENT
-    ====================================================== -->
+    <!-- =====================================
+         CREATE POST
+    ====================================== -->
 
     <button
         type="button"
@@ -112,9 +113,9 @@
 
 
 
-    <!-- =====================================================
+    <!-- =====================================
          BOTTOM NAVIGATION
-    ====================================================== -->
+    ====================================== -->
 
     <nav
         class="bottom-nav"
@@ -122,23 +123,23 @@
     >
 
 
+        <!-- HOME -->
+
         <button
             type="button"
             onclick="goHome()"
             aria-label="Home"
         >
 
-            <span>
-                🏠
-            </span>
+            <span>🏠</span>
 
-            <small>
-                Home
-            </small>
+            <small>Home</small>
 
         </button>
 
 
+
+        <!-- CHAT -->
 
         <button
             type="button"
@@ -146,17 +147,15 @@
             aria-label="Chat"
         >
 
-            <span>
-                💬
-            </span>
+            <span>💬</span>
 
-            <small>
-                Chat
-            </small>
+            <small>Chat</small>
 
         </button>
 
 
+
+        <!-- PROFILE -->
 
         <button
             type="button"
@@ -164,13 +163,9 @@
             aria-label="Profile"
         >
 
-            <span>
-                👤
-            </span>
+            <span>👤</span>
 
-            <small>
-                Profile
-            </small>
+            <small>Profile</small>
 
         </button>
 
@@ -182,26 +177,16 @@
 
 
 
-<!-- =========================================================
+<!-- =====================================
      SUPABASE
-========================================================= -->
+====================================== -->
 
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
-<script
-    src="supabase.js">
-</script>
+<script src="supabase.js"></script>
 
 
 <script>
-
-    /*
-     * CHUK AN CHUKK
-     * Supabase client
-     */
 
     if (window.chukSupabase) {
 
@@ -223,14 +208,11 @@
 </script>
 
 
-
-<!-- =========================================================
+<!-- =====================================
      MAIN SCRIPT
-========================================================= -->
+====================================== -->
 
-<script
-    src="script.js">
-</script>
+<script src="script.js"></script>
 
 
 </body>
