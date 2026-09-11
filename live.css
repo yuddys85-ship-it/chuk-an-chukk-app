@@ -1,72 +1,104 @@
-/* =========================================================
-   CHUK AN CHUKK
-   LIVE CSS
-   DREAM LIKE PLASTIC 90%
-   ========================================================= */
-
-
-/* =========================================================
-   RESET
-   ========================================================= */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
-}
+/* =====================================================
+   CHUK AN CHUKK LIVE
+   CAMERA FULL SCREEN / FILTER BOTTOM SHEET
+===================================================== */
 
 html,
 body {
     width: 100%;
     height: 100%;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
     background: #000;
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
 }
 
-
-/* =========================================================
-   LIVE APP
-   ========================================================= */
 
 .live-app {
-    position: relative;
+    position: fixed;
+    inset: 0;
 
     width: 100%;
-    height: 100dvh;
+    height: 100%;
 
-    min-height: 100vh;
+    overflow: hidden;
+    background: #000;
+}
+
+
+/* =====================================================
+   CAMERA AREA
+   FULL SCREEN
+===================================================== */
+
+.camera-area {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
 
     overflow: hidden;
 
     background: #000;
-
-    color: #fff;
 }
 
 
-/* =========================================================
+/* =====================================================
+   CAMERA + FILTER CANVAS
+===================================================== */
+
+#camera,
+#filterCanvas {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: contain;
+
+    background: #000;
+}
+
+
+/* Kamera asli disembunyikan karena canvas
+   yang menampilkan hasil filter */
+
+#camera {
+    opacity: 0;
+
+    z-index: 1;
+}
+
+
+#filterCanvas {
+
+    z-index: 2;
+
+    object-fit: contain;
+}
+
+
+/* =====================================================
    HEADER
-   ========================================================= */
+===================================================== */
 
 .live-header {
+
     position: absolute;
 
     top: 0;
     left: 0;
     right: 0;
 
-    z-index: 50;
-
     height: 64px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 
     padding:
         env(safe-area-inset-top)
@@ -74,794 +106,532 @@ body {
         0
         14px;
 
+    box-sizing: border-box;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    z-index: 50;
+
     background:
         linear-gradient(
             to bottom,
-            rgba(0, 0, 0, .72),
-            rgba(0, 0, 0, 0)
+            rgba(0,0,0,.55),
+            transparent
         );
 }
 
-.live-header button {
-    border: 0;
-    outline: none;
+
+/* =====================================================
+   CAMERA STATUS
+===================================================== */
+
+.camera-status {
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(
+        -50%,
+        -50%
+    );
+
+    z-index: 40;
+
+    padding: 10px 15px;
+
+    border-radius: 12px;
+
+    background: rgba(0,0,0,.65);
 
     color: #fff;
-    background: rgba(0, 0, 0, .35);
-
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    font-size: 20px;
-
-    cursor: pointer;
-}
-
-.live-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    font-size: 15px;
-    letter-spacing: .5px;
-}
-
-.live-dot {
-    width: 10px;
-    height: 10px;
-
-    border-radius: 50%;
-
-    background: #ff2020;
-
-    box-shadow:
-        0 0 10px rgba(255, 0, 0, .9);
-
-    animation: livePulse 1.2s infinite;
-}
-
-@keyframes livePulse {
-
-    0% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: .45;
-        transform: scale(.75);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.viewer-count {
-    min-width: 60px;
-
-    padding: 8px 10px;
-
-    text-align: center;
-
-    border-radius: 20px;
-
-    background: rgba(0, 0, 0, .42);
 
     font-size: 13px;
+
+    transition:
+        opacity .25s ease;
 }
 
 
-/* =========================================================
-   CAMERA AREA
-   ========================================================= */
+.camera-status.hidden {
 
-.camera-area {
-    position: absolute;
-
-    inset: 0;
-
-    overflow: hidden;
-
-    background: #000;
-}
-
-
-/* =========================================================
-   CAMERA
-   ========================================================= */
-
-#camera,
-#filterCanvas {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    /*
-     * contain mencegah gambar kamera dipaksa
-     * crop sehingga terlihat terlalu zoom.
-     */
-    object-fit: contain;
-
-    background: #000;
-
-    display: block;
-}
-
-#camera {
-    z-index: 1;
-
-    /*
-     * Video asli disembunyikan ketika
-     * canvas filter aktif.
-     */
     opacity: 0;
-}
-
-#filterCanvas {
-    z-index: 2;
 
     pointer-events: none;
 }
 
 
-/* =========================================================
-   CAMERA STATUS
-   ========================================================= */
-
-.camera-status {
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    z-index: 20;
-
-    padding: 10px 16px;
-
-    border-radius: 20px;
-
-    background: rgba(0, 0, 0, .62);
-
-    backdrop-filter: blur(10px);
-
-    font-size: 13px;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   AUTO LIGHT STATUS
-   ========================================================= */
+/* =====================================================
+   AUTO LIGHT BADGE
+===================================================== */
 
 .light-status {
+
     position: absolute;
 
-    top: 76px;
-    left: 14px;
+    top: 74px;
+    right: 12px;
 
-    z-index: 30;
+    z-index: 45;
 
-    padding: 8px 12px;
+    padding: 6px 10px;
 
     border-radius: 20px;
 
-    background: rgba(0, 0, 0, .45);
-
-    backdrop-filter: blur(10px);
-
-    font-size: 11px;
-
-    letter-spacing: .3px;
-
-    opacity: .9;
-}
-
-
-/* =========================================================
-   LIVE INFO
-   ========================================================= */
-
-.live-info {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    z-index: 30;
-
-    display: flex;
-
-    align-items: flex-end;
-    justify-content: space-between;
-
-    padding:
-        20px
-        16px
-        22px;
-
     background:
-        linear-gradient(
-            to top,
-            rgba(0, 0, 0, .72),
-            rgba(0, 0, 0, 0)
-        );
-}
-
-
-/* =========================================================
-   HOST
-   ========================================================= */
-
-.host-info {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-}
-
-.host-info img {
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    object-fit: cover;
-
-    border: 2px solid rgba(255,255,255,.8);
-}
-
-.host-info div {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 3px;
-}
-
-.host-info b {
-    font-size: 13px;
-}
-
-.host-info small {
-    font-size: 11px;
-
-    opacity: .75;
-}
-
-
-/* =========================================================
-   LIKE
-   ========================================================= */
-
-.live-actions {
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-}
-
-.live-actions button {
-    width: 46px;
-    height: 46px;
-
-    border: 0;
-
-    border-radius: 50%;
-
-    background: rgba(0,0,0,.48);
+        rgba(0,0,0,.45);
 
     color: #fff;
 
-    font-size: 22px;
+    font-size: 10px;
 
-    cursor: pointer;
-}
+    backdrop-filter: blur(8px);
 
-#likeCount {
-    font-size: 12px;
-
-    min-width: 20px;
+    -webkit-backdrop-filter: blur(8px);
 }
 
 
-/* =========================================================
+/* =====================================================
+   LIVE INFO
+   Jangan ikut mendorong kamera
+===================================================== */
+
+.live-info {
+
+    position: absolute;
+
+    left: 12px;
+    right: 12px;
+
+    bottom: 92px;
+
+    z-index: 45;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    pointer-events: none;
+}
+
+
+.host-info,
+.live-actions {
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
    FILTER PANEL
-   ========================================================= */
+   BOTTOM SHEET
+===================================================== */
 
 .filter-panel {
-    position: absolute;
+
+    position: fixed;
 
     left: 0;
     right: 0;
-    bottom: 76px;
 
-    z-index: 60;
+    bottom: 72px;
 
-    max-height: 48vh;
+    width: 100%;
+
+    max-height: 30vh;
+
+    box-sizing: border-box;
+
+    padding:
+        10px
+        12px
+        calc(
+            10px +
+            env(safe-area-inset-bottom)
+        );
 
     overflow-y: auto;
 
-    padding: 14px 14px 16px;
-
     background:
-        rgba(12, 12, 16, .91);
+        rgba(12,12,18,.94);
 
     backdrop-filter: blur(18px);
 
-    border-top:
-        1px solid rgba(255,255,255,.12);
+    -webkit-backdrop-filter: blur(18px);
 
     border-radius:
-        22px
-        22px
+        20px
+        20px
         0
         0;
 
-    transform: translateY(0);
+    z-index: 100;
+
+    transform:
+        translateY(110%);
+
+    opacity: 0;
+
+    pointer-events: none;
 
     transition:
-        transform .25s ease;
+        transform .25s ease,
+        opacity .25s ease;
 }
 
 
-/* =========================================================
-   PANEL TITLE
-   ========================================================= */
+/* OPEN */
+
+.filter-panel.open {
+
+    transform:
+        translateY(0);
+
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+
+/* =====================================================
+   FILTER TITLE
+===================================================== */
 
 .panel-title {
+
     display: flex;
 
-    justify-content: space-between;
     align-items: center;
 
-    margin-bottom: 12px;
+    justify-content: space-between;
+
+    margin-bottom: 7px;
+
 }
 
-.panel-title > div {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 3px;
-}
 
 .panel-title b {
-    font-size: 15px;
+
+    font-size: 14px;
+
 }
+
 
 .panel-title small {
+
+    display: block;
+
     font-size: 10px;
 
-    opacity: .6;
-}
+    opacity: .65;
 
-#resetFilter {
-    border: 0;
-
-    padding: 7px 12px;
-
-    border-radius: 14px;
-
-    background: rgba(255,255,255,.1);
-
-    color: #fff;
-
-    font-size: 11px;
 }
 
 
-/* =========================================================
-   DREAM MAIN BUTTON
-   ========================================================= */
+/* =====================================================
+   CLEAR BUTTON
+===================================================== */
 
 .dream-filter-main {
-    margin-bottom: 14px;
+
+    margin-bottom: 7px;
+
 }
 
+
 .dream-main-button {
+
     width: 100%;
 
-    min-height: 64px;
+    min-height: 42px;
+
+    padding: 7px 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    border-radius: 13px;
+
+}
+
+
+/* =====================================================
+   BEAUTY CONTROLS
+===================================================== */
+
+.beauty-controls {
 
     display: grid;
 
     grid-template-columns:
-        42px
-        1fr
-        auto;
+        1fr 1fr;
 
-    align-items: center;
+    column-gap: 12px;
 
-    gap: 10px;
-
-    padding: 10px 14px;
-
-    border: 1px solid
-        rgba(255,255,255,.16);
-
-    border-radius: 18px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,.16),
-            rgba(255,255,255,.05)
-        );
-
-    color: #fff;
-
-    text-align: left;
+    row-gap: 5px;
 }
 
-.dream-main-button.active {
-    border-color:
-        rgba(255,255,255,.65);
-
-    box-shadow:
-        0 0 22px
-        rgba(255,255,255,.12);
-}
-
-.dream-main-button span {
-    width: 38px;
-    height: 38px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,.12);
-
-    font-size: 20px;
-}
-
-.dream-main-button strong {
-    font-size: 13px;
-}
-
-.dream-main-button small {
-    font-size: 10px;
-
-    opacity: .65;
-}
-
-
-/* =========================================================
-   BEAUTY CONTROLS
-   ========================================================= */
-
-.beauty-controls {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 12px;
-}
 
 .beauty-controls label {
-    display: block;
+
+    min-width: 0;
+
 }
+
 
 .beauty-controls label > div {
-    display: flex;
 
-    justify-content: space-between;
-    align-items: center;
-
-    margin-bottom: 6px;
-
-    font-size: 12px;
-}
-
-.beauty-controls label b {
-    font-size: 11px;
-
-    opacity: .75;
-}
-
-
-/* =========================================================
-   RANGE
-   ========================================================= */
-
-input[type="range"] {
-    width: 100%;
-
-    height: 5px;
-
-    appearance: none;
-
-    border-radius: 10px;
-
-    background: rgba(255,255,255,.18);
-
-    outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-    appearance: none;
-
-    width: 20px;
-    height: 20px;
-
-    border-radius: 50%;
-
-    background: #fff;
-
-    border: 0;
-
-    box-shadow:
-        0 2px 10px
-        rgba(0,0,0,.45);
-
-    cursor: pointer;
-}
-
-input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-
-    border-radius: 50%;
-
-    background: #fff;
-
-    border: 0;
-
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   AUTO LIGHT
-   ========================================================= */
-
-.auto-light-control {
     display: flex;
 
     align-items: center;
+
     justify-content: space-between;
 
-    margin-top: 15px;
+    gap: 5px;
 
-    padding-top: 13px;
+    margin-bottom: 1px;
 
-    border-top:
-        1px solid rgba(255,255,255,.1);
-}
-
-.auto-light-control > div {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 4px;
-}
-
-.auto-light-control span {
-    font-size: 12px;
-
-    font-weight: 600;
-}
-
-.auto-light-control small {
     font-size: 10px;
 
-    opacity: .55;
 }
 
 
-/* =========================================================
-   TOGGLE
-   ========================================================= */
+.beauty-controls input[type="range"] {
 
-.toggle {
-    position: relative;
+    width: 100%;
 
-    width: 50px;
-    height: 29px;
+    height: 3px;
 
-    border: 0;
-
-    border-radius: 30px;
-
-    background: rgba(255,255,255,.2);
-
-    padding: 3px;
-
-    cursor: pointer;
+    margin: 0;
 }
 
-.toggle span {
+
+/* =====================================================
+   AUTO LIGHT
+===================================================== */
+
+.auto-light-control {
+
+    margin-top: 7px;
+
+    padding: 7px 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-radius: 11px;
+
+    background:
+        rgba(255,255,255,.07);
+}
+
+
+.auto-light-control span {
+
+    font-size: 11px;
+
+}
+
+
+.auto-light-control small {
+
     display: block;
 
-    width: 23px;
-    height: 23px;
+    margin-top: 2px;
 
-    border-radius: 50%;
+    font-size: 9px;
 
-    background: #fff;
+    opacity: .6;
 
-    transition:
-        transform .2s ease;
-}
-
-.toggle.active span {
-    transform:
-        translateX(21px);
 }
 
 
-/* =========================================================
-   BOTTOM LIVE CONTROLS
-   ========================================================= */
+/* =====================================================
+   BOTTOM CONTROLS
+===================================================== */
 
 .live-controls {
-    position: absolute;
+
+    position: fixed;
 
     left: 0;
     right: 0;
     bottom: 0;
 
-    z-index: 100;
-
-    height: 76px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-around;
+    height: 72px;
 
     padding:
-        7px
+        6px
         8px
-        calc(7px + env(safe-area-inset-bottom));
+        env(safe-area-inset-bottom);
 
-    background:
-        rgba(0,0,0,.86);
-
-    backdrop-filter: blur(14px);
-
-    border-top:
-        1px solid rgba(255,255,255,.08);
-}
-
-.live-controls button {
-    min-width: 54px;
-
-    height: 58px;
+    box-sizing: border-box;
 
     display: flex;
 
-    flex-direction: column;
-
     align-items: center;
-    justify-content: center;
 
-    gap: 3px;
+    justify-content: space-around;
+
+    z-index: 120;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.85),
+            rgba(0,0,0,.25),
+            transparent
+        );
+}
+
+
+.live-controls button {
+
+    min-width: 52px;
 
     border: 0;
-
-    border-radius: 14px;
 
     background: transparent;
 
     color: #fff;
 
-    font-size: 19px;
+    display: flex;
 
-    cursor: pointer;
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 2px;
 }
+
 
 .live-controls button small {
+
     font-size: 9px;
 
-    opacity: .75;
-}
-
-.live-controls button:active {
-    transform: scale(.92);
+    opacity: .9;
 }
 
 
-/* =========================================================
-   START LIVE
-   ========================================================= */
+/* =====================================================
+   MOBILE
+===================================================== */
 
-.start-live {
-    min-width: 70px !important;
+@media (max-width: 600px) {
 
-    border-radius: 18px !important;
+    .live-info {
 
-    background:
-        rgba(255,255,255,.12) !important;
-}
+        bottom: 82px;
 
-.start-live small {
-    opacity: 1 !important;
-
-    font-weight: 600;
-}
-
-
-/* =========================================================
-   FILTER PANEL HIDDEN
-   ========================================================= */
-
-.filter-panel.hidden {
-    transform:
-        translateY(calc(100% + 80px));
-}
-
-
-/* =========================================================
-   SMALL PHONE
-   ========================================================= */
-
-@media (max-width: 360px) {
-
-    .live-controls button {
-        min-width: 48px;
     }
 
-    .live-controls {
-        padding-left: 3px;
-        padding-right: 3px;
-    }
 
     .filter-panel {
-        max-height: 52vh;
+
+        bottom: 68px;
+
+        max-height: 27vh;
+
+        padding:
+            9px
+            10px
+            calc(
+                8px +
+                env(safe-area-inset-bottom)
+            );
+
+    }
+
+
+    .live-controls {
+
+        height: 68px;
+
     }
 
 }
 
 
-/* =========================================================
+/* =====================================================
+   SMALL PHONE
+===================================================== */
+
+@media (max-height: 700px) {
+
+    .filter-panel {
+
+        max-height: 25vh;
+
+    }
+
+
+    .live-info {
+
+        bottom: 76px;
+
+    }
+
+}
+
+
+/* =====================================================
    LANDSCAPE
-   ========================================================= */
+===================================================== */
 
 @media (orientation: landscape) {
 
     .filter-panel {
-        max-height: 62vh;
+
+        left: 50%;
+
+        right: auto;
+
+        width: min(
+            420px,
+            55vw
+        );
+
+        bottom: 60px;
+
+        max-height: 55vh;
+
+        border-radius:
+            18px;
+
+        transform:
+            translate(
+                -50%,
+                110%
+            );
+
     }
 
-    .live-controls {
-        height: 68px;
-    }
 
-    .live-info {
-        padding-bottom: 82px;
-    }
+    .filter-panel.open {
 
-}
+        transform:
+            translate(
+                -50%,
+                0
+            );
 
-
-/* =========================================================
-   REDUCE MOTION
-   ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
-        animation: none !important;
-        transition: none !important;
     }
 
 }
