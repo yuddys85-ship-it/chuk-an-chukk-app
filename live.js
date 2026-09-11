@@ -1,445 +1,60 @@
-/* =========================================================
-   CHUK AN CHUKK
-   LIVE.JS
-   CAMERA + MIC + FLIP + LIVE + FILTER
-   ========================================================= */
-
 (function () {
 
     "use strict";
 
-
-    /* =====================================================
-       DOM
-       ===================================================== */
-
     const video = document.getElementById("camera");
     const canvas = document.getElementById("filterCanvas");
-
-    const cameraStatus =
-        document.getElementById("cameraStatus");
-
-    const lightStatus =
-        document.getElementById("lightStatus");
-
-    const viewerCount =
-        document.getElementById("viewerCount");
-
-    const liveTime =
-        document.getElementById("liveTime");
-
-    const likeCount =
-        document.getElementById("likeCount");
-
-
-    const closeLive =
-        document.getElementById("closeLive");
-
-    const cameraButton =
-        document.getElementById("cameraButton");
-
-    const micButton =
-        document.getElementById("micButton");
-
-    const startLiveButton =
-        document.getElementById("startLiveButton");
-
-    const flipButton =
-        document.getElementById("flipButton");
-
-    const filterButton =
-        document.getElementById("filterButton");
-
-    const filterPanel =
-        document.getElementById("filterPanel");
-
-    const dreamLikeButton =
-        document.getElementById("dreamLikeButton");
-
-    const resetFilter =
-        document.getElementById("resetFilter");
-
-    const autoLightButton =
-        document.getElementById("autoLightButton");
-
-    const autoLightText =
-        document.getElementById("autoLightText");
-
-    const likeButton =
-        document.getElementById("likeButton");
-
-
-    /* =====================================================
-       STATE
-       ===================================================== */
+    const status = document.getElementById("cameraStatus");
 
     let stream = null;
-
     let facingMode = "user";
 
-    let cameraEnabled = true;
-
-    let micEnabled = true;
-
-    let liveStarted = false;
-
-    let liveSeconds = 0;
-
-    let liveTimer = null;
-
-    let viewerTimer = null;
-
-    let viewers = 0;
-
-    let likes = 0;
-
-    let autoLight = true;
-
-    let filterEnabled = false;
-
-    let dreamFilter = null;
-
-
-    /* =====================================================
-       DEFAULT FILTER
-       ===================================================== */
-
-    const DEFAULT_FILTER = {
-
-        plastic: 90,
-
-        glow: 65,
-
-        brightness: 35,
-
-        softFocus: 55,
-
-        detail: 25,
-
-        strength: 90
-
-    };
-
-
-    /* =====================================================
-       INIT
-       ===================================================== */
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        init
-    );
-
-
-    function init() {
-
-        console.log(
-            "🚀 CHUK AN CHUKK LIVE START"
-        );
-
-
-        if (!video) {
-
-            console.error(
-                "❌ Element #camera tidak ditemukan"
-            );
-
-            return;
+    function showStatus(text) {
+        if (status) {
+            status.textContent = text;
+            status.classList.remove("hidden");
         }
-
-
-        setupButtons();
-
-        setupSliders();
-
-        setupFilter();
-
-        setupVideoEvents();
-
-        resizeCanvas();
-
-        startCamera();
-
     }
 
-
-    /* =====================================================
-       BUTTON EVENTS
-       ===================================================== */
-
-    function setupButtons() {
-
-        if (closeLive) {
-
-            closeLive.addEventListener(
-                "click",
-                closeLivePage
-            );
-
+    function hideStatus() {
+        if (status) {
+            status.classList.add("hidden");
         }
-
-
-        if (cameraButton) {
-
-            cameraButton.addEventListener(
-                "click",
-                toggleCamera
-            );
-
-        }
-
-
-        if (micButton) {
-
-            micButton.addEventListener(
-                "click",
-                toggleMic
-            );
-
-        }
-
-
-        if (flipButton) {
-
-            flipButton.addEventListener(
-                "click",
-                flipCamera
-            );
-
-        }
-
-
-        if (startLiveButton) {
-
-            startLiveButton.addEventListener(
-                "click",
-                toggleLive
-            );
-
-        }
-
-
-        if (filterButton) {
-
-            filterButton.addEventListener(
-                "click",
-                toggleFilterPanel
-            );
-
-        }
-
-
-        if (dreamLikeButton) {
-
-            dreamLikeButton.addEventListener(
-                "click",
-                enableDreamLike
-            );
-
-        }
-
-
-        if (resetFilter) {
-
-            resetFilter.addEventListener(
-                "click",
-                resetBeautyFilter
-            );
-
-        }
-
-
-        if (autoLightButton) {
-
-            autoLightButton.addEventListener(
-                "click",
-                toggleAutoLight
-            );
-
-        }
-
-
-        if (likeButton) {
-
-            likeButton.addEventListener(
-                "click",
-                addLike
-            );
-
-        }
-
-
-        window.addEventListener(
-            "resize",
-            resizeCanvas
-        );
-
-
-        window.addEventListener(
-            "orientationchange",
-            function () {
-
-                setTimeout(
-                    resizeCanvas,
-                    300
-                );
-
-            }
-        );
-
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (event.key === "Escape") {
-
-                    closeFilterPanel();
-
-                }
-
-            }
-        );
-
     }
-
-
-    /* =====================================================
-       FILTER SETUP
-       ===================================================== */
-
-    function setupFilter() {
-
-        canvas.style.display = "none";
-
-        if (
-            typeof window.DreamLikePlastic !==
-            "function"
-        ) {
-
-            console.warn(
-                "⚠️ dream-like-filter.js tidak tersedia"
-            );
-
-            return;
-        }
-
-
-        try {
-
-            dreamFilter =
-                new window.DreamLikePlastic(
-                    video,
-                    canvas
-                );
-
-
-            dreamFilter.setSettings(
-                DEFAULT_FILTER
-            );
-
-
-            if (
-                typeof dreamFilter.setAutoLight ===
-                "function"
-            ) {
-
-                dreamFilter.setAutoLight(
-                    autoLight
-                );
-
-            }
-
-
-            console.log(
-                "✅ DreamLikePlastic siap"
-            );
-
-        } catch (error) {
-
-            console.error(
-                "❌ Filter gagal dibuat:",
-                error
-            );
-
-            dreamFilter = null;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       VIDEO EVENTS
-       ===================================================== */
-
-    function setupVideoEvents() {
-
-        video.addEventListener(
-            "loadedmetadata",
-            function () {
-
-                console.log(
-                    "🎥 Camera resolution:",
-                    video.videoWidth,
-                    "x",
-                    video.videoHeight
-                );
-
-                resizeCanvas();
-
-            }
-        );
-
-
-        video.addEventListener(
-            "canplay",
-            function () {
-
-                hideCameraStatus();
-
-                tryPlayVideo();
-
-            }
-        );
-
-
-        video.addEventListener(
-            "playing",
-            function () {
-
-                hideCameraStatus();
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       START CAMERA
-       ===================================================== */
 
     async function startCamera() {
 
-        console.log(
-            "📷 Memulai kamera:",
-            facingMode
-        );
+        console.log("================================");
+        console.log("CHUK AN CHUKK CAMERA TEST");
+        console.log("================================");
 
+        showStatus("📷 Membuka kamera...");
 
-        showCameraStatus(
-            "📷 Meminta izin kamera..."
-        );
+        /*
+         * MATIKAN CANVAS FILTER DULU
+         * Supaya tidak menutupi kamera.
+         */
+        if (canvas) {
+            canvas.style.display = "none";
+        }
 
+        if (!navigator.mediaDevices) {
 
-        if (
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
-        ) {
+            showStatus(
+                "❌ navigator.mediaDevices tidak tersedia"
+            );
 
-            showCameraStatus(
-                "❌ Browser tidak mendukung kamera"
+            console.error(
+                "navigator.mediaDevices tidak tersedia"
+            );
+
+            return;
+        }
+
+        if (!navigator.mediaDevices.getUserMedia) {
+
+            showStatus(
+                "❌ getUserMedia tidak tersedia"
             );
 
             console.error(
@@ -447,289 +62,273 @@
             );
 
             return;
-
         }
 
+        /*
+         * Hentikan kamera lama.
+         */
+        if (stream) {
 
-        stopCurrentStream();
-
-
-        const constraints = {
-
-            video: {
-
-                facingMode: {
-                    ideal: facingMode
-                },
-
-                width: {
-                    ideal: 1280
-                },
-
-                height: {
-                    ideal: 720
-                },
-
-                frameRate: {
-                    ideal: 30,
-                    max: 30
+            stream.getTracks().forEach(
+                function (track) {
+                    track.stop();
                 }
+            );
 
-            },
-
-            audio: true
-
-        };
-
+            stream = null;
+        }
 
         try {
 
+            console.log(
+                "Request camera:",
+                facingMode
+            );
+
+            /*
+             * Gunakan constraint sederhana
+             * supaya kompatibilitas Pi Browser
+             * lebih tinggi.
+             */
             stream =
                 await navigator.mediaDevices
-                    .getUserMedia(
-                        constraints
-                    );
+                    .getUserMedia({
+
+                        video: {
+                            facingMode: facingMode
+                        },
+
+                        audio: true
+
+                    });
 
 
             console.log(
-                "✅ getUserMedia berhasil"
+                "✅ CAMERA ACCESS GRANTED"
             );
 
 
-            video.srcObject = stream;
+            const videoTracks =
+                stream.getVideoTracks();
 
-            video.muted = true;
 
-            video.autoplay = true;
+            if (videoTracks.length) {
 
-            video.playsInline = true;
+                console.log(
+                    "Camera:",
+                    videoTracks[0].label
+                );
+
+                console.log(
+                    "Camera settings:",
+                    videoTracks[0].getSettings()
+                );
+
+            }
 
 
             /*
-               PENTING:
-               Jangan mirror kamera.
-               Gerak kanan = terlihat kanan.
-            */
+             * Pasang stream ke video.
+             */
+            video.srcObject = stream;
 
-            video.style.transform = "none";
+            video.autoplay = true;
+            video.muted = true;
+            video.playsInline = true;
 
-            canvas.style.transform = "none";
+            /*
+             * NON-MIRROR.
+             *
+             * Gerak kanan asli =
+             * gerak kanan di layar.
+             */
+            video.style.transform =
+                "none";
 
 
-            updateTrackStates();
+            /*
+             * Paksa play.
+             */
+            try {
 
+                await video.play();
 
-            tryPlayVideo();
+                console.log(
+                    "✅ VIDEO PLAYING"
+                );
+
+            } catch (playError) {
+
+                console.warn(
+                    "Video play error:",
+                    playError
+                );
+
+                showStatus(
+                    "📷 Tekan layar untuk mengaktifkan kamera"
+                );
+
+            }
 
 
             video.onloadedmetadata =
                 function () {
 
                     console.log(
-                        "📐 Video:",
-                        video.videoWidth,
-                        "x",
+                        "Video width:",
+                        video.videoWidth
+                    );
+
+                    console.log(
+                        "Video height:",
                         video.videoHeight
                     );
 
+                    console.log(
+                        "Video readyState:",
+                        video.readyState
+                    );
 
-                    resizeCanvas();
-
-                    hideCameraStatus();
-
-
-                    if (
-                        dreamFilter &&
-                        filterEnabled
-                    ) {
-
-                        startFilter();
-
-                    }
+                    hideStatus();
 
                 };
 
 
-            setTimeout(
+            video.onplaying =
                 function () {
 
-                    if (
-                        video.readyState >= 2
-                    ) {
+                    console.log(
+                        "🎥 VIDEO BENAR-BENAR BERJALAN"
+                    );
 
-                        hideCameraStatus();
+                    hideStatus();
 
-                    }
+                };
 
-                },
-                2500
-            );
+
+            video.onerror =
+                function (error) {
+
+                    console.error(
+                        "❌ VIDEO ERROR:",
+                        error
+                    );
+
+                    showStatus(
+                        "❌ Video error"
+                    );
+
+                };
 
 
         } catch (error) {
 
             console.error(
-                "❌ Kamera error:",
-                error
+                "❌ GET USER MEDIA ERROR"
             );
 
-
-            handleCameraError(
-                error
+            console.error(
+                "Name:",
+                error.name
             );
+
+            console.error(
+                "Message:",
+                error.message
+            );
+
+            let message =
+                "❌ Kamera gagal dibuka";
+
+
+            if (
+                error.name ===
+                "NotAllowedError"
+            ) {
+
+                message =
+                    "❌ Izin kamera ditolak";
+
+            }
+
+            else if (
+                error.name ===
+                "NotFoundError"
+            ) {
+
+                message =
+                    "❌ Kamera tidak ditemukan";
+
+            }
+
+            else if (
+                error.name ===
+                "NotReadableError"
+            ) {
+
+                message =
+                    "❌ Kamera sedang digunakan aplikasi lain";
+
+            }
+
+            else if (
+                error.name ===
+                "SecurityError"
+            ) {
+
+                message =
+                    "❌ Kamera membutuhkan HTTPS";
+
+            }
+
+            else if (
+                error.name ===
+                "OverconstrainedError"
+            ) {
+
+                message =
+                    "❌ Kamera tidak mendukung mode ini";
+
+            }
+
+
+            showStatus(message);
 
         }
 
     }
 
 
-    /* =====================================================
-       PLAY VIDEO
-       ===================================================== */
+    /*
+     * FLIP CAMERA
+     */
+    async function flipCamera() {
 
-    function tryPlayVideo() {
+        facingMode =
+            facingMode === "user"
+                ? "environment"
+                : "user";
 
-        if (!video) {
-            return;
-        }
-
-
-        const promise =
-            video.play();
-
-
-        if (
-            promise &&
-            typeof promise.catch ===
-            "function"
-        ) {
-
-            promise.catch(
-                function (error) {
-
-                    console.warn(
-                        "Video play menunggu gesture:",
-                        error
-                    );
-
-                    showCameraStatus(
-                        "📷 Tekan Kamera untuk mengaktifkan"
-                    );
-
-                }
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       CAMERA ERROR
-       ===================================================== */
-
-    function handleCameraError(error) {
-
-        let message =
-            "❌ Kamera tidak dapat digunakan";
-
-
-        switch (error.name) {
-
-            case "NotAllowedError":
-
-            case "PermissionDeniedError":
-
-                message =
-                    "❌ Izin kamera ditolak. Izinkan kamera untuk CHUK.";
-
-                break;
-
-
-            case "NotFoundError":
-
-                message =
-                    "❌ Kamera tidak ditemukan.";
-
-                break;
-
-
-            case "NotReadableError":
-
-                message =
-                    "❌ Kamera sedang digunakan aplikasi lain.";
-
-                break;
-
-
-            case "OverconstrainedError":
-
-                message =
-                    "❌ Mode kamera tidak tersedia.";
-
-                break;
-
-
-            case "SecurityError":
-
-                message =
-                    "❌ Kamera membutuhkan HTTPS.";
-
-                break;
-
-        }
-
-
-        showCameraStatus(
-            message
+        console.log(
+            "🔄 FLIP:",
+            facingMode
         );
 
-    }
-
-
-    /* =====================================================
-       STOP STREAM
-       ===================================================== */
-
-    function stopCurrentStream() {
-
-        if (!stream) {
-            return;
-        }
-
-
-        stream
-            .getTracks()
-            .forEach(
-                function (track) {
-
-                    track.stop();
-
-                }
-            );
-
-
-        stream = null;
-
-        video.srcObject = null;
+        await startCamera();
 
     }
 
 
-    /* =====================================================
-       CAMERA TOGGLE
-       ===================================================== */
-
-    async function toggleCamera() {
+    /*
+     * CAMERA ON/OFF
+     */
+    function toggleCamera() {
 
         if (!stream) {
 
-            cameraEnabled = true;
-
-            await startCamera();
+            startCamera();
 
             return;
-
         }
 
 
@@ -737,47 +336,46 @@
             stream.getVideoTracks();
 
 
-        cameraEnabled =
-            !cameraEnabled;
-
-
         tracks.forEach(
             function (track) {
 
                 track.enabled =
-                    cameraEnabled;
+                    !track.enabled;
 
             }
         );
 
 
-        if (cameraEnabled) {
+        const enabled =
+            tracks.length
+                ? tracks[0].enabled
+                : false;
 
-            cameraButton.innerHTML =
-                "📹<small>Kamera</small>";
 
-            hideCameraStatus();
+        console.log(
+            "Camera enabled:",
+            enabled
+        );
+
+
+        if (enabled) {
+
+            hideStatus();
 
         } else {
 
-            cameraButton.innerHTML =
-                "🚫<small>Kamera OFF</small>";
-
-            showCameraStatus(
+            showStatus(
                 "📷 Kamera OFF"
             );
-
-            stopFilter();
 
         }
 
     }
 
 
-    /* =====================================================
-       MICROPHONE
-       ===================================================== */
-
+    /*
+     * MICROPHONE
+     */
     function toggleMic() {
 
         if (!stream) {
@@ -789,909 +387,132 @@
             stream.getAudioTracks();
 
 
-        micEnabled =
-            !micEnabled;
-
-
         tracks.forEach(
             function (track) {
 
                 track.enabled =
-                    micEnabled;
+                    !track.enabled;
 
             }
         );
-
-
-        if (micEnabled) {
-
-            micButton.innerHTML =
-                "🎤<small>Mic</small>";
-
-        } else {
-
-            micButton.innerHTML =
-                "🔇<small>Mic OFF</small>";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       FLIP CAMERA
-       ===================================================== */
-
-    async function flipCamera() {
-
-        facingMode =
-            facingMode === "user"
-                ? "environment"
-                : "user";
 
 
         console.log(
-            "🔄 Flip:",
-            facingMode
-        );
-
-
-        showCameraStatus(
-            "🔄 Mengganti kamera..."
-        );
-
-
-        await startCamera();
-
-    }
-
-
-    /* =====================================================
-       CANVAS
-       ===================================================== */
-
-    function resizeCanvas() {
-
-        if (!canvas) {
-            return;
-        }
-
-
-        const width =
-            video.videoWidth ||
-            720;
-
-
-        const height =
-            video.videoHeight ||
-            1280;
-
-
-        if (
-            canvas.width !== width ||
-            canvas.height !== height
-        ) {
-
-            canvas.width = width;
-
-            canvas.height = height;
-
-        }
-
-
-        if (
-            dreamFilter &&
-            typeof dreamFilter.resize ===
-            "function"
-        ) {
-
-            try {
-
-                dreamFilter.resize();
-
-            } catch (error) {
-
-                console.warn(
-                    "Filter resize error:",
-                    error
-                );
-
-            }
-
-        }
-
-    }
-
-
-    /* =====================================================
-       FILTER PANEL
-       ===================================================== */
-
-    function toggleFilterPanel() {
-
-        if (!filterPanel) {
-            return;
-        }
-
-
-        filterPanel.classList.toggle(
-            "open"
+            "Mic enabled:",
+            tracks.length
+                ? tracks[0].enabled
+                : false
         );
 
     }
 
 
-    function closeFilterPanel() {
+    /*
+     * TOMBOL
+     */
 
-        if (!filterPanel) {
-            return;
-        }
+    const flipButton =
+        document.getElementById("flipButton");
 
+    if (flipButton) {
 
-        filterPanel.classList.remove(
-            "open"
-        );
-
-    }
-
-
-    /* =====================================================
-       DREAM LIKE
-       ===================================================== */
-
-    function enableDreamLike() {
-
-        filterEnabled = true;
-
-
-        if (dreamLikeButton) {
-
-            dreamLikeButton.classList.add(
-                "active"
-            );
-
-        }
-
-
-        canvas.style.display =
-            "block";
-
-
-        startFilter();
-
-
-        /*
-           Setelah memilih filter,
-           panel langsung ditutup.
-        */
-
-        closeFilterPanel();
+        flipButton.onclick =
+            flipCamera;
 
     }
 
 
-    /* =====================================================
-       START FILTER
-       ===================================================== */
+    const cameraButton =
+        document.getElementById("cameraButton");
 
-    function startFilter() {
+    if (cameraButton) {
 
-        if (
-            !dreamFilter ||
-            !cameraEnabled
-        ) {
-
-            return;
-
-        }
-
-
-        try {
-
-            if (
-                typeof dreamFilter.start ===
-                "function"
-            ) {
-
-                dreamFilter.start();
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Filter start error:",
-                error
-            );
-
-            /*
-               Kalau filter error,
-               kamera tetap hidup.
-            */
-
-            filterEnabled = false;
-
-            canvas.style.display =
-                "none";
-
-        }
+        cameraButton.onclick =
+            toggleCamera;
 
     }
 
 
-    /* =====================================================
-       STOP FILTER
-       ===================================================== */
+    const micButton =
+        document.getElementById("micButton");
 
-    function stopFilter() {
+    if (micButton) {
 
-        if (
-            dreamFilter &&
-            typeof dreamFilter.stop ===
-            "function"
-        ) {
-
-            try {
-
-                dreamFilter.stop();
-
-            } catch (error) {
-
-                console.warn(
-                    "Filter stop error:",
-                    error
-                );
-
-            }
-
-        }
-
-
-        canvas.style.display =
-            "none";
+        micButton.onclick =
+            toggleMic;
 
     }
 
 
-    /* =====================================================
-       RESET FILTER
-       ===================================================== */
+    /*
+     * Tutup halaman.
+     */
+    const closeButton =
+        document.getElementById("closeLive");
 
-    function resetBeautyFilter() {
+    if (closeButton) {
 
-        filterEnabled = false;
+        closeButton.onclick =
+            function () {
 
+                if (stream) {
 
-        if (dreamFilter) {
-
-            try {
-
-                dreamFilter.setSettings(
-                    DEFAULT_FILTER
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "Reset filter error:",
-                    error
-                );
-
-            }
-
-        }
-
-
-        updateSliderValue(
-            "plasticRange",
-            "plasticValue"
-        );
-
-        updateSliderValue(
-            "glowRange",
-            "glowValue"
-        );
-
-        updateSliderValue(
-            "brightnessRange",
-            "brightnessValue"
-        );
-
-        updateSliderValue(
-            "softFocusRange",
-            "softFocusValue"
-        );
-
-        updateSliderValue(
-            "detailRange",
-            "detailValue"
-        );
-
-
-        canvas.style.display =
-            "none";
-
-
-        if (dreamLikeButton) {
-
-            dreamLikeButton.classList.remove(
-                "active"
-            );
-
-        }
-
-
-        closeFilterPanel();
-
-    }
-
-
-    /* =====================================================
-       SLIDERS
-       ===================================================== */
-
-    function setupSliders() {
-
-        const sliders = [
-
-            [
-                "plasticRange",
-                "plasticValue",
-                "plastic"
-            ],
-
-            [
-                "glowRange",
-                "glowValue",
-                "glow"
-            ],
-
-            [
-                "brightnessRange",
-                "brightnessValue",
-                "brightness"
-            ],
-
-            [
-                "softFocusRange",
-                "softFocusValue",
-                "softFocus"
-            ],
-
-            [
-                "detailRange",
-                "detailValue",
-                "detail"
-            ]
-
-        ];
-
-
-        sliders.forEach(
-            function (item) {
-
-                const input =
-                    document.getElementById(
-                        item[0]
-                    );
-
-                const output =
-                    document.getElementById(
-                        item[1]
-                    );
-
-
-                if (!input) {
-                    return;
-                }
-
-
-                input.addEventListener(
-                    "input",
-                    function () {
-
-                        const value =
-                            Number(
-                                input.value
-                            );
-
-
-                        if (output) {
-
-                            output.textContent =
-                                value + "%";
-
-                        }
-
-
-                        if (
-                            dreamFilter &&
-                            typeof dreamFilter.setSetting ===
-                            "function"
-                        ) {
-
-                            try {
-
-                                dreamFilter.setSetting(
-                                    item[2],
-                                    value
-                                );
-
-                            } catch (error) {
-
-                                console.warn(
-                                    "Slider filter error:",
-                                    error
-                                );
-
+                    stream
+                        .getTracks()
+                        .forEach(
+                            function (track) {
+                                track.stop();
                             }
-
-                        }
-
-
-                        if (!filterEnabled) {
-
-                            filterEnabled =
-                                true;
-
-                            canvas.style.display =
-                                "block";
-
-                            startFilter();
-
-                        }
-
-                    }
-                );
-
-            }
-        );
-
-    }
-
-
-    function updateSliderValue(
-        inputId,
-        outputId
-    ) {
-
-        const input =
-            document.getElementById(
-                inputId
-            );
-
-        const output =
-            document.getElementById(
-                outputId
-            );
-
-
-        if (
-            input &&
-            output
-        ) {
-
-            output.textContent =
-                input.value + "%";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       AUTO LIGHT
-       ===================================================== */
-
-    function toggleAutoLight() {
-
-        autoLight =
-            !autoLight;
-
-
-        if (autoLightButton) {
-
-            autoLightButton.classList.toggle(
-                "active",
-                autoLight
-            );
-
-        }
-
-
-        if (autoLightText) {
-
-            autoLightText.textContent =
-                autoLight
-                    ? "Aktif — menyesuaikan cahaya otomatis"
-                    : "Nonaktif — cahaya manual";
-
-        }
-
-
-        if (
-            dreamFilter &&
-            typeof dreamFilter.setAutoLight ===
-            "function"
-        ) {
-
-            try {
-
-                dreamFilter.setAutoLight(
-                    autoLight
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "Auto light error:",
-                    error
-                );
-
-            }
-
-        }
-
-
-        if (lightStatus) {
-
-            lightStatus.textContent =
-                autoLight
-                    ? "☀️ AUTO LIGHT"
-                    : "☀️ MANUAL LIGHT";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       LIVE
-       ===================================================== */
-
-    function toggleLive() {
-
-        if (liveStarted) {
-
-            stopLive();
-
-        } else {
-
-            startLive();
-
-        }
-
-    }
-
-
-    function startLive() {
-
-        if (!stream) {
-
-            showCameraStatus(
-                "📷 Kamera belum aktif"
-            );
-
-            return;
-
-        }
-
-
-        liveStarted = true;
-
-        liveSeconds = 0;
-
-        viewers = 1;
-
-
-        if (startLiveButton) {
-
-            startLiveButton.innerHTML =
-                "⏹️<small>Stop Live</small>";
-
-        }
-
-
-        updateLiveTime();
-
-        updateViewerCount();
-
-
-        clearInterval(
-            liveTimer
-        );
-
-        clearInterval(
-            viewerTimer
-        );
-
-
-        liveTimer =
-            setInterval(
-                function () {
-
-                    liveSeconds++;
-
-                    updateLiveTime();
-
-                },
-                1000
-            );
-
-
-        viewerTimer =
-            setInterval(
-                function () {
-
-                    /*
-                       Simulasi viewer lokal.
-                       Belum streaming ke user lain.
-                    */
-
-                    viewers =
-                        Math.max(
-                            1,
-                            viewers +
-                            Math.floor(
-                                Math.random() * 3
-                            ) - 1
                         );
 
-
-                    updateViewerCount();
-
-                },
-                3000
-            );
-
-
-        console.log(
-            "🔴 LIVE STARTED"
-        );
-
-    }
-
-
-    function stopLive() {
-
-        liveStarted = false;
-
-
-        clearInterval(
-            liveTimer
-        );
-
-        clearInterval(
-            viewerTimer
-        );
-
-
-        liveTimer = null;
-
-        viewerTimer = null;
-
-
-        if (startLiveButton) {
-
-            startLiveButton.innerHTML =
-                "🔴<small>Mulai Live</small>";
-
-        }
-
-
-        console.log(
-            "⏹️ LIVE STOPPED"
-        );
-
-    }
-
-
-    /* =====================================================
-       LIVE TIMER
-       ===================================================== */
-
-    function updateLiveTime() {
-
-        if (!liveTime) {
-            return;
-        }
-
-
-        const minutes =
-            Math.floor(
-                liveSeconds / 60
-            );
-
-
-        const seconds =
-            liveSeconds % 60;
-
-
-        liveTime.textContent =
-            String(minutes).padStart(
-                2,
-                "0"
-            )
-            +
-            ":"
-            +
-            String(seconds).padStart(
-                2,
-                "0"
-            );
-
-    }
-
-
-    /* =====================================================
-       VIEWERS
-       ===================================================== */
-
-    function updateViewerCount() {
-
-        if (viewerCount) {
-
-            viewerCount.textContent =
-                viewers;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       LIKE
-       ===================================================== */
-
-    function addLike() {
-
-        likes++;
-
-
-        if (likeCount) {
-
-            likeCount.textContent =
-                likes;
-
-        }
-
-
-        if (likeButton) {
-
-            likeButton.animate(
-                [
-                    {
-                        transform:
-                            "scale(1)"
-                    },
-
-                    {
-                        transform:
-                            "scale(1.35)"
-                    },
-
-                    {
-                        transform:
-                            "scale(1)"
-                    }
-
-                ],
-                {
-                    duration: 220
                 }
-            );
 
-        }
+                window.location.href =
+                    "index.html";
 
-    }
-
-
-    /* =====================================================
-       TRACK STATUS
-       ===================================================== */
-
-    function updateTrackStates() {
-
-        if (!stream) {
-            return;
-        }
-
-
-        const videoTracks =
-            stream.getVideoTracks();
-
-
-        const audioTracks =
-            stream.getAudioTracks();
-
-
-        if (videoTracks.length) {
-
-            cameraEnabled =
-                videoTracks[0].enabled;
-
-        }
-
-
-        if (audioTracks.length) {
-
-            micEnabled =
-                audioTracks[0].enabled;
-
-        }
+            };
 
     }
 
 
-    /* =====================================================
-       STATUS
-       ===================================================== */
-
-    function showCameraStatus(
-        message
+    /*
+     * Mulai kamera setelah halaman siap.
+     */
+    if (
+        document.readyState ===
+        "loading"
     ) {
 
-        if (!cameraStatus) {
-            return;
-        }
-
-
-        cameraStatus.textContent =
-            message;
-
-        cameraStatus.classList.remove(
-            "hidden"
+        document.addEventListener(
+            "DOMContentLoaded",
+            startCamera
         );
 
-    }
+    } else {
 
-
-    function hideCameraStatus() {
-
-        if (!cameraStatus) {
-            return;
-        }
-
-
-        cameraStatus.classList.add(
-            "hidden"
-        );
+        startCamera();
 
     }
 
 
-    /* =====================================================
-       CLOSE
-       ===================================================== */
-
-    function closeLivePage() {
-
-        stopLive();
-
-        stopFilter();
-
-        stopCurrentStream();
-
-
-        window.location.href =
-            "index.html";
-
-    }
-
-
-    /* =====================================================
-       CLEANUP
-       ===================================================== */
-
+    /*
+     * Bersihkan kamera.
+     */
     window.addEventListener(
         "beforeunload",
         function () {
 
-            stopLive();
+            if (stream) {
 
-            stopFilter();
+                stream
+                    .getTracks()
+                    .forEach(
+                        function (track) {
+                            track.stop();
+                        }
+                    );
 
-            stopCurrentStream();
+            }
 
         }
     );
