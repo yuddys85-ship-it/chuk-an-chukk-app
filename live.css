@@ -62,28 +62,31 @@ body {
    CAMERA AREA
    ========================================================= */
 
-.camera-area {
-    position: fixed;
-
+#camera {
+    position: absolute;
     inset: 0;
 
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
 
-    overflow: hidden;
+    display: block;
+
+    margin: 0;
+    padding: 0;
 
     background: #000;
+
+    object-fit: cover;
+    object-position: center center;
+
+    /* NON-MIRROR */
+    transform: scaleX(1) !important;
+
+    /* Jangan biarkan browser melakukan mirror */
+    -webkit-transform: scaleX(1) !important;
+
+    z-index: 1;
 }
-
-@supports (height: 100dvh) {
-
-    .camera-area {
-        height: 100dvh;
-    }
-
-}
-
-
 /* =========================================================
    VIDEO
    ========================================================= */
