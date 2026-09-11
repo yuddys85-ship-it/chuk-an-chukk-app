@@ -1,13 +1,7 @@
-/* =========================================================
+ /* =========================================================
    CHUK AN CHUKK
-   LIVE.CSS
-   TIKTOK STYLE LIVE CAMERA
-   CLEAR FILTER PANEL
-   ========================================================= */
-
-
-/* =========================================================
-   RESET
+   LIVE CSS
+   FULLSCREEN CAMERA
    ========================================================= */
 
 * {
@@ -15,12 +9,10 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-
 html,
 body {
     width: 100%;
     height: 100%;
-
     margin: 0;
     padding: 0;
 
@@ -34,34 +26,35 @@ body {
         sans-serif;
 }
 
-
 body {
     position: fixed;
-
     inset: 0;
-
-    color: #fff;
-
-    touch-action: manipulation;
 }
 
 
 /* =========================================================
-   LIVE APP
+   APP
    ========================================================= */
 
 .live-app {
-
     position: fixed;
 
     inset: 0;
 
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
 
     overflow: hidden;
 
     background: #000;
+}
+
+@supports (height: 100dvh) {
+
+    .live-app {
+        height: 100dvh;
+    }
+
 }
 
 
@@ -70,27 +63,32 @@ body {
    ========================================================= */
 
 .camera-area {
-
-    position: absolute;
+    position: fixed;
 
     inset: 0;
 
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
 
     overflow: hidden;
 
     background: #000;
 }
 
+@supports (height: 100dvh) {
+
+    .camera-area {
+        height: 100dvh;
+    }
+
+}
+
 
 /* =========================================================
-   CAMERA
+   VIDEO
    ========================================================= */
 
-#camera,
-#filterCanvas {
-
+#camera {
     position: absolute;
 
     top: 0;
@@ -99,47 +97,63 @@ body {
     width: 100%;
     height: 100%;
 
+    display: block;
+
     margin: 0;
     padding: 0;
-
-    display: block;
 
     background: #000;
 
     /*
-     * CONTAIN = seluruh gambar kamera terlihat.
-     * Tidak menggunakan cover karena cover menyebabkan
-     * kamera terlihat zoom/crop.
-     */
+       COVER = layar penuh.
+       NONE = kamera TIDAK mirror.
+    */
 
-    object-fit: contain;
-}
+    object-fit: cover;
+    object-position: center center;
 
-
-#camera {
+    transform: none;
 
     z-index: 1;
-
-    opacity: 0;
-}
-
-
-#filterCanvas {
-
-    z-index: 2;
-
-    pointer-events: auto;
-
-    object-fit: contain;
 }
 
 
 /* =========================================================
-   LIVE HEADER
+   FILTER CANVAS
+   ========================================================= */
+
+#filterCanvas {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: none;
+
+    margin: 0;
+    padding: 0;
+
+    background: transparent;
+
+    object-fit: cover;
+    object-position: center center;
+
+    transform: none;
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   HEADER
    ========================================================= */
 
 .live-header {
-
     position: absolute;
 
     top: 0;
@@ -150,9 +164,9 @@ body {
 
     padding:
         env(safe-area-inset-top)
-        14px
-        0
-        14px;
+        16px
+        10px
+        16px;
 
     display: flex;
 
@@ -160,107 +174,57 @@ body {
 
     justify-content: space-between;
 
-    z-index: 50;
+    z-index: 20;
+
+    color: #fff;
 
     background:
         linear-gradient(
             to bottom,
-            rgba(0, 0, 0, .65),
-            rgba(0, 0, 0, .20),
-            transparent
+            rgba(0,0,0,.55),
+            rgba(0,0,0,0)
         );
-
-    pointer-events: none;
 }
 
-
-.live-header button,
-.viewer-count,
-.live-title {
-
-    pointer-events: auto;
-}
-
-
-/* =========================================================
-   CLOSE BUTTON
-   ========================================================= */
-
-#closeLive {
-
-    width: 40px;
-    height: 40px;
+.header-button {
+    width: 42px;
+    height: 42px;
 
     border: 0;
-
     border-radius: 50%;
 
-    background:
-        rgba(0, 0, 0, .42);
+    background: rgba(0,0,0,.45);
 
     color: #fff;
 
     font-size: 20px;
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
     cursor: pointer;
-
-    backdrop-filter: blur(8px);
-
-    -webkit-backdrop-filter: blur(8px);
 }
 
-
-/* =========================================================
-   LIVE TITLE
-   ========================================================= */
-
 .live-title {
-
     display: flex;
 
     align-items: center;
 
     gap: 7px;
 
-    padding:
-        6px
-        11px;
-
-    border-radius: 20px;
-
-    background:
-        rgba(0, 0, 0, .40);
-
-    backdrop-filter: blur(8px);
-
-    -webkit-backdrop-filter: blur(8px);
-
-    font-size: 13px;
+    font-size: 17px;
 }
 
-
 .live-dot {
-
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
 
     border-radius: 50%;
 
     background: #ff1744;
 
     box-shadow:
-        0 0 10px
-        rgba(255, 23, 68, .9);
+        0 0 12px rgba(255,23,68,.9);
 
-    animation:
-        livePulse 1.2s infinite;
+    animation: livePulse 1.2s infinite;
 }
-
 
 @keyframes livePulse {
 
@@ -278,29 +242,17 @@ body {
         opacity: 1;
         transform: scale(1);
     }
+
 }
 
-
-/* =========================================================
-   VIEWER COUNT
-   ========================================================= */
-
 .viewer-count {
-
-    padding:
-        7px
-        10px;
+    padding: 8px 12px;
 
     border-radius: 20px;
 
-    background:
-        rgba(0, 0, 0, .42);
+    background: rgba(0,0,0,.45);
 
-    font-size: 12px;
-
-    backdrop-filter: blur(8px);
-
-    -webkit-backdrop-filter: blur(8px);
+    font-size: 13px;
 }
 
 
@@ -309,317 +261,181 @@ body {
    ========================================================= */
 
 .camera-status {
-
     position: absolute;
 
     top: 50%;
     left: 50%;
 
-    transform:
-        translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 
-    z-index: 40;
+    z-index: 15;
 
-    max-width: 85%;
+    padding: 14px 18px;
 
-    padding:
-        10px
-        15px;
-
-    border-radius: 13px;
-
-    background:
-        rgba(0, 0, 0, .68);
+    border-radius: 14px;
 
     color: #fff;
+
+    background: rgba(0,0,0,.65);
+
+    font-size: 14px;
 
     text-align: center;
 
-    font-size: 13px;
-
-    backdrop-filter: blur(10px);
-
-    -webkit-backdrop-filter: blur(10px);
-
-    transition:
-        opacity .25s ease;
+    white-space: nowrap;
 }
 
-
 .camera-status.hidden {
-
-    opacity: 0;
-
-    pointer-events: none;
+    display: none;
 }
 
 
 /* =========================================================
-   AUTO LIGHT BADGE
+   LIGHT STATUS
    ========================================================= */
 
 .light-status {
-
     position: absolute;
 
-    top: 78px;
-    right: 12px;
+    top: 82px;
+    left: 14px;
 
-    z-index: 45;
+    z-index: 15;
 
-    padding:
-        6px
-        10px;
+    padding: 7px 11px;
 
-    border-radius: 20px;
+    border-radius: 14px;
 
-    background:
-        rgba(0, 0, 0, .42);
+    background: rgba(0,0,0,.38);
 
     color: #fff;
 
-    font-size: 10px;
-
-    backdrop-filter: blur(10px);
-
-    -webkit-backdrop-filter: blur(10px);
+    font-size: 11px;
 }
 
 
 /* =========================================================
-   LIVE INFORMATION
+   LIVE INFO
    ========================================================= */
 
 .live-info {
-
     position: absolute;
 
-    left: 12px;
-    right: 12px;
+    left: 14px;
+    right: 14px;
+    bottom: 105px;
 
-    bottom: 82px;
-
-    z-index: 45;
+    z-index: 15;
 
     display: flex;
 
     align-items: flex-end;
 
     justify-content: space-between;
-
-    pointer-events: none;
 }
 
-
-/* =========================================================
-   HOST
-   ========================================================= */
-
 .host-info {
-
     display: flex;
 
     align-items: center;
 
-    gap: 9px;
+    gap: 10px;
 
-    padding:
-        6px
-        9px;
-
-    border-radius: 25px;
-
-    background:
-        rgba(0, 0, 0, .38);
-
-    backdrop-filter: blur(10px);
-
-    -webkit-backdrop-filter: blur(10px);
+    color: #fff;
 }
 
-
 .host-info img {
-
-    width: 35px;
-    height: 35px;
+    width: 42px;
+    height: 42px;
 
     border-radius: 50%;
 
     object-fit: cover;
 
-    border:
-        2px solid
-        rgba(255, 255, 255, .8);
+    border: 2px solid rgba(255,255,255,.85);
+
+    background: #fff;
 }
 
-
-.host-info b {
-
+.host-info strong {
     display: block;
 
-    font-size: 12px;
+    font-size: 13px;
 }
-
 
 .host-info small {
-
     display: block;
 
-    margin-top: 2px;
+    margin-top: 3px;
 
-    font-size: 10px;
+    opacity: .8;
 
-    opacity: .75;
+    font-size: 11px;
 }
 
-
-/* =========================================================
-   LIKE
-   ========================================================= */
-
-.live-actions {
-
+.like-area {
     display: flex;
 
     align-items: center;
 
     gap: 5px;
 
-    padding:
-        6px
-        9px;
-
-    border-radius: 22px;
-
-    background:
-        rgba(0, 0, 0, .38);
-
-    backdrop-filter: blur(10px);
-
-    -webkit-backdrop-filter: blur(10px);
+    color: #fff;
 }
 
-
-.live-actions button {
-
-    width: 38px;
-    height: 38px;
-
+.like-area button {
     border: 0;
 
     background: transparent;
 
     color: #fff;
 
-    font-size: 23px;
+    font-size: 32px;
 
     cursor: pointer;
 
-    transition:
-        transform .15s ease;
+    transition: transform .15s ease;
 }
 
-
-.live-actions button:active {
-
-    transform:
-        scale(1.35);
+.like-area button:active {
+    transform: scale(1.35);
 }
 
-
-.live-actions button.liked {
-
-    animation:
-        likePop .3s ease;
-}
-
-
-@keyframes likePop {
-
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.45);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-
-#likeCount {
-
-    font-size: 12px;
-
-    min-width: 20px;
-
-    text-align: center;
+.like-area span {
+    font-size: 13px;
 }
 
 
 /* =========================================================
    FILTER PANEL
-   HIDDEN BY DEFAULT
    ========================================================= */
 
 .filter-panel {
-
-    position: fixed;
+    position: absolute;
 
     left: 0;
     right: 0;
+    bottom: 0;
 
-    bottom: 70px;
+    z-index: 30;
 
-    width: 100%;
-
-    max-height: 29vh;
+    max-height: 72vh;
 
     padding:
-        10px
-        12px
-        calc(
-            9px +
-            env(safe-area-inset-bottom)
-        );
+        16px
+        16px
+        calc(90px + env(safe-area-inset-bottom));
 
     overflow-y: auto;
 
-    overflow-x: hidden;
+    border-radius: 24px 24px 0 0;
 
     background:
-        rgba(12, 12, 18, .95);
+        rgba(15,15,20,.96);
 
-    border-radius:
-        20px
-        20px
-        0
-        0;
+    color: #fff;
 
-    border-top:
-        1px solid
-        rgba(255, 255, 255, .10);
-
-    box-shadow:
-        0 -10px 35px
-        rgba(0, 0, 0, .40);
-
-    backdrop-filter: blur(20px);
-
-    -webkit-backdrop-filter: blur(20px);
-
-    z-index: 100;
-
-    /*
-     * DEFAULT:
-     * panel benar-benar tidak terlihat.
-     */
-
-    transform:
-        translateY(110%);
+    transform: translateY(110%);
 
     opacity: 0;
 
@@ -629,19 +445,12 @@ body {
 
     transition:
         transform .25s ease,
-        opacity .20s ease,
-        visibility .25s ease;
+        opacity .2s ease,
+        visibility .2s ease;
 }
 
-
-/* =========================================================
-   FILTER PANEL OPEN
-   ========================================================= */
-
 .filter-panel.open {
-
-    transform:
-        translateY(0);
+    transform: translateY(0);
 
     opacity: 1;
 
@@ -650,142 +459,111 @@ body {
     pointer-events: auto;
 }
 
-
-/* =========================================================
-   FILTER PANEL TITLE
-   ========================================================= */
-
 .panel-title {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
-    min-height: 30px;
-
-    margin-bottom: 6px;
+    margin-bottom: 12px;
 }
 
-
-.panel-title b {
-
+.panel-title strong {
     display: block;
 
-    font-size: 14px;
+    font-size: 16px;
 }
-
 
 .panel-title small {
-
     display: block;
 
-    margin-top: 1px;
+    margin-top: 3px;
 
-    font-size: 9px;
+    opacity: .65;
 
-    opacity: .60;
+    font-size: 11px;
 }
 
-
-#resetFilter {
-
-    padding:
-        6px
-        10px;
-
+.panel-title button {
     border: 0;
 
-    border-radius: 10px;
+    padding: 7px 12px;
 
-    background:
-        rgba(255, 255, 255, .10);
+    border-radius: 14px;
 
-    color: #fff;
-
-    font-size: 10px;
-}
-
-
-/* =========================================================
-   CLEAR MAIN BUTTON
-   ========================================================= */
-
-.dream-filter-main {
-
-    width: 100%;
-
-    margin-bottom: 7px;
-}
-
-
-.dream-main-button {
-
-    width: 100%;
-
-    min-height: 40px;
-
-    padding:
-        6px
-        10px;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, .10);
-
-    border-radius: 13px;
-
-    background:
-        rgba(255, 255, 255, .07);
+    background: rgba(255,255,255,.12);
 
     color: #fff;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 7px;
 
     cursor: pointer;
 }
 
 
-.dream-main-button.active {
+/* =========================================================
+   DREAM FILTER
+   ========================================================= */
+
+.dream-filter-main {
+    margin-bottom: 14px;
+}
+
+.dream-main-button {
+    width: 100%;
+
+    min-height: 66px;
+
+    border: 1px solid rgba(255,255,255,.14);
+
+    border-radius: 17px;
 
     background:
-        rgba(255, 255, 255, .14);
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.16),
+            rgba(255,255,255,.05)
+        );
 
-    border-color:
-        rgba(255, 255, 255, .25);
+    color: #fff;
 
-    box-shadow:
-        0 0 15px
-        rgba(255, 255, 255, .08);
+    cursor: pointer;
+
+    text-align: left;
+
+    padding: 10px 15px;
 }
-
 
 .dream-main-button span {
+    float: left;
 
-    font-size: 17px;
+    font-size: 28px;
+
+    margin-right: 10px;
 }
-
 
 .dream-main-button strong {
+    display: block;
 
-    font-size: 12px;
+    padding-top: 3px;
 
-    letter-spacing: .7px;
+    font-size: 14px;
 }
 
-
 .dream-main-button small {
+    display: block;
 
-    font-size: 8px;
+    margin-top: 4px;
 
-    opacity: .65;
+    opacity: .7;
+
+    font-size: 10px;
+}
+
+.dream-main-button.active {
+    border-color: rgba(255,255,255,.65);
+
+    box-shadow:
+        0 0 18px rgba(255,255,255,.10);
 }
 
 
@@ -794,73 +572,35 @@ body {
    ========================================================= */
 
 .beauty-controls {
-
     display: grid;
 
-    grid-template-columns:
-        1fr 1fr;
-
-    column-gap: 12px;
-
-    row-gap: 5px;
+    gap: 10px;
 }
-
 
 .beauty-controls label {
-
     display: block;
-
-    min-width: 0;
 }
 
-
 .beauty-controls label > div {
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
-    gap: 5px;
+    margin-bottom: 5px;
 
-    margin-bottom: 1px;
-
-    font-size: 10px;
+    font-size: 12px;
 }
 
-
-.beauty-controls label > div span {
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
+.beauty-controls b {
+    opacity: .8;
 }
 
-
-.beauty-controls label > div b {
-
-    font-size: 9px;
-
-    opacity: .75;
-}
-
-
-/* =========================================================
-   SLIDERS
-   ========================================================= */
-
-.beauty-controls input[type="range"] {
-
+.beauty-controls input {
     width: 100%;
 
-    height: 4px;
-
-    margin: 0;
-
-    padding: 0;
+    height: 5px;
 
     accent-color: #fff;
 
@@ -873,68 +613,48 @@ body {
    ========================================================= */
 
 .auto-light-control {
-
-    margin-top: 7px;
-
-    padding:
-        7px
-        9px;
-
-    min-height: 38px;
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
-    gap: 10px;
+    gap: 15px;
 
-    border-radius: 11px;
+    margin-top: 15px;
 
-    background:
-        rgba(255, 255, 255, .07);
+    padding-top: 14px;
+
+    border-top:
+        1px solid rgba(255,255,255,.1);
 }
-
-
-.auto-light-control > div {
-
-    min-width: 0;
-}
-
 
 .auto-light-control span {
-
     display: block;
+
+    font-size: 12px;
+}
+
+.auto-light-control small {
+    display: block;
+
+    margin-top: 4px;
+
+    opacity: .55;
 
     font-size: 10px;
 }
 
 
-.auto-light-control small {
-
-    display: block;
-
-    margin-top: 2px;
-
-    font-size: 8px;
-
-    opacity: .55;
-}
-
-
 /* =========================================================
-   AUTO LIGHT TOGGLE
+   TOGGLE
    ========================================================= */
 
 .toggle {
-
     position: relative;
 
-    width: 40px;
-    height: 22px;
-
-    flex: 0 0 auto;
+    width: 48px;
+    height: 27px;
 
     padding: 0;
 
@@ -942,66 +662,53 @@ body {
 
     border-radius: 20px;
 
-    background:
-        rgba(255, 255, 255, .20);
+    background: #444;
 
     cursor: pointer;
+
+    flex-shrink: 0;
 }
 
-
 .toggle span {
-
     position: absolute;
 
-    top: 3px;
-    left: 3px;
+    top: 4px;
+    left: 4px;
 
-    width: 16px;
-    height: 16px;
+    width: 19px;
+    height: 19px;
 
     border-radius: 50%;
 
     background: #fff;
 
-    transition:
-        transform .2s ease;
+    transition: transform .2s ease;
 }
-
-
-.toggle.active {
-
-    background:
-        rgba(255, 255, 255, .55);
-}
-
 
 .toggle.active span {
-
-    transform:
-        translateX(18px);
+    transform: translateX(21px);
 }
 
 
 /* =========================================================
-   LIVE BOTTOM CONTROLS
+   BOTTOM CONTROLS
    ========================================================= */
 
 .live-controls {
-
-    position: fixed;
+    position: absolute;
 
     left: 0;
     right: 0;
     bottom: 0;
 
-    width: 100%;
+    z-index: 40;
 
-    height: 70px;
+    min-height: 78px;
 
     padding:
-        5px
         8px
-        env(safe-area-inset-bottom);
+        10px
+        calc(8px + env(safe-area-inset-bottom));
 
     display: flex;
 
@@ -1009,344 +716,109 @@ body {
 
     justify-content: space-around;
 
-    z-index: 120;
-
     background:
         linear-gradient(
             to top,
-            rgba(0, 0, 0, .88),
-            rgba(0, 0, 0, .42),
-            transparent
+            rgba(0,0,0,.78),
+            rgba(0,0,0,0)
         );
 }
 
-
 .live-controls button {
-
-    width: 54px;
-    min-width: 48px;
-
-    height: 55px;
-
-    padding: 3px;
+    width: 62px;
 
     border: 0;
-
-    border-radius: 15px;
 
     background: transparent;
 
     color: #fff;
 
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 2px;
-
-    font-size: 21px;
+    font-size: 23px;
 
     cursor: pointer;
 
-    transition:
-        transform .15s ease,
-        background .15s ease;
+    text-align: center;
 }
-
-
-.live-controls button:active {
-
-    transform:
-        scale(.90);
-
-    background:
-        rgba(255, 255, 255, .08);
-}
-
 
 .live-controls button small {
-
     display: block;
+
+    margin-top: 4px;
 
     font-size: 9px;
 
-    line-height: 1;
-
-    opacity: .85;
+    opacity: .9;
 }
 
-
-/* =========================================================
-   START LIVE BUTTON
-   ========================================================= */
-
 .live-controls .start-live {
-
-    width: 62px;
-    height: 62px;
+    width: 68px;
+    height: 68px;
 
     border-radius: 50%;
 
-    background:
-        rgba(255, 30, 70, .15);
-
-    border:
-        2px solid
-        rgba(255, 255, 255, .9);
+    background: rgba(255,30,60,.95);
 
     box-shadow:
-        0 0 18px
-        rgba(255, 30, 70, .22);
+        0 5px 22px rgba(255,30,60,.28);
 }
-
 
 .live-controls .start-live small {
-
-    position: absolute;
-
-    margin-top: 72px;
-
-    white-space: nowrap;
-
-    font-size: 9px;
-}
-
-
-.live-controls .start-live.is-live {
-
-    background:
-        rgba(255, 30, 70, .45);
+    margin-top: 0;
 }
 
 
 /* =========================================================
-   BUTTON OFF STATE
-   ========================================================= */
-
-.live-controls button.off {
-
-    opacity: .45;
-}
-
-
-/* =========================================================
-   HIDE SCROLLBAR
-   ========================================================= */
-
-.filter-panel::-webkit-scrollbar {
-
-    width: 3px;
-}
-
-
-.filter-panel::-webkit-scrollbar-track {
-
-    background: transparent;
-}
-
-
-.filter-panel::-webkit-scrollbar-thumb {
-
-    background:
-        rgba(255, 255, 255, .25);
-
-    border-radius: 10px;
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-    .live-header {
-
-        height: 64px;
-
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
-
-    .light-status {
-
-        top: 70px;
-
-        right: 9px;
-
-    }
-
-
-    .live-info {
-
-        left: 9px;
-        right: 9px;
-
-        bottom: 76px;
-    }
-
-
-    .filter-panel {
-
-        bottom: 66px;
-
-        max-height: 28vh;
-
-        padding:
-            8px
-            10px
-            calc(
-                8px +
-                env(safe-area-inset-bottom)
-            );
-    }
-
-
-    .live-controls {
-
-        height: 66px;
-
-        padding-left: 4px;
-        padding-right: 4px;
-    }
-
-
-    .live-controls button {
-
-        width: 50px;
-
-        min-width: 44px;
-
-    }
-
-
-    .live-controls .start-live {
-
-        width: 58px;
-        height: 58px;
-
-    }
-
-}
-
-
-/* =========================================================
-   VERY SMALL PHONE
-   ========================================================= */
-
-@media (max-height: 700px) {
-
-    .filter-panel {
-
-        max-height: 24vh;
-
-    }
-
-
-    .live-info {
-
-        bottom: 70px;
-
-    }
-
-
-    .beauty-controls {
-
-        row-gap: 3px;
-
-    }
-
-
-    .auto-light-control {
-
-        margin-top: 5px;
-
-    }
-
-}
-
-
-/* =========================================================
-   LANDSCAPE
+   MOBILE LANDSCAPE
    ========================================================= */
 
 @media (orientation: landscape) {
 
     .filter-panel {
-
         left: 50%;
+
         right: auto;
 
-        width:
-            min(
-                430px,
-                55vw
-            );
+        width: min(430px, 70vw);
 
-        bottom: 58px;
+        border-radius: 20px;
 
-        max-height: 55vh;
-
-        border-radius: 18px;
+        bottom: 12px;
 
         transform:
-            translate(
-                -50%,
-                110%
-            );
-    }
+            translate(-50%, 110%);
 
+        padding-bottom: 20px;
+    }
 
     .filter-panel.open {
-
         transform:
-            translate(
-                -50%,
-                0
-            );
+            translate(-50%, 0);
     }
-
 
     .live-info {
-
-        bottom: 64px;
-
-    }
-
-
-    .live-controls {
-
-        height: 58px;
-
+        bottom: 90px;
     }
 
 }
 
 
 /* =========================================================
-   REDUCED MOTION
+   SMALL SCREEN
    ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+@media (max-height: 650px) {
 
-    *,
-    *::before,
-    *::after {
+    .live-controls {
+        min-height: 68px;
+    }
 
-        animation-duration:
-            .01ms !important;
+    .live-controls .start-live {
+        width: 58px;
+        height: 58px;
+    }
 
-        animation-iteration-count:
-            1 !important;
-
-        transition-duration:
-            .01ms !important;
-
+    .filter-panel {
+        max-height: 68vh;
     }
 
 }
