@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width,
-        initial-scale=1.0,
-        maximum-scale=1.0,
-        user-scalable=no">
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
     <meta name="theme-color" content="#000000">
 
@@ -22,22 +19,21 @@
 
 <div class="live-app">
 
-    <!-- =====================================
-         LIVE HEADER
-    ====================================== -->
-
+    <!-- HEADER -->
     <header class="live-header">
 
         <button
             id="closeLive"
+            class="header-button"
             type="button"
-            aria-label="Tutup Live">
+            aria-label="Tutup Live"
+        >
             ✕
         </button>
 
         <div class="live-title">
             <span class="live-dot"></span>
-            <b>LIVE</b>
+            <strong>LIVE</strong>
         </div>
 
         <div class="viewer-count">
@@ -47,78 +43,65 @@
     </header>
 
 
-    <!-- =====================================
-         CAMERA AREA
-    ====================================== -->
-
+    <!-- CAMERA -->
     <main class="camera-area">
 
         <video
             id="camera"
             autoplay
             muted
-            playsinline>
-        </video>
+            playsinline
+            webkit-playsinline
+        ></video>
 
-        <!-- Canvas untuk Dream Like Filter -->
-        <canvas
-            id="filterCanvas">
-        </canvas>
+        <!--
+            Canvas hanya muncul ketika filter aktif.
+            Jadi kalau filter error, kamera tetap terlihat.
+        -->
+        <canvas id="filterCanvas"></canvas>
 
-        <!-- Status kamera -->
-        <div
-            id="cameraStatus"
-            class="camera-status">
+
+        <!-- CAMERA STATUS -->
+        <div id="cameraStatus" class="camera-status">
             📷 Menyiapkan kamera...
         </div>
 
 
-        <!-- Auto Light Status -->
-
-        <div
-            id="lightStatus"
-            class="light-status">
-
+        <!-- LIGHT STATUS -->
+        <div id="lightStatus" class="light-status">
             ☀️ AUTO LIGHT
-
         </div>
 
 
         <!-- LIVE INFO -->
-
         <div class="live-info">
 
             <div class="host-info">
 
                 <img
                     src="assets/logo.png"
-                    alt="Host">
+                    alt="Host"
+                >
 
                 <div>
-
-                    <b>CHUK USER</b>
-
-                    <small id="liveTime">
-                        00:00
-                    </small>
-
+                    <strong>CHUK USER</strong>
+                    <small id="liveTime">00:00</small>
                 </div>
 
             </div>
 
 
-            <div class="live-actions">
+            <div class="like-area">
 
                 <button
-                    type="button"
                     id="likeButton"
-                    aria-label="Like">
+                    type="button"
+                    aria-label="Like"
+                >
                     ❤️
                 </button>
 
-                <span id="likeCount">
-                    0
-                </span>
+                <span id="likeCount">0</span>
 
             </div>
 
@@ -127,58 +110,43 @@
     </main>
 
 
-    <!-- =====================================
-         DREAM LIKE FILTER
-    ====================================== -->
-
+    <!-- FILTER PANEL -->
     <section
         id="filterPanel"
-        class="filter-panel">
+        class="filter-panel"
+    >
 
         <div class="panel-title">
 
             <div>
-
-                <b>
-                    ✨ Dream Like
-                </b>
-
-                <small>
-                    Plastic 90%
-                </small>
-
+                <strong>✨ Dream Like</strong>
+                <small>Plastic 90%</small>
             </div>
-
 
             <button
                 id="resetFilter"
-                type="button">
-
+                type="button"
+            >
                 Reset
-
             </button>
 
         </div>
 
 
         <!-- MAIN FILTER -->
-
         <div class="dream-filter-main">
 
             <button
                 id="dreamLikeButton"
                 class="dream-main-button active"
-                type="button">
+                type="button"
+            >
 
                 <span>✨</span>
 
-                <strong>
-                    DREAM LIKE
-                </strong>
+                <strong>DREAM LIKE</strong>
 
-                <small>
-                    PLASTIC 90%
-                </small>
+                <small>PLASTIC 90%</small>
 
             </button>
 
@@ -186,24 +154,13 @@
 
 
         <!-- BEAUTY CONTROLS -->
-
         <div class="beauty-controls">
-
-
-            <!-- Plastic -->
 
             <label>
 
                 <div>
-
-                    <span>
-                        🧴 Plastic Skin
-                    </span>
-
-                    <b id="plasticValue">
-                        90%
-                    </b>
-
+                    <span>🧴 Plastic Skin</span>
+                    <b id="plasticValue">90%</b>
                 </div>
 
                 <input
@@ -211,25 +168,17 @@
                     type="range"
                     min="0"
                     max="100"
-                    value="90">
+                    value="90"
+                >
 
             </label>
 
 
-            <!-- Glow -->
-
             <label>
 
                 <div>
-
-                    <span>
-                        ✨ Dream Glow
-                    </span>
-
-                    <b id="glowValue">
-                        65%
-                    </b>
-
+                    <span>✨ Dream Glow</span>
+                    <b id="glowValue">65%</b>
                 </div>
 
                 <input
@@ -237,25 +186,17 @@
                     type="range"
                     min="0"
                     max="100"
-                    value="65">
+                    value="65"
+                >
 
             </label>
 
 
-            <!-- Brightness -->
-
             <label>
 
                 <div>
-
-                    <span>
-                        💎 Brightness
-                    </span>
-
-                    <b id="brightnessValue">
-                        35%
-                    </b>
-
+                    <span>💎 Brightness</span>
+                    <b id="brightnessValue">35%</b>
                 </div>
 
                 <input
@@ -263,25 +204,17 @@
                     type="range"
                     min="0"
                     max="100"
-                    value="35">
+                    value="35"
+                >
 
             </label>
 
 
-            <!-- Soft Focus -->
-
             <label>
 
                 <div>
-
-                    <span>
-                        🌸 Soft Focus
-                    </span>
-
-                    <b id="softFocusValue">
-                        55%
-                    </b>
-
+                    <span>🌸 Soft Focus</span>
+                    <b id="softFocusValue">55%</b>
                 </div>
 
                 <input
@@ -289,25 +222,17 @@
                     type="range"
                     min="0"
                     max="100"
-                    value="55">
+                    value="55"
+                >
 
             </label>
 
 
-            <!-- Face Detail -->
-
             <label>
 
                 <div>
-
-                    <span>
-                        👀 Face Detail
-                    </span>
-
-                    <b id="detailValue">
-                        25%
-                    </b>
-
+                    <span>👀 Face Detail</span>
+                    <b id="detailValue">25%</b>
                 </div>
 
                 <input
@@ -315,7 +240,8 @@
                     type="range"
                     min="0"
                     max="100"
-                    value="25">
+                    value="25"
+                >
 
             </label>
 
@@ -323,14 +249,11 @@
 
 
         <!-- AUTO LIGHT -->
-
         <div class="auto-light-control">
 
             <div>
 
-                <span>
-                    ☀️🌙 Auto Siang / Malam
-                </span>
+                <span>☀️🌙 Auto Siang / Malam</span>
 
                 <small id="autoLightText">
                     Aktif — menyesuaikan cahaya otomatis
@@ -338,15 +261,13 @@
 
             </div>
 
-
             <button
                 id="autoLightButton"
                 class="toggle active"
                 type="button"
-                aria-label="Auto Light">
-
+                aria-label="Auto Light"
+            >
                 <span></span>
-
             </button>
 
         </div>
@@ -354,86 +275,52 @@
     </section>
 
 
-    <!-- =====================================
-         LIVE CONTROLS
-    ====================================== -->
-
+    <!-- BOTTOM CONTROLS -->
     <footer class="live-controls">
-
-
-        <!-- CAMERA -->
 
         <button
             id="cameraButton"
-            type="button">
-
+            type="button"
+        >
             📹
-
-            <small>
-                Kamera
-            </small>
-
+            <small>Kamera</small>
         </button>
 
-
-        <!-- MIC -->
 
         <button
             id="micButton"
-            type="button">
-
+            type="button"
+        >
             🎤
-
-            <small>
-                Mic
-            </small>
-
+            <small>Mic</small>
         </button>
 
-
-        <!-- START LIVE -->
 
         <button
             id="startLiveButton"
             class="start-live"
-            type="button">
-
+            type="button"
+        >
             🔴
-
-            <small>
-                Mulai Live
-            </small>
-
+            <small>Mulai Live</small>
         </button>
 
-
-        <!-- FLIP -->
 
         <button
             id="flipButton"
-            type="button">
-
+            type="button"
+        >
             🔄
-
-            <small>
-                Flip
-            </small>
-
+            <small>Flip</small>
         </button>
 
 
-        <!-- FILTER -->
-
         <button
             id="filterButton"
-            type="button">
-
+            type="button"
+        >
             ✨
-
-            <small>
-                Filter
-            </small>
-
+            <small>Filter</small>
         </button>
 
     </footer>
@@ -441,19 +328,11 @@
 </div>
 
 
-<!-- =====================================
-     FILTER ENGINE
-====================================== -->
-
+<!-- FILTER JS -->
 <script src="dream-like-filter.js"></script>
 
-
-<!-- =====================================
-     LIVE SCRIPT
-====================================== -->
-
+<!-- LIVE JS -->
 <script src="live.js"></script>
-
 
 </body>
 </html>
