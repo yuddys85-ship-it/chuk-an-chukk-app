@@ -9,265 +9,402 @@
     >
 
     <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <title>CHUK AN CHUKK - LIVE</title>
+    <title>CHUK AN CHUKK — Live</title>
 
     <link rel="stylesheet" href="live.css">
 </head>
 
 <body>
 
-<div class="live-app">
+<div id="liveApp" class="live-app">
 
-    <!-- HEADER -->
+    <!-- =====================================================
+         CAMERA SOURCE
+         Video asli disembunyikan.
+         Tampilan kamera utama menggunakan Canvas agar
+         tidak mengikuti efek mirror preview browser.
+         ===================================================== -->
+
+    <video
+        id="camera"
+        class="camera-source"
+        autoplay
+        muted
+        playsinline
+        webkit-playsinline
+        preload="none"
+    ></video>
+
+    <!-- Kamera + filter ditampilkan melalui Canvas -->
+    <canvas id="filterCanvas"></canvas>
+
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
     <header class="live-header">
 
         <button
-            id="closeLive"
+            id="closeLiveButton"
             class="header-button"
             type="button"
             aria-label="Tutup Live"
+            title="Tutup"
         >
             ✕
         </button>
 
         <div class="live-title">
             <span class="live-dot"></span>
-            <strong>LIVE</strong>
+            <span>LIVE</span>
         </div>
 
-        <div class="viewer-count">
-            👁️ <span id="viewerCount">0</span>
+        <div class="viewer-box">
+            <span class="viewer-icon">👁</span>
+            <span id="viewerCount">0</span>
         </div>
 
     </header>
 
 
-    <!-- CAMERA -->
-    <main class="camera-area">
+    <!-- =====================================================
+         CAMERA STATUS
+         ===================================================== -->
 
-        <video
-            id="camera"
-            autoplay
-            muted
-            playsinline
-            webkit-playsinline
-        ></video>
-
-        <!--
-            Canvas hanya muncul ketika filter aktif.
-            Jadi kalau filter error, kamera tetap terlihat.
-        -->
-        <canvas id="filterCanvas"></canvas>
+    <div id="cameraStatus" class="camera-status">
+        Menyiapkan kamera...
+    </div>
 
 
-        <!-- CAMERA STATUS -->
-        <div id="cameraStatus" class="camera-status">
-            📷 Menyiapkan kamera...
+    <!-- =====================================================
+         HOST INFORMATION
+         ===================================================== -->
+
+    <section class="host-info">
+
+        <div class="host-avatar">
+            <span>👤</span>
         </div>
 
+        <div class="host-details">
 
-        <!-- LIGHT STATUS -->
-        <div id="lightStatus" class="light-status">
-            ☀️ AUTO LIGHT
-        </div>
+            <strong id="hostName">
+                Chuk an Chukk
+            </strong>
 
-
-        <!-- LIVE INFO -->
-        <div class="live-info">
-
-            <div class="host-info">
-
-                <img
-                    src="assets/logo.png"
-                    alt="Host"
-                >
-
-                <div>
-                    <strong>CHUK USER</strong>
-                    <small id="liveTime">00:00</small>
-                </div>
-
-            </div>
-
-
-            <div class="like-area">
-
-                <button
-                    id="likeButton"
-                    type="button"
-                    aria-label="Like"
-                >
-                    ❤️
-                </button>
-
-                <span id="likeCount">0</span>
-
-            </div>
+            <span id="hostUsername">
+                @chukanchukk
+            </span>
 
         </div>
 
-    </main>
+        <button
+            id="followButton"
+            class="follow-button"
+            type="button"
+        >
+            Follow
+        </button>
+
+    </section>
 
 
-    <!-- FILTER PANEL -->
+    <!-- =====================================================
+         LIVE DESCRIPTION
+         ===================================================== -->
+
+    <div class="live-description">
+        <span id="liveDescription">
+            Selamat datang di Chuk an Chukk Live 🔥
+        </span>
+    </div>
+
+
+    <!-- =====================================================
+         COMMENTS
+         Model TikTok:
+         komentar muncul di bagian bawah kiri.
+         ===================================================== -->
+
+    <section
+        id="commentsContainer"
+        class="comments-container"
+        aria-label="Komentar Live"
+    >
+
+        <div id="commentsList" class="comments-list">
+
+            <!-- Komentar akan dibuat oleh live.js -->
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         LIKE AREA
+         ===================================================== -->
+
+    <div class="like-area">
+
+        <button
+            id="likeButton"
+            class="side-button like-button"
+            type="button"
+            aria-label="Like"
+            title="Like"
+        >
+            <span class="side-icon">❤️</span>
+            <span id="likeCount">0</span>
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         RIGHT SIDE CONTROLS
+         ===================================================== -->
+
+    <aside class="side-controls">
+
+        <button
+            id="commentButton"
+            class="side-button"
+            type="button"
+            aria-label="Komentar"
+            title="Komentar"
+        >
+            <span class="side-icon">💬</span>
+            <span>Chat</span>
+        </button>
+
+
+        <button
+            id="flipButton"
+            class="side-button"
+            type="button"
+            aria-label="Balik Kamera"
+            title="Balik Kamera"
+        >
+            <span class="side-icon">🔄</span>
+            <span>Flip</span>
+        </button>
+
+
+        <button
+            id="cameraButton"
+            class="side-button"
+            type="button"
+            aria-label="Kamera"
+            title="Kamera"
+        >
+            <span
+                id="cameraIcon"
+                class="side-icon"
+            >
+                📷
+            </span>
+
+            <span id="cameraText">
+                Camera
+            </span>
+        </button>
+
+
+        <button
+            id="micButton"
+            class="side-button"
+            type="button"
+            aria-label="Microphone"
+            title="Microphone"
+        >
+            <span
+                id="micIcon"
+                class="side-icon"
+            >
+                🎤
+            </span>
+
+            <span id="micText">
+                Mic
+            </span>
+        </button>
+
+
+        <button
+            id="filterButton"
+            class="side-button filter-button"
+            type="button"
+            aria-label="Filter"
+            title="Filter wajah"
+        >
+            <span class="side-icon">✨</span>
+            <span>Filter</span>
+        </button>
+
+    </aside>
+
+
+    <!-- =====================================================
+         FILTER PANEL
+         Default: TERSEMBUNYI
+         ===================================================== -->
+
     <section
         id="filterPanel"
         class="filter-panel"
+        aria-label="Pengaturan Filter"
     >
 
-        <div class="panel-title">
+        <div class="filter-panel-header">
 
             <div>
-                <strong>✨ Dream Like</strong>
-                <small>Plastic 90%</small>
+                <strong>✨ Beauty Filter</strong>
+
+                <small>
+                    Dream Like Plastic
+                </small>
             </div>
 
             <button
-                id="resetFilter"
+                id="closeFilterButton"
                 type="button"
+                class="panel-close"
+                aria-label="Tutup Filter"
             >
-                Reset
+                ✕
             </button>
 
         </div>
 
 
-        <!-- MAIN FILTER -->
-        <div class="dream-filter-main">
+        <!-- Dream Like -->
+        <button
+            id="dreamLikeButton"
+            class="dream-filter-button"
+            type="button"
+        >
+            ✨ Dream Like
+        </button>
 
-            <button
-                id="dreamLikeButton"
-                class="dream-main-button active"
-                type="button"
+
+        <!-- Plastic -->
+        <div class="filter-control">
+
+            <div class="filter-label">
+                <span>Plastic</span>
+                <span id="plasticValue">90</span>
+            </div>
+
+            <input
+                id="plasticSlider"
+                type="range"
+                min="0"
+                max="100"
+                value="90"
             >
 
-                <span>✨</span>
+        </div>
 
-                <strong>DREAM LIKE</strong>
 
-                <small>PLASTIC 90%</small>
+        <!-- Glow -->
+        <div class="filter-control">
 
-            </button>
+            <div class="filter-label">
+                <span>Glow</span>
+                <span id="glowValue">65</span>
+            </div>
+
+            <input
+                id="glowSlider"
+                type="range"
+                min="0"
+                max="100"
+                value="65"
+            >
 
         </div>
 
 
-        <!-- BEAUTY CONTROLS -->
-        <div class="beauty-controls">
+        <!-- Brightness -->
+        <div class="filter-control">
 
-            <label>
+            <div class="filter-label">
+                <span>Brightness</span>
+                <span id="brightnessValue">35</span>
+            </div>
 
-                <div>
-                    <span>🧴 Plastic Skin</span>
-                    <b id="plasticValue">90%</b>
-                </div>
-
-                <input
-                    id="plasticRange"
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="90"
-                >
-
-            </label>
-
-
-            <label>
-
-                <div>
-                    <span>✨ Dream Glow</span>
-                    <b id="glowValue">65%</b>
-                </div>
-
-                <input
-                    id="glowRange"
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="65"
-                >
-
-            </label>
-
-
-            <label>
-
-                <div>
-                    <span>💎 Brightness</span>
-                    <b id="brightnessValue">35%</b>
-                </div>
-
-                <input
-                    id="brightnessRange"
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="35"
-                >
-
-            </label>
-
-
-            <label>
-
-                <div>
-                    <span>🌸 Soft Focus</span>
-                    <b id="softFocusValue">55%</b>
-                </div>
-
-                <input
-                    id="softFocusRange"
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="55"
-                >
-
-            </label>
-
-
-            <label>
-
-                <div>
-                    <span>👀 Face Detail</span>
-                    <b id="detailValue">25%</b>
-                </div>
-
-                <input
-                    id="detailRange"
-                    type="range"
-                    min="0"
-                    max="100"
-                    value="25"
-                >
-
-            </label>
+            <input
+                id="brightnessSlider"
+                type="range"
+                min="0"
+                max="100"
+                value="35"
+            >
 
         </div>
 
 
-        <!-- AUTO LIGHT -->
-        <div class="auto-light-control">
+        <!-- Soft Focus -->
+        <div class="filter-control">
+
+            <div class="filter-label">
+                <span>Soft Focus</span>
+                <span id="softFocusValue">55</span>
+            </div>
+
+            <input
+                id="softFocusSlider"
+                type="range"
+                min="0"
+                max="100"
+                value="55"
+            >
+
+        </div>
+
+
+        <!-- Detail -->
+        <div class="filter-control">
+
+            <div class="filter-label">
+                <span>Detail</span>
+                <span id="detailValue">25</span>
+            </div>
+
+            <input
+                id="detailSlider"
+                type="range"
+                min="0"
+                max="100"
+                value="25"
+            >
+
+        </div>
+
+
+        <!-- Auto Light -->
+        <div class="filter-option">
 
             <div>
+                <strong>💡 Auto Light</strong>
 
-                <span>☀️🌙 Auto Siang / Malam</span>
-
-                <small id="autoLightText">
-                    Aktif — menyesuaikan cahaya otomatis
+                <small>
+                    Sesuaikan pencahayaan otomatis
                 </small>
-
             </div>
 
             <button
                 id="autoLightButton"
-                class="toggle active"
+                class="toggle-button active"
                 type="button"
-                aria-label="Auto Light"
+                aria-pressed="true"
             >
-                <span></span>
+                ON
             </button>
 
         </div>
@@ -275,63 +412,121 @@
     </section>
 
 
-    <!-- BOTTOM CONTROLS -->
+    <!-- =====================================================
+         COMMENT INPUT
+         ===================================================== -->
+
+    <section
+        id="commentInputArea"
+        class="comment-input-area"
+    >
+
+        <input
+            id="commentInput"
+            type="text"
+            maxlength="150"
+            autocomplete="off"
+            placeholder="Tulis komentar..."
+        >
+
+        <button
+            id="sendCommentButton"
+            type="button"
+            aria-label="Kirim komentar"
+        >
+            ➤
+        </button>
+
+    </section>
+
+
+    <!-- =====================================================
+         BOTTOM LIVE CONTROLS
+         ===================================================== -->
+
     <footer class="live-controls">
 
         <button
-            id="cameraButton"
+            id="bottomMicButton"
+            class="bottom-control"
             type="button"
+            aria-label="Microphone"
         >
-            📹
-            <small>Kamera</small>
+            🎤
+            <span>Mic</span>
         </button>
 
 
         <button
-            id="micButton"
+            id="bottomFilterButton"
+            class="bottom-control"
             type="button"
+            aria-label="Filter"
         >
-            🎤
-            <small>Mic</small>
+            ✨
+            <span>Filter</span>
         </button>
 
 
         <button
             id="startLiveButton"
-            class="start-live"
+            class="start-live-button"
             type="button"
         >
             🔴
-            <small>Mulai Live</small>
+            <span id="startLiveText">
+                Mulai Live
+            </span>
         </button>
 
 
         <button
-            id="flipButton"
+            id="bottomFlipButton"
+            class="bottom-control"
             type="button"
+            aria-label="Flip Kamera"
         >
             🔄
-            <small>Flip</small>
-        </button>
-
-
-        <button
-            id="filterButton"
-            type="button"
-        >
-            ✨
-            <small>Filter</small>
+            <span>Flip</span>
         </button>
 
     </footer>
 
+
+    <!-- =====================================================
+         LIVE TIMER
+         ===================================================== -->
+
+    <div
+        id="liveTimer"
+        class="live-timer"
+    >
+        00:00
+    </div>
+
+
+    <!-- =====================================================
+         LIGHT STATUS
+         ===================================================== -->
+
+    <div
+        id="lightStatus"
+        class="light-status"
+    >
+        💡 Auto Light
+    </div>
+
 </div>
 
 
-<!-- FILTER JS -->
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<!-- Beauty filter -->
 <script src="dream-like-filter.js"></script>
 
-<!-- LIVE JS -->
+<!-- Live controller -->
 <script src="live.js"></script>
 
 </body>
