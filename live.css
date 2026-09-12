@@ -1,827 +1,381 @@
- /* =========================================================
-   CHUK AN CHUKK
-   LIVE CSS
-   FULLSCREEN CAMERA
-   ========================================================= */
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 html,
-body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-
-    overflow: hidden;
-
-    background: #000;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    font-family:Arial,sans-serif;
 }
 
-body {
-    position: fixed;
-    inset: 0;
+.live-app{
+    width:100%;
+    height:100%;
+    position:relative;
+    background:#000;
+    color:#fff;
 }
 
+.live-header{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:62px;
 
-/* =========================================================
-   APP
-   ========================================================= */
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
 
-.live-app {
-    position: fixed;
+    padding:0 15px;
 
-    inset: 0;
+    z-index:20;
 
-    width: 100vw;
-    height: 100vh;
-
-    overflow: hidden;
-
-    background: #000;
+    background:linear-gradient(
+        rgba(0,0,0,.65),
+        transparent
+    );
 }
 
-@supports (height: 100dvh) {
+.live-header button{
+    border:0;
+    background:rgba(0,0,0,.35);
+    color:#fff;
 
-    .live-app {
-        height: 100dvh;
+    width:40px;
+    height:40px;
+
+    border-radius:50%;
+    font-size:20px;
+
+    cursor:pointer;
+}
+
+.live-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:17px;
+}
+
+.live-dot{
+    width:10px;
+    height:10px;
+
+    background:#ff1744;
+    border-radius:50%;
+
+    box-shadow:0 0 12px #ff1744;
+
+    animation:livePulse 1s infinite;
+}
+
+@keyframes livePulse{
+    50%{
+        opacity:.35;
     }
-
 }
 
-
-/* =========================================================
-   CAMERA AREA
-   ========================================================= */
-
-#camera {
-    position: absolute;
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    margin: 0;
-    padding: 0;
-
-    background: #000;
-
-    object-fit: cover;
-    object-position: center center;
-
-    /* NON-MIRROR */
-    transform: scaleX(1) !important;
-
-    /* Jangan biarkan browser melakukan mirror */
-    -webkit-transform: scaleX(1) !important;
-
-    z-index: 1;
-}
-/* =========================================================
-   VIDEO
-   ========================================================= */
-
-#camera {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    margin: 0;
-    padding: 0;
-
-    background: #000;
-
-    /*
-       COVER = layar penuh.
-       NONE = kamera TIDAK mirror.
-    */
-
-    object-fit: cover;
-    object-position: center center;
-
-    transform: none;
-
-    z-index: 1;
+.viewer-count{
+    background:rgba(0,0,0,.45);
+    padding:8px 12px;
+    border-radius:20px;
+    font-size:13px;
 }
 
+.camera-area{
+    position:absolute;
+    inset:0;
 
-/* =========================================================
-   FILTER CANVAS
-   ========================================================= */
+    background:#111;
 
-#filterCanvas {
-    position: absolute;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    display: none;
-
-    margin: 0;
-    padding: 0;
-
-    background: transparent;
-
-    object-fit: cover;
-    object-position: center center;
-
-    transform: none;
-
-    z-index: 2;
-
-    pointer-events: none;
+    overflow:hidden;
 }
 
+#camera{
+    width:100%;
+    height:100%;
 
-/* =========================================================
-   HEADER
-   ========================================================= */
+    object-fit:cover;
 
-.live-header {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 70px;
-
-    padding:
-        env(safe-area-inset-top)
-        16px
-        10px
-        16px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    z-index: 20;
-
-    color: #fff;
-
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(0,0,0,.55),
-            rgba(0,0,0,0)
-        );
-}
-
-.header-button {
-    width: 42px;
-    height: 42px;
-
-    border: 0;
-    border-radius: 50%;
-
-    background: rgba(0,0,0,.45);
-
-    color: #fff;
-
-    font-size: 20px;
-
-    cursor: pointer;
-}
-
-.live-title {
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    font-size: 17px;
-}
-
-.live-dot {
-    width: 10px;
-    height: 10px;
-
-    border-radius: 50%;
-
-    background: #ff1744;
-
-    box-shadow:
-        0 0 12px rgba(255,23,68,.9);
-
-    animation: livePulse 1.2s infinite;
-}
-
-@keyframes livePulse {
-
-    0% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: .45;
-        transform: scale(.75);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-}
-
-.viewer-count {
-    padding: 8px 12px;
-
-    border-radius: 20px;
-
-    background: rgba(0,0,0,.45);
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   CAMERA STATUS
-   ========================================================= */
-
-.camera-status {
-    position: absolute;
-
-    top: 50%;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    z-index: 15;
-
-    padding: 14px 18px;
-
-    border-radius: 14px;
-
-    color: #fff;
-
-    background: rgba(0,0,0,.65);
-
-    font-size: 14px;
-
-    text-align: center;
-
-    white-space: nowrap;
-}
-
-.camera-status.hidden {
-    display: none;
-}
-
-
-/* =========================================================
-   LIGHT STATUS
-   ========================================================= */
-
-.light-status {
-    position: absolute;
-
-    top: 82px;
-    left: 14px;
-
-    z-index: 15;
-
-    padding: 7px 11px;
-
-    border-radius: 14px;
-
-    background: rgba(0,0,0,.38);
-
-    color: #fff;
-
-    font-size: 11px;
-}
-
-
-/* =========================================================
-   LIVE INFO
-   ========================================================= */
-
-.live-info {
-    position: absolute;
-
-    left: 14px;
-    right: 14px;
-    bottom: 105px;
-
-    z-index: 15;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: space-between;
-}
-
-.host-info {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    color: #fff;
-}
-
-.host-info img {
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    object-fit: cover;
-
-    border: 2px solid rgba(255,255,255,.85);
-
-    background: #fff;
-}
-
-.host-info strong {
-    display: block;
-
-    font-size: 13px;
-}
-
-.host-info small {
-    display: block;
-
-    margin-top: 3px;
-
-    opacity: .8;
-
-    font-size: 11px;
-}
-
-.like-area {
-    display: flex;
-
-    align-items: center;
-
-    gap: 5px;
-
-    color: #fff;
-}
-
-.like-area button {
-    border: 0;
-
-    background: transparent;
-
-    color: #fff;
-
-    font-size: 32px;
-
-    cursor: pointer;
-
-    transition: transform .15s ease;
-}
-
-.like-area button:active {
-    transform: scale(1.35);
-}
-
-.like-area span {
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   FILTER PANEL
-   ========================================================= */
-
-.filter-panel {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    z-index: 30;
-
-    max-height: 72vh;
-
-    padding:
-        16px
-        16px
-        calc(90px + env(safe-area-inset-bottom));
-
-    overflow-y: auto;
-
-    border-radius: 24px 24px 0 0;
-
-    background:
-        rgba(15,15,20,.96);
-
-    color: #fff;
-
-    transform: translateY(110%);
-
-    opacity: 0;
-
-    visibility: hidden;
-
-    pointer-events: none;
+    transform:scaleX(-1);
 
     transition:
-        transform .25s ease,
-        opacity .2s ease,
-        visibility .2s ease;
+        filter .25s ease,
+        transform .3s ease;
 }
 
-.filter-panel.open {
-    transform: translateY(0);
+.face-glow{
+    position:absolute;
+    inset:0;
 
-    opacity: 1;
+    pointer-events:none;
 
-    visibility: visible;
+    opacity:.2;
 
-    pointer-events: auto;
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(255,220,180,.45),
+            transparent 45%
+        );
+
+    mix-blend-mode:screen;
 }
 
-.panel-title {
-    display: flex;
+.camera-status{
+    position:absolute;
 
-    align-items: center;
+    top:75px;
+    left:50%;
 
-    justify-content: space-between;
+    transform:translateX(-50%);
 
-    margin-bottom: 12px;
+    background:rgba(0,0,0,.65);
+
+    padding:9px 15px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    z-index:10;
 }
 
-.panel-title strong {
-    display: block;
+.live-info{
+    position:absolute;
 
-    font-size: 16px;
+    left:15px;
+    right:15px;
+    bottom:110px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    z-index:10;
 }
 
-.panel-title small {
-    display: block;
-
-    margin-top: 3px;
-
-    opacity: .65;
-
-    font-size: 11px;
+.host-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-.panel-title button {
-    border: 0;
+.host-info img{
+    width:43px;
+    height:43px;
 
-    padding: 7px 12px;
+    border-radius:50%;
+    object-fit:cover;
 
-    border-radius: 14px;
-
-    background: rgba(255,255,255,.12);
-
-    color: #fff;
-
-    cursor: pointer;
+    border:2px solid #fff;
 }
 
-
-/* =========================================================
-   DREAM FILTER
-   ========================================================= */
-
-.dream-filter-main {
-    margin-bottom: 14px;
+.host-info b{
+    display:block;
+    font-size:14px;
 }
 
-.dream-main-button {
-    width: 100%;
+.host-info small{
+    display:block;
+    margin-top:3px;
+    opacity:.75;
+}
 
-    min-height: 66px;
+.live-actions{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
 
-    border: 1px solid rgba(255,255,255,.14);
+.live-actions button{
+    width:46px;
+    height:46px;
 
-    border-radius: 17px;
+    border:0;
+    border-radius:50%;
+
+    background:rgba(0,0,0,.45);
+
+    font-size:22px;
+}
+
+.filter-panel{
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:72px;
+
+    z-index:30;
+
+    padding:12px 14px;
 
     background:
         linear-gradient(
-            135deg,
-            rgba(255,255,255,.16),
-            rgba(255,255,255,.05)
+            transparent,
+            rgba(0,0,0,.92) 25%
         );
 
-    color: #fff;
+    transform:translateY(100%);
 
-    cursor: pointer;
-
-    text-align: left;
-
-    padding: 10px 15px;
+    transition:.3s ease;
 }
 
-.dream-main-button span {
-    float: left;
-
-    font-size: 28px;
-
-    margin-right: 10px;
+.filter-panel.show{
+    transform:translateY(0);
 }
 
-.dream-main-button strong {
-    display: block;
+.panel-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 
-    padding-top: 3px;
-
-    font-size: 14px;
+    margin-bottom:10px;
 }
 
-.dream-main-button small {
-    display: block;
+.panel-title button{
+    border:0;
 
-    margin-top: 4px;
+    background:rgba(255,255,255,.15);
 
-    opacity: .7;
+    color:#fff;
 
-    font-size: 10px;
+    padding:6px 12px;
+
+    border-radius:15px;
 }
 
-.dream-main-button.active {
-    border-color: rgba(255,255,255,.65);
+.filter-list{
+    display:flex;
+    gap:10px;
+
+    overflow-x:auto;
+
+    padding-bottom:8px;
+}
+
+.filter-btn{
+    flex:0 0 auto;
+
+    border:1px solid rgba(255,255,255,.15);
+
+    background:rgba(255,255,255,.08);
+
+    color:#fff;
+
+    border-radius:12px;
+
+    min-width:62px;
+
+    padding:8px 6px;
+}
+
+.filter-btn span{
+    display:block;
+    font-size:22px;
+}
+
+.filter-btn small{
+    display:block;
+    margin-top:3px;
+}
+
+.filter-btn.active{
+    background:#fff;
+    color:#111;
+}
+
+.beauty-controls{
+    display:grid;
+    gap:8px;
+    margin-top:8px;
+}
+
+.beauty-controls label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:12px;
+}
+
+.beauty-controls span{
+    width:90px;
+}
+
+.beauty-controls input{
+    flex:1;
+}
+
+.live-controls{
+    position:absolute;
+
+    bottom:0;
+    left:0;
+    right:0;
+
+    height:72px;
+
+    z-index:40;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    background:rgba(0,0,0,.82);
+}
+
+.live-controls button{
+    border:0;
+    background:none;
+
+    color:#fff;
+
+    min-width:55px;
+
+    font-size:22px;
+}
+
+.live-controls small{
+    display:block;
+    font-size:10px;
+    margin-top:3px;
+}
+
+.start-live{
+    width:70px;
+    height:58px;
+
+    border-radius:18px !important;
+
+    background:#ff1744 !important;
 
     box-shadow:
-        0 0 18px rgba(255,255,255,.10);
+        0 5px 20px rgba(255,23,68,.35);
 }
 
-
-/* =========================================================
-   BEAUTY CONTROLS
-   ========================================================= */
-
-.beauty-controls {
-    display: grid;
-
-    gap: 10px;
+.start-live.live-active{
+    background:#333 !important;
 }
 
-.beauty-controls label {
-    display: block;
-}
+@media(max-width:600px){
 
-.beauty-controls label > div {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    margin-bottom: 5px;
-
-    font-size: 12px;
-}
-
-.beauty-controls b {
-    opacity: .8;
-}
-
-.beauty-controls input {
-    width: 100%;
-
-    height: 5px;
-
-    accent-color: #fff;
-
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   AUTO LIGHT
-   ========================================================= */
-
-.auto-light-control {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 15px;
-
-    margin-top: 15px;
-
-    padding-top: 14px;
-
-    border-top:
-        1px solid rgba(255,255,255,.1);
-}
-
-.auto-light-control span {
-    display: block;
-
-    font-size: 12px;
-}
-
-.auto-light-control small {
-    display: block;
-
-    margin-top: 4px;
-
-    opacity: .55;
-
-    font-size: 10px;
-}
-
-
-/* =========================================================
-   TOGGLE
-   ========================================================= */
-
-.toggle {
-    position: relative;
-
-    width: 48px;
-    height: 27px;
-
-    padding: 0;
-
-    border: 0;
-
-    border-radius: 20px;
-
-    background: #444;
-
-    cursor: pointer;
-
-    flex-shrink: 0;
-}
-
-.toggle span {
-    position: absolute;
-
-    top: 4px;
-    left: 4px;
-
-    width: 19px;
-    height: 19px;
-
-    border-radius: 50%;
-
-    background: #fff;
-
-    transition: transform .2s ease;
-}
-
-.toggle.active span {
-    transform: translateX(21px);
-}
-
-
-/* =========================================================
-   BOTTOM CONTROLS
-   ========================================================= */
-
-.live-controls {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    z-index: 40;
-
-    min-height: 78px;
-
-    padding:
-        8px
-        10px
-        calc(8px + env(safe-area-inset-bottom));
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-around;
-
-    background:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,.78),
-            rgba(0,0,0,0)
-        );
-}
-
-.live-controls button {
-    width: 62px;
-
-    border: 0;
-
-    background: transparent;
-
-    color: #fff;
-
-    font-size: 23px;
-
-    cursor: pointer;
-
-    text-align: center;
-}
-
-.live-controls button small {
-    display: block;
-
-    margin-top: 4px;
-
-    font-size: 9px;
-
-    opacity: .9;
-}
-
-.live-controls .start-live {
-    width: 68px;
-    height: 68px;
-
-    border-radius: 50%;
-
-    background: rgba(255,30,60,.95);
-
-    box-shadow:
-        0 5px 22px rgba(255,30,60,.28);
-}
-
-.live-controls .start-live small {
-    margin-top: 0;
-}
-
-
-/* =========================================================
-   MOBILE LANDSCAPE
-   ========================================================= */
-
-@media (orientation: landscape) {
-
-    .filter-panel {
-        left: 50%;
-
-        right: auto;
-
-        width: min(430px, 70vw);
-
-        border-radius: 20px;
-
-        bottom: 12px;
-
-        transform:
-            translate(-50%, 110%);
-
-        padding-bottom: 20px;
+    .live-info{
+        bottom:90px;
     }
 
-    .filter-panel.open {
-        transform:
-            translate(-50%, 0);
-    }
-
-    .live-info {
-        bottom: 90px;
-    }
-
-}
-
-
-/* =========================================================
-   SMALL SCREEN
-   ========================================================= */
-
-@media (max-height: 650px) {
-
-    .live-controls {
-        min-height: 68px;
-    }
-
-    .live-controls .start-live {
-        width: 58px;
-        height: 58px;
-    }
-
-    .filter-panel {
-        max-height: 68vh;
+    .filter-panel{
+        bottom:70px;
     }
 
 }
