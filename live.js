@@ -1,8 +1,9 @@
 /* =========================================================
    CHUK AN CHUKK
-   LIVE CAMERA V3
-   NON-MIRROR • NO ZOOM • NO CROP
+   LIVE CAMERA V4
+   NO MIRROR • NO ZOOM • NO CROP
    CANVAS CAMERA ENGINE
+   NO DREAM-LIKE-FILTER.JS
    ========================================================= */
 
 "use strict";
@@ -183,8 +184,7 @@ const closeLiveButton =
 
 /* =========================================================
    PREPARE VIDEO
-   Video hanya sumber.
-   Tidak pernah ditampilkan ke user.
+   VIDEO HANYA SUMBER KAMERA
    ========================================================= */
 
 function prepareVideo() {
@@ -204,6 +204,11 @@ function prepareVideo() {
         "webkit-playsinline",
         ""
     );
+
+    /*
+     * Penting:
+     * Video tidak boleh membalik atau memberi filter.
+     */
 
     video.style.transform = "none";
     video.style.webkitTransform = "none";
@@ -229,13 +234,12 @@ function setStatus(text) {
 
 
 /* =========================================================
-   CANVAS RESIZE
+   CANVAS SIZE
    ========================================================= */
 
 function resizeCanvas() {
 
     if (!canvas) return;
-
 
     const width =
         window.innerWidth || 360;
@@ -243,13 +247,11 @@ function resizeCanvas() {
     const height =
         window.innerHeight || 640;
 
-
     const dpr =
         Math.min(
             window.devicePixelRatio || 1,
             2
         );
-
 
     canvas.width =
         Math.round(
@@ -261,7 +263,6 @@ function resizeCanvas() {
             height * dpr
         );
 
-
     canvas.style.width =
         width + "px";
 
@@ -272,7 +273,7 @@ function resizeCanvas() {
 
 
 /* =========================================================
-   CAMERA RENDER
+   RENDER CAMERA
    ========================================================= */
 
 function renderCamera() {
@@ -323,7 +324,7 @@ function renderCamera() {
 
 
     /* =====================================================
-       CLEAR
+       RESET CANVAS
        ===================================================== */
 
     ctx.setTransform(
@@ -337,7 +338,8 @@ function renderCamera() {
 
     ctx.filter = "none";
 
-    ctx.fillStyle = "#000";
+    ctx.fillStyle =
+        "#000000";
 
     ctx.fillRect(
         0,
@@ -380,10 +382,8 @@ function renderCamera() {
 
     const brightness =
         autoLightEnabled
-
             ? 100 +
               filters.brightness * 0.30
-
             : 100 +
               filters.brightness * 0.15;
 
@@ -421,67 +421,23 @@ function renderCamera() {
 
 
     /* =====================================================
-       CAMERA FRONT
-       FORCE NON-MIRROR
+       DRAW RAW CAMERA FRAME
+       
+       IMPORTANT:
+       TIDAK ADA scale(-1,1)
+       TIDAK ADA translate horizontal
+
+       Kamera depan = normal
+       Kamera belakang = normal
        ===================================================== */
 
-    if (
-        currentCamera === "user"
-    ) {
-
-        ctx.save();
-
-
-        /*
-         * Balik horizontal.
-         *
-         * Kamera depan Android/Pi Browser
-         * sering memberikan frame mirrored.
-         *
-         * Canvas dibalik supaya hasil akhir
-         * menjadi NORMAL.
-         */
-
-        ctx.translate(
-            cw,
-            0
-        );
-
-        ctx.scale(
-            -1,
-            1
-        );
-
-
-        ctx.drawImage(
-            video,
-
-            cw - x - drawWidth,
-            y,
-
-            drawWidth,
-            drawHeight
-        );
-
-
-        ctx.restore();
-
-    } else {
-
-        /* =================================================
-           CAMERA BELAKANG
-           NORMAL
-           ================================================= */
-
-        ctx.drawImage(
-            video,
-            x,
-            y,
-            drawWidth,
-            drawHeight
-        );
-
-    }
+    ctx.drawImage(
+        video,
+        x,
+        y,
+        drawWidth,
+        drawHeight
+    );
 
 
     ctx.filter = "none";
@@ -527,7 +483,7 @@ function renderCamera() {
 
 
 /* =========================================================
-   START RENDER
+   START RENDERER
    ========================================================= */
 
 function startRenderer() {
@@ -545,7 +501,7 @@ function startRenderer() {
 
 
 /* =========================================================
-   STOP RENDER
+   STOP RENDERER
    ========================================================= */
 
 function stopRenderer() {
@@ -566,7 +522,7 @@ function stopRenderer() {
 
 
 /* =========================================================
-   STOP TRACKS
+   STOP CAMERA TRACKS
    ========================================================= */
 
 function stopCameraTracks() {
@@ -628,12 +584,12 @@ async function startCamera() {
         stopCameraTracks();
 
 
-        /* =================================================
-           CAMERA REQUEST
-           ================================================= */
-
         let stream;
 
+
+        /* =================================================
+           REQUEST CAMERA
+           ================================================= */
 
         try {
 
@@ -702,7 +658,15 @@ async function startCamera() {
 
                         },
 
-                        audio: true
+                        audio: {
+
+                            echoCancellation: true,
+
+                            noiseSuppression: true,
+
+                            autoGainControl: true
+
+                        }
 
                     });
 
@@ -776,10 +740,24 @@ async function startCamera() {
         );
 
 
+        console.log(
+            "📷 CAMERA:",
+            currentCamera
+        );
+
+
+        console.log(
+            "📐 VIDEO:",
+            video.videoWidth,
+            "x",
+            video.videoHeight
+        );
+
+
     } catch (error) {
 
         console.error(
-            "CHUK CAMERA ERROR:",
+            "❌ CHUK CAMERA ERROR:",
             error
         );
 
@@ -1140,23 +1118,38 @@ if (dreamLikeButton) {
         function() {
 
             if (plasticSlider) {
-                plasticSlider.value = 90;
+
+                plasticSlider.value =
+                    90;
+
             }
 
             if (glowSlider) {
-                glowSlider.value = 65;
+
+                glowSlider.value =
+                    65;
+
             }
 
             if (brightnessSlider) {
-                brightnessSlider.value = 35;
+
+                brightnessSlider.value =
+                    35;
+
             }
 
             if (softFocusSlider) {
-                softFocusSlider.value = 55;
+
+                softFocusSlider.value =
+                    55;
+
             }
 
             if (detailSlider) {
-                detailSlider.value = 25;
+
+                detailSlider.value =
+                    25;
+
             }
 
 
@@ -1285,7 +1278,7 @@ function escapeHTML(text) {
         );
 
     element.textContent =
-        text;
+        String(text);
 
     return element.innerHTML;
 
@@ -1757,3 +1750,28 @@ if (
     initLive();
 
 }
+
+
+/* =========================================================
+   READY
+   ========================================================= */
+
+console.log(
+    "✅ CHUK AN CHUKK LIVE V4 READY"
+);
+
+console.log(
+    "📷 CAMERA: NO MIRROR"
+);
+
+console.log(
+    "🔍 CAMERA: NO ZOOM"
+);
+
+console.log(
+    "✂️ CAMERA: NO CROP"
+);
+
+console.log(
+    "🎨 FILTER ENGINE: LIVE.JS"
+);
