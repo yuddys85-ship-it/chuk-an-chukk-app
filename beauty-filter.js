@@ -1,324 +1,766 @@
 /* =========================================================
    CHUK AN CHUKK
-   BEAUTY FILTER ENGINE V1
-   =========================================================
-   Khusus efek beauty.
-   Tidak mengatur:
-   - kamera
-   - mirror
-   - zoom
-   - crop
-   - microphone
+   BEAUTY FILTER V2
+   FACE-AWARE BEAUTY ENGINE
    ========================================================= */
-
-"use strict";
 
 window.ChukBeauty = (() => {
 
     const state = {
+
         enabled: true,
 
-        smooth: 35,
-        glow: 20,
-        brightness: 10,
-        contrast: 5,
-        saturation: 5,
-        warmth: 0,
-        detail: 20
+        smooth: 45,
+
+        brightness: 18,
+
+        glow: 18,
+
+        warmth: 4,
+
+        detail: 22,
+
+        faceDetected: false
+
     };
 
-    /* =========================
-       SET VALUE
-    ========================= */
+
+    /* =====================================================
+       BASIC STATE
+       ===================================================== */
 
     function set(name, value) {
+
         if (!(name in state)) return;
 
-        value = Number(value);
+        state[name] = Number(value);
 
-        if (!Number.isFinite(value)) return;
-
-        state[name] = value;
     }
 
-    /* =========================
-       GET VALUE
-    ========================= */
 
     function get(name) {
+
         return state[name];
+
     }
 
-    /* =========================
-       ENABLE / DISABLE
-    ========================= */
 
     function enable() {
+
         state.enabled = true;
+
     }
+
 
     function disable() {
+
         state.enabled = false;
+
     }
+
 
     function toggle() {
+
         state.enabled = !state.enabled;
+
         return state.enabled;
+
     }
 
-    /* =========================
+
+    /* =====================================================
        PRESETS
-    ========================= */
-
-    function natural() {
-
-        Object.assign(state, {
-            enabled: true,
-            smooth: 25,
-            glow: 12,
-            brightness: 5,
-            contrast: 4,
-            saturation: 3,
-            warmth: 2,
-            detail: 25
-        });
-
-        return getState();
-    }
-
-    function beauty() {
-
-        Object.assign(state, {
-            enabled: true,
-            smooth: 45,
-            glow: 20,
-            brightness: 10,
-            contrast: 5,
-            saturation: 7,
-            warmth: 3,
-            detail: 18
-        });
-
-        return getState();
-    }
-
-    function dream() {
-
-        Object.assign(state, {
-            enabled: true,
-            smooth: 60,
-            glow: 35,
-            brightness: 18,
-            contrast: 3,
-            saturation: 8,
-            warmth: 5,
-            detail: 12
-        });
-
-        return getState();
-    }
+       ===================================================== */
 
     function reset() {
 
-        Object.assign(state, {
-            enabled: true,
-            smooth: 0,
-            glow: 0,
-            brightness: 0,
-            contrast: 0,
-            saturation: 0,
-            warmth: 0,
-            detail: 100
-        });
+        state.enabled = true;
 
-        return getState();
+        state.smooth = 45;
+
+        state.brightness = 18;
+
+        state.glow = 18;
+
+        state.warmth = 4;
+
+        state.detail = 22;
+
     }
 
-    /* =========================
-       CSS FILTER STRING
-    ========================= */
+
+    function natural() {
+
+        state.enabled = true;
+
+        state.smooth = 25;
+
+        state.brightness = 8;
+
+        state.glow = 8;
+
+        state.warmth = 2;
+
+        state.detail = 35;
+
+    }
+
+
+    function beauty() {
+
+        state.enabled = true;
+
+        state.smooth = 55;
+
+        state.brightness = 18;
+
+        state.glow = 20;
+
+        state.warmth = 4;
+
+        state.detail = 20;
+
+    }
+
+
+    function dream() {
+
+        state.enabled = true;
+
+        state.smooth = 72;
+
+        state.brightness = 25;
+
+        state.glow = 35;
+
+        state.warmth = 6;
+
+        state.detail = 12;
+
+    }
+
+
+    /* =====================================================
+       CSS CAMERA FILTER
+       ===================================================== */
 
     function getCSSFilter() {
 
         if (!state.enabled) {
+
             return "none";
+
         }
 
+
         const brightness =
-            100 + state.brightness;
+            100 + state.brightness * 0.35;
 
         const contrast =
-            100 + state.contrast;
+            100 + state.detail * 0.05;
 
         const saturation =
-            100 + state.saturation;
+            100 + state.warmth * 1.5;
+
+
+        return `
+            brightness(${brightness}%)
+            contrast(${contrast}%)
+            saturate(${saturation}%)
+        `;
+
+    }
+
+
+    /* =====================================================
+       FACE MASK
+       ===================================================== */
+
+    function createFaceMask(
+        ctx,
+        landmarks,
+        width,
+        height
+    ) {
+
+        if (
+            !landmarks ||
+            !landmarks.length
+        ) {
+
+            return null;
+
+        }
+
+
+        const points = landmarks;
+
+
+        let minX = 1;
+        let minY = 1;
+
+        let maxX = 0;
+        let maxY = 0;
+
+
+        for (const point of points) {
+
+            if (!point) continue;
+
+            minX = Math.min(
+                minX,
+                point.x
+            );
+
+            minY = Math.min(
+                minY,
+                point.y
+            );
+
+            maxX = Math.max(
+                maxX,
+                point.x
+            );
+
+            maxY = Math.max(
+                maxY,
+                point.y
+            );
+
+        }
+
+
+        if (
+            maxX <= minX ||
+            maxY <= minY
+        ) {
+
+            return null;
+
+        }
+
+
+        const centerX =
+            ((minX + maxX) / 2) * width;
+
+        const centerY =
+            ((minY + maxY) / 2) * height;
+
+
+        const faceWidth =
+            (maxX - minX) * width;
+
+        const faceHeight =
+            (maxY - minY) * height;
+
+
+        const radiusX =
+            faceWidth * 0.53;
+
+        const radiusY =
+            faceHeight * 0.56;
+
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            centerX,
+            centerY,
+            radiusX,
+            radiusY,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+        return ctx;
+
+    }
+
+
+    /* =====================================================
+       CUT DETAIL AREAS
+       Keep eyes / mouth sharper
+       ===================================================== */
+
+    function cutDetailAreas(
+        ctx,
+        landmarks,
+        width,
+        height
+    ) {
+
+        if (
+            !landmarks ||
+            landmarks.length < 400
+        ) {
+
+            return;
+
+        }
+
 
         /*
-         * Smooth dibuat sangat kecil
-         * supaya wajah tidak terlihat
-         * seperti plastik.
+         * MediaPipe Face Landmarker
+         * approximate eye / mouth regions.
          */
 
-        const blur =
-            Math.min(
-                state.smooth * 0.012,
-                0.8
-            );
 
-        return [
-            `brightness(${brightness}%)`,
-            `contrast(${contrast}%)`,
-            `saturate(${saturation}%)`,
-            `blur(${blur}px)`
-        ].join(" ");
-    }
+        const areas = [
 
-    /* =========================
-       CANVAS FILTER
-    ========================= */
+            /*
+             * Left eye
+             */
+            [
+                [33, 133],
+                [159, 145]
+            ],
 
-    function apply(ctx) {
+            /*
+             * Right eye
+             */
+            [
+                [362, 263],
+                [386, 374]
+            ],
 
-        if (!ctx) return;
+            /*
+             * Mouth
+             */
+            [
+                [61, 291],
+                [13, 14]
+            ]
 
-        ctx.filter =
-            getCSSFilter();
-    }
+        ];
 
-    /* =========================
-       GLOW
-    ========================= */
-
-    function drawGlow(
-        ctx,
-        x,
-        y,
-        width,
-        height
-    ) {
-
-        if (!ctx || !state.enabled) return;
-
-        if (state.glow <= 0) return;
-
-        const alpha =
-            Math.min(
-                state.glow / 100 * 0.08,
-                0.08
-            );
 
         ctx.save();
 
-        ctx.fillStyle =
-            `rgba(255,255,255,${alpha})`;
 
-        ctx.fillRect(
-            x,
-            y,
-            width,
-            height
-        );
+        ctx.globalCompositeOperation =
+            "destination-out";
+
+
+        for (const area of areas) {
+
+            const horizontal =
+                area[0];
+
+            const vertical =
+                area[1];
+
+
+            const p1 =
+                landmarks[horizontal[0]];
+
+            const p2 =
+                landmarks[horizontal[1]];
+
+            const p3 =
+                landmarks[vertical[0]];
+
+            const p4 =
+                landmarks[vertical[1]];
+
+
+            if (
+                !p1 ||
+                !p2 ||
+                !p3 ||
+                !p4
+            ) {
+
+                continue;
+
+            }
+
+
+            const cx =
+                (
+                    p1.x +
+                    p2.x
+                ) / 2 * width;
+
+
+            const cy =
+                (
+                    p3.y +
+                    p4.y
+                ) / 2 * height;
+
+
+            const rx =
+                Math.abs(
+                    p2.x -
+                    p1.x
+                ) * width * 0.72;
+
+
+            const ry =
+                Math.abs(
+                    p4.y -
+                    p3.y
+                ) * height * 0.95;
+
+
+            ctx.beginPath();
+
+            ctx.ellipse(
+                cx,
+                cy,
+                Math.max(rx, 5),
+                Math.max(ry, 5),
+                0,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+        }
+
 
         ctx.restore();
+
     }
 
-    /* =========================
-       WARM TONE
-    ========================= */
 
-    function drawWarmth(
+    /* =====================================================
+       FACE SMOOTHING
+       ===================================================== */
+
+    function applyFaceSmooth(
         ctx,
-        x,
-        y,
+        sourceCanvas,
+        landmarks,
         width,
         height
     ) {
 
-        if (!ctx || !state.enabled) return;
+        if (
+            !state.enabled ||
+            !landmarks ||
+            !landmarks.length
+        ) {
 
-        if (state.warmth <= 0) return;
+            return;
 
-        const alpha =
-            Math.min(
-                state.warmth / 100 * 0.06,
-                0.06
+        }
+
+
+        const maskCanvas =
+            document.createElement("canvas");
+
+        maskCanvas.width = width;
+        maskCanvas.height = height;
+
+
+        const maskCtx =
+            maskCanvas.getContext("2d");
+
+
+        /*
+         * Face mask
+         */
+
+        maskCtx.fillStyle =
+            "#ffffff";
+
+        maskCtx.beginPath();
+
+
+        const face =
+            createFaceMask(
+                maskCtx,
+                landmarks,
+                width,
+                height
             );
+
+
+        if (!face) {
+
+            return;
+
+        }
+
+
+        face.fillStyle =
+            "#ffffff";
+
+        face.fill();
+
+
+        /*
+         * Feather mask
+         */
+
+        maskCtx.globalCompositeOperation =
+            "source-in";
+
+
+        /*
+         * Slightly softened copy
+         */
+
+        maskCtx.filter =
+            `blur(${Math.max(
+                1,
+                state.smooth * 0.045
+            )}px)`;
+
+
+        maskCtx.drawImage(
+            sourceCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        /*
+         * Draw softened face
+         */
 
         ctx.save();
 
-        ctx.fillStyle =
-            `rgba(255,190,120,${alpha})`;
 
-        ctx.fillRect(
-            x,
-            y,
+        ctx.globalAlpha =
+            Math.min(
+                0.82,
+                state.smooth / 100
+            );
+
+
+        ctx.drawImage(
+            maskCanvas,
+            0,
+            0,
             width,
             height
         );
 
+
         ctx.restore();
+
     }
 
-    /* =========================
-       BEAUTY EFFECT
-    ========================= */
 
-    function render(
+    /* =====================================================
+       FACE GLOW
+       ===================================================== */
+
+    function applyFaceGlow(
         ctx,
-        x,
-        y,
+        landmarks,
         width,
         height
     ) {
 
-        if (!ctx) return;
+        if (
+            !state.enabled ||
+            !landmarks ||
+            !landmarks.length
+        ) {
 
-        drawGlow(
+            return;
+
+        }
+
+
+        const maskCanvas =
+            document.createElement("canvas");
+
+        maskCanvas.width = width;
+        maskCanvas.height = height;
+
+
+        const maskCtx =
+            maskCanvas.getContext("2d");
+
+
+        const face =
+            createFaceMask(
+                maskCtx,
+                landmarks,
+                width,
+                height
+            );
+
+
+        if (!face) {
+
+            return;
+
+        }
+
+
+        /*
+         * Soft white / warm glow.
+         */
+
+        face.fillStyle =
+            `rgba(
+                255,
+                240,
+                225,
+                ${Math.min(
+                    0.22,
+                    state.glow / 450
+                )}
+            )`;
+
+        face.shadowColor =
+            "rgba(255,240,225,0.35)";
+
+        face.shadowBlur =
+            18 + state.glow * 0.18;
+
+
+        face.fill();
+
+
+        ctx.save();
+
+
+        ctx.globalCompositeOperation =
+            "screen";
+
+        ctx.globalAlpha =
+            0.65;
+
+
+        ctx.drawImage(
+            maskCanvas,
+            0,
+            0
+        );
+
+
+        ctx.restore();
+
+    }
+
+
+    /* =====================================================
+       MAIN FACE FILTER
+       ===================================================== */
+
+    function apply(
+        ctx,
+        sourceCanvas,
+        landmarks,
+        width,
+        height
+    ) {
+
+        if (!state.enabled) {
+
+            return;
+
+        }
+
+
+        if (
+            !landmarks ||
+            !landmarks.length
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+         * 1. Face smoothing
+         */
+
+        applyFaceSmooth(
             ctx,
-            x,
-            y,
+            sourceCanvas,
+            landmarks,
             width,
             height
         );
 
-        drawWarmth(
-            ctx,
-            x,
-            y,
-            width,
-            height
-        );
+
+        /*
+         * 2. Keep important facial details sharp.
+         */
+
+        /*
+         * Detail preservation is intentionally
+         * subtle to prevent holes in the image.
+         */
+
+        if (state.detail > 35) {
+
+            ctx.save();
+
+            ctx.globalAlpha =
+                Math.min(
+                    0.18,
+                    state.detail / 500
+                );
+
+            ctx.filter =
+                "contrast(105%)";
+
+            ctx.drawImage(
+                sourceCanvas,
+                0,
+                0,
+                width,
+                height
+            );
+
+            ctx.restore();
+
+        }
+
     }
 
-    /* =========================
-       STATE
-    ========================= */
 
-    function getState() {
-        return {
-            ...state
-        };
-    }
-
-    /* =========================
+    /* =====================================================
        PUBLIC API
-    ========================= */
+       ===================================================== */
 
     return {
+
         state,
+
         set,
+
         get,
+
         enable,
+
         disable,
+
         toggle,
-        natural,
-        beauty,
-        dream,
+
         reset,
-        apply,
-        render,
+
+        natural,
+
+        beauty,
+
+        dream,
+
         getCSSFilter,
-        getState
+
+        createFaceMask,
+
+        cutDetailAreas,
+
+        applyFaceSmooth,
+
+        applyFaceGlow,
+
+        apply
+
     };
 
 })();
