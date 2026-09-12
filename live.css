@@ -678,3 +678,53 @@ body{
     }
 
 }
+
+/* =========================================================
+   CHUK AN CHUKK
+   CAMERA CANVAS FIX V5
+   VIDEO = SOURCE ONLY
+   CANVAS = CAMERA DISPLAY
+   NO MIRROR • NO ZOOM • NO CROP
+   ========================================================= */
+
+/* VIDEO HANYA SEBAGAI SUMBER KAMERA */
+#camera {
+    position: fixed !important;
+
+    width: 1px !important;
+    height: 1px !important;
+
+    opacity: 0 !important;
+
+    pointer-events: none !important;
+
+    transform: none !important;
+    -webkit-transform: none !important;
+
+    object-fit: contain !important;
+}
+
+
+/* CANVAS MENJADI TAMPILAN KAMERA */
+#filterCanvas {
+    position: absolute !important;
+
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: #000;
+
+    transform: none !important;
+    -webkit-transform: none !important;
+
+    z-index: 1 !important;
+
+    pointer-events: none !important;
+}
