@@ -1,7 +1,8 @@
 /* =========================================================
    CHUK AN CHUKK
-   LIVE CAMERA CONTROLLER V2
-   NON-MIRROR • NO ZOOM • CANVAS RENDERER
+   LIVE CAMERA V3
+   NON-MIRROR • NO ZOOM • NO CROP
+   CANVAS CAMERA ENGINE
    ========================================================= */
 
 "use strict";
@@ -20,17 +21,25 @@ let liveStarted = false;
 
 let likes = 0;
 let seconds = 0;
+
 let timerInterval = null;
 let animationFrame = null;
 
 let autoLightEnabled = true;
 
+
+/* =========================================================
+   FILTER STATE
+   ========================================================= */
+
 const filters = {
+
     plastic: 90,
     glow: 65,
     brightness: 35,
     softFocus: 55,
     detail: 25
+
 };
 
 
@@ -38,19 +47,30 @@ const filters = {
    ELEMENTS
    ========================================================= */
 
-const video = document.getElementById("camera");
-const canvas = document.getElementById("filterCanvas");
-const ctx = canvas ? canvas.getContext("2d", {
-    alpha: false
-}) : null;
+const video =
+    document.getElementById("camera");
 
-const statusBox = document.getElementById("cameraStatus");
+const canvas =
+    document.getElementById("filterCanvas");
+
+const ctx =
+    canvas
+        ? canvas.getContext("2d", {
+            alpha: false
+        })
+        : null;
+
+const statusBox =
+    document.getElementById("cameraStatus");
 
 const startButton =
     document.getElementById("startLiveButton");
 
 const startLiveText =
     document.getElementById("startLiveText");
+
+const viewerCount =
+    document.getElementById("viewerCount");
 
 const cameraButton =
     document.getElementById("cameraButton");
@@ -127,6 +147,9 @@ const detailValue =
 const autoLightButton =
     document.getElementById("autoLightButton");
 
+const lightStatus =
+    document.getElementById("lightStatus");
+
 const commentButton =
     document.getElementById("commentButton");
 
@@ -148,14 +171,8 @@ const likeButton =
 const likeCount =
     document.getElementById("likeCount");
 
-const viewerCount =
-    document.getElementById("viewerCount");
-
 const liveTimer =
     document.getElementById("liveTimer");
-
-const lightStatus =
-    document.getElementById("lightStatus");
 
 const followButton =
     document.getElementById("followButton");
@@ -165,20 +182,28 @@ const closeLiveButton =
 
 
 /* =========================================================
-   VIDEO SOURCE MUST NEVER BE VISIBLE
-   Canvas is the only visible camera.
+   PREPARE VIDEO
+   Video hanya sumber.
+   Tidak pernah ditampilkan ke user.
    ========================================================= */
 
 function prepareVideo() {
 
     if (!video) return;
 
-    video.muted = true;
     video.autoplay = true;
+    video.muted = true;
     video.playsInline = true;
 
-    video.setAttribute("playsinline", "");
-    video.setAttribute("webkit-playsinline", "");
+    video.setAttribute(
+        "playsinline",
+        ""
+    );
+
+    video.setAttribute(
+        "webkit-playsinline",
+        ""
+    );
 
     video.style.transform = "none";
     video.style.webkitTransform = "none";
@@ -188,25 +213,29 @@ function prepareVideo() {
 
 
 /* =========================================================
-   CAMERA STATUS
+   STATUS
    ========================================================= */
 
-function setCameraStatus(message) {
+function setStatus(text) {
 
     if (statusBox) {
-        statusBox.textContent = message;
+
+        statusBox.textContent =
+            text;
+
     }
 
 }
 
 
 /* =========================================================
-   CANVAS SIZE
+   CANVAS RESIZE
    ========================================================= */
 
 function resizeCanvas() {
 
     if (!canvas) return;
+
 
     const width =
         window.innerWidth || 360;
@@ -214,14 +243,24 @@ function resizeCanvas() {
     const height =
         window.innerHeight || 640;
 
+
     const dpr =
-        Math.min(window.devicePixelRatio || 1, 2);
+        Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
+
 
     canvas.width =
-        Math.floor(width * dpr);
+        Math.round(
+            width * dpr
+        );
 
     canvas.height =
-        Math.floor(height * dpr);
+        Math.round(
+            height * dpr
+        );
+
 
     canvas.style.width =
         width + "px";
@@ -233,96 +272,106 @@ function resizeCanvas() {
 
 
 /* =========================================================
-   DRAW CAMERA
-   IMPORTANT:
-   - contain
-   - no crop
-   - no zoom
-   - no mirror
+   CAMERA RENDER
    ========================================================= */
 
-function drawCamera() {
+function renderCamera() {
 
     if (
         !canvas ||
         !ctx ||
-        !video ||
-        video.readyState < 2
+        !video
     ) {
 
         animationFrame =
-            requestAnimationFrame(drawCamera);
+            requestAnimationFrame(
+                renderCamera
+            );
 
         return;
 
     }
-
-
-    const sourceWidth =
-        video.videoWidth;
-
-    const sourceHeight =
-        video.videoHeight;
 
 
     if (
-        !sourceWidth ||
-        !sourceHeight
+        video.readyState < 2 ||
+        !video.videoWidth ||
+        !video.videoHeight
     ) {
 
         animationFrame =
-            requestAnimationFrame(drawCamera);
+            requestAnimationFrame(
+                renderCamera
+            );
 
         return;
 
     }
 
 
-    const canvasWidth =
+    const cw =
         canvas.width;
 
-    const canvasHeight =
+    const ch =
         canvas.height;
 
+    const vw =
+        video.videoWidth;
 
-    /* Clear */
+    const vh =
+        video.videoHeight;
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    /* =====================================================
+       CLEAR
+       ===================================================== */
+
+    ctx.setTransform(
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+    );
+
+    ctx.filter = "none";
 
     ctx.fillStyle = "#000";
+
     ctx.fillRect(
         0,
         0,
-        canvasWidth,
-        canvasHeight
+        cw,
+        ch
     );
 
 
     /* =====================================================
-       CONTAIN MODE
-       Seluruh kamera terlihat.
-       Tidak ada crop.
+       CONTAIN
+       NO ZOOM
+       NO CROP
        ===================================================== */
 
     const scale =
         Math.min(
-            canvasWidth / sourceWidth,
-            canvasHeight / sourceHeight
+            cw / vw,
+            ch / vh
         );
 
 
     const drawWidth =
-        sourceWidth * scale;
+        vw * scale;
 
     const drawHeight =
-        sourceHeight * scale;
+        vh * scale;
 
 
     const x =
-        (canvasWidth - drawWidth) / 2;
+        (cw - drawWidth) / 2;
 
     const y =
-        (canvasHeight - drawHeight) / 2;
+        (ch - drawHeight) / 2;
 
 
     /* =====================================================
@@ -331,61 +380,133 @@ function drawCamera() {
 
     const brightness =
         autoLightEnabled
-            ? Math.max(
-                100,
-                100 + filters.brightness * 0.35
-            )
-            : 100 + filters.brightness * 0.20;
+
+            ? 100 +
+              filters.brightness * 0.30
+
+            : 100 +
+              filters.brightness * 0.15;
 
 
     const saturation =
-        100 + filters.glow * 0.12;
+        100 +
+        filters.glow * 0.10;
 
 
     const contrast =
-        100 - filters.plastic * 0.04;
+        100 -
+        filters.plastic * 0.03;
 
 
     const blur =
-        filters.softFocus * 0.012;
+        filters.softFocus * 0.008;
 
 
     ctx.filter =
-        `brightness(${brightness}%) ` +
-        `saturate(${saturation}%) ` +
-        `contrast(${contrast}%) ` +
-        `blur(${blur}px)`;
+        "brightness(" +
+        brightness +
+        "%) " +
+
+        "saturate(" +
+        saturation +
+        "%) " +
+
+        "contrast(" +
+        contrast +
+        "%) " +
+
+        "blur(" +
+        blur +
+        "px)";
 
 
     /* =====================================================
-       CRITICAL:
-       JANGAN gunakan scale(-1, 1).
-       Kamera ditampilkan NORMAL.
+       CAMERA FRONT
+       FORCE NON-MIRROR
        ===================================================== */
 
-    ctx.drawImage(
-        video,
-        x,
-        y,
-        drawWidth,
-        drawHeight
-    );
+    if (
+        currentCamera === "user"
+    ) {
+
+        ctx.save();
+
+
+        /*
+         * Balik horizontal.
+         *
+         * Kamera depan Android/Pi Browser
+         * sering memberikan frame mirrored.
+         *
+         * Canvas dibalik supaya hasil akhir
+         * menjadi NORMAL.
+         */
+
+        ctx.translate(
+            cw,
+            0
+        );
+
+        ctx.scale(
+            -1,
+            1
+        );
+
+
+        ctx.drawImage(
+            video,
+
+            cw - x - drawWidth,
+            y,
+
+            drawWidth,
+            drawHeight
+        );
+
+
+        ctx.restore();
+
+    } else {
+
+        /* =================================================
+           CAMERA BELAKANG
+           NORMAL
+           ================================================= */
+
+        ctx.drawImage(
+            video,
+            x,
+            y,
+            drawWidth,
+            drawHeight
+        );
+
+    }
 
 
     ctx.filter = "none";
 
 
     /* =====================================================
-       SOFT GLOW OVERLAY
+       SOFT GLOW
        ===================================================== */
 
-    if (filters.glow > 0) {
+    if (
+        filters.glow > 0
+    ) {
 
-        const glowAlpha =
-            (filters.glow / 100) * 0.08;
+        const alpha =
+            (
+                filters.glow /
+                100
+            ) * 0.06;
+
 
         ctx.fillStyle =
-            `rgba(255,255,255,${glowAlpha})`;
+            "rgba(255,255,255," +
+            alpha +
+            ")";
+
 
         ctx.fillRect(
             x,
@@ -398,40 +519,40 @@ function drawCamera() {
 
 
     animationFrame =
-        requestAnimationFrame(drawCamera);
+        requestAnimationFrame(
+            renderCamera
+        );
 
 }
 
 
 /* =========================================================
-   START RENDERER
+   START RENDER
    ========================================================= */
 
 function startRenderer() {
 
-    if (animationFrame) {
-
-        cancelAnimationFrame(
-            animationFrame
-        );
-
-    }
+    stopRenderer();
 
     resizeCanvas();
 
     animationFrame =
-        requestAnimationFrame(drawCamera);
+        requestAnimationFrame(
+            renderCamera
+        );
 
 }
 
 
 /* =========================================================
-   STOP RENDERER
+   STOP RENDER
    ========================================================= */
 
 function stopRenderer() {
 
-    if (animationFrame) {
+    if (
+        animationFrame !== null
+    ) {
 
         cancelAnimationFrame(
             animationFrame
@@ -445,6 +566,41 @@ function stopRenderer() {
 
 
 /* =========================================================
+   STOP TRACKS
+   ========================================================= */
+
+function stopCameraTracks() {
+
+    if (!cameraStream) return;
+
+
+    cameraStream
+        .getTracks()
+        .forEach(
+            track => {
+
+                try {
+
+                    track.stop();
+
+                } catch (error) {
+
+                    console.warn(
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+
+    cameraStream = null;
+
+}
+
+
+/* =========================================================
    START CAMERA
    ========================================================= */
 
@@ -452,7 +608,7 @@ async function startCamera() {
 
     try {
 
-        setCameraStatus(
+        setStatus(
             "📷 Menyiapkan kamera..."
         );
 
@@ -463,81 +619,87 @@ async function startCamera() {
         ) {
 
             throw new Error(
-                "getUserMedia tidak tersedia"
+                "Camera API tidak tersedia"
             );
 
         }
 
 
-        /* Stop kamera lama */
-
         stopCameraTracks();
 
 
         /* =================================================
-           CAMERA CONSTRAINTS
+           CAMERA REQUEST
            ================================================= */
 
-        const constraints = {
-
-            video: {
-
-                facingMode: {
-                    exact: currentCamera
-                },
-
-                width: {
-                    ideal: 1280
-                },
-
-                height: {
-                    ideal: 720
-                },
-
-                frameRate: {
-                    ideal: 30,
-                    max: 30
-                }
-
-            },
-
-            audio: {
-
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true
-
-            }
-
-        };
+        let stream;
 
 
         try {
 
-            cameraStream =
-                await navigator.mediaDevices
-                    .getUserMedia(constraints);
-
-        } catch (firstError) {
-
-            console.warn(
-                "Exact camera gagal, mencoba fallback...",
-                firstError
-            );
-
-
-            cameraStream =
+            stream =
                 await navigator.mediaDevices
                     .getUserMedia({
 
                         video: {
-                            facingMode: currentCamera,
+
+                            facingMode: {
+                                exact:
+                                    currentCamera
+                            },
+
                             width: {
                                 ideal: 1280
                             },
+
+                            height: {
+                                ideal: 720
+                            },
+
+                            frameRate: {
+                                ideal: 30,
+                                max: 30
+                            }
+
+                        },
+
+                        audio: {
+
+                            echoCancellation: true,
+
+                            noiseSuppression: true,
+
+                            autoGainControl: true
+
+                        }
+
+                    });
+
+        } catch (error) {
+
+            console.warn(
+                "Exact camera gagal:",
+                error
+            );
+
+
+            stream =
+                await navigator.mediaDevices
+                    .getUserMedia({
+
+                        video: {
+
+                            facingMode:
+                                currentCamera,
+
+                            width: {
+                                ideal: 1280
+                            },
+
                             height: {
                                 ideal: 720
                             }
+
                         },
 
                         audio: true
@@ -547,7 +709,9 @@ async function startCamera() {
         }
 
 
-        /* Hubungkan stream */
+        cameraStream =
+            stream;
+
 
         video.srcObject =
             cameraStream;
@@ -556,56 +720,61 @@ async function startCamera() {
         prepareVideo();
 
 
-        /* Tunggu metadata */
+        /* =================================================
+           WAIT VIDEO
+           ================================================= */
 
-        await new Promise(resolve => {
+        await new Promise(
+            resolve => {
 
-            if (video.readyState >= 1) {
+                if (
+                    video.readyState >= 1
+                ) {
 
-                resolve();
+                    resolve();
 
-                return;
+                    return;
+
+                }
+
+
+                video.addEventListener(
+                    "loadedmetadata",
+                    resolve,
+                    {
+                        once: true
+                    }
+                );
 
             }
-
-
-            video.addEventListener(
-                "loadedmetadata",
-                resolve,
-                {
-                    once: true
-                }
-            );
-
-        });
+        );
 
 
         try {
 
             await video.play();
 
-        } catch (playError) {
+        } catch (error) {
 
             console.warn(
                 "Video play:",
-                playError
+                error
             );
 
         }
 
 
-        /* Canvas */
+        updateTracks();
 
         resizeCanvas();
+
         startRenderer();
 
 
-        setCameraStatus(
+        setStatus(
             "✅ Kamera siap"
         );
 
-
-        updateTracks();
 
     } catch (error) {
 
@@ -615,57 +784,31 @@ async function startCamera() {
         );
 
 
-        setCameraStatus(
+        setStatus(
             "❌ Kamera tidak tersedia"
         );
 
 
-        if (error.name === "NotAllowedError") {
+        if (
+            error.name ===
+            "NotAllowedError"
+        ) {
 
             alert(
-                "Izin kamera/mikrofon ditolak.\n\n" +
-                "Silakan izinkan Kamera dan Mikrofon " +
-                "untuk Chuk an Chukk."
+                "Akses kamera/mikrofon ditolak.\n\n" +
+                "Silakan izinkan kamera dan mikrofon."
             );
 
         } else {
 
             alert(
                 "Kamera tidak dapat digunakan.\n\n" +
-                "Pastikan halaman dibuka melalui HTTPS " +
-                "dan kamera tidak sedang digunakan aplikasi lain."
+                "Pastikan Chuk an Chukk dibuka melalui HTTPS."
             );
 
         }
 
     }
-
-}
-
-
-/* =========================================================
-   STOP CAMERA TRACKS
-   ========================================================= */
-
-function stopCameraTracks() {
-
-    if (!cameraStream) return;
-
-
-    cameraStream
-        .getTracks()
-        .forEach(track => {
-
-            try {
-                track.stop();
-            } catch (error) {
-                console.warn(error);
-            }
-
-        });
-
-
-    cameraStream = null;
 
 }
 
@@ -683,7 +826,8 @@ function stopCamera() {
 
     if (video) {
 
-        video.srcObject = null;
+        video.srcObject =
+            null;
 
     }
 
@@ -691,7 +835,7 @@ function stopCamera() {
 
 
 /* =========================================================
-   TRACK STATE
+   UPDATE TRACKS
    ========================================================= */
 
 function updateTracks() {
@@ -700,10 +844,12 @@ function updateTracks() {
 
 
     const videoTrack =
-        cameraStream.getVideoTracks()[0];
+        cameraStream
+            .getVideoTracks()[0];
 
     const audioTrack =
-        cameraStream.getAudioTracks()[0];
+        cameraStream
+            .getAudioTracks()[0];
 
 
     if (videoTrack) {
@@ -765,7 +911,7 @@ function updateTracks() {
 
 
 /* =========================================================
-   TOGGLE CAMERA
+   CAMERA TOGGLE
    ========================================================= */
 
 function toggleCamera() {
@@ -778,8 +924,18 @@ function toggleCamera() {
 }
 
 
+if (cameraButton) {
+
+    cameraButton.addEventListener(
+        "click",
+        toggleCamera
+    );
+
+}
+
+
 /* =========================================================
-   TOGGLE MIC
+   MIC TOGGLE
    ========================================================= */
 
 function toggleMic() {
@@ -792,24 +948,6 @@ function toggleMic() {
 }
 
 
-/* =========================================================
-   CAMERA BUTTON
-   ========================================================= */
-
-if (cameraButton) {
-
-    cameraButton.addEventListener(
-        "click",
-        toggleCamera
-    );
-
-}
-
-
-/* =========================================================
-   MIC BUTTON
-   ========================================================= */
-
 if (micButton) {
 
     micButton.addEventListener(
@@ -819,10 +957,6 @@ if (micButton) {
 
 }
 
-
-/* =========================================================
-   BOTTOM MIC
-   ========================================================= */
 
 if (bottomMicButton) {
 
@@ -880,35 +1014,49 @@ function updateFilterValues() {
     if (plasticSlider) {
 
         filters.plastic =
-            Number(plasticSlider.value);
+            Number(
+                plasticSlider.value
+            );
 
     }
+
 
     if (glowSlider) {
 
         filters.glow =
-            Number(glowSlider.value);
+            Number(
+                glowSlider.value
+            );
 
     }
+
 
     if (brightnessSlider) {
 
         filters.brightness =
-            Number(brightnessSlider.value);
+            Number(
+                brightnessSlider.value
+            );
 
     }
+
 
     if (softFocusSlider) {
 
         filters.softFocus =
-            Number(softFocusSlider.value);
+            Number(
+                softFocusSlider.value
+            );
 
     }
+
 
     if (detailSlider) {
 
         filters.detail =
-            Number(detailSlider.value);
+            Number(
+                detailSlider.value
+            );
 
     }
 
@@ -920,12 +1068,14 @@ function updateFilterValues() {
 
     }
 
+
     if (glowValue) {
 
         glowValue.textContent =
             filters.glow;
 
     }
+
 
     if (brightnessValue) {
 
@@ -934,12 +1084,14 @@ function updateFilterValues() {
 
     }
 
+
     if (softFocusValue) {
 
         softFocusValue.textContent =
             filters.softFocus;
 
     }
+
 
     if (detailValue) {
 
@@ -952,7 +1104,7 @@ function updateFilterValues() {
 
 
 /* =========================================================
-   SLIDERS
+   FILTER SLIDERS
    ========================================================= */
 
 [
@@ -962,17 +1114,19 @@ function updateFilterValues() {
     softFocusSlider,
     detailSlider
 
-].forEach(slider => {
+].forEach(
+    slider => {
 
-    if (!slider) return;
+        if (!slider) return;
 
 
-    slider.addEventListener(
-        "input",
-        updateFilterValues
-    );
+        slider.addEventListener(
+            "input",
+            updateFilterValues
+        );
 
-});
+    }
+);
 
 
 /* =========================================================
@@ -984,13 +1138,6 @@ if (dreamLikeButton) {
     dreamLikeButton.addEventListener(
         "click",
         function() {
-
-            filters.plastic = 90;
-            filters.glow = 65;
-            filters.brightness = 35;
-            filters.softFocus = 55;
-            filters.detail = 25;
-
 
             if (plasticSlider) {
                 plasticSlider.value = 90;
@@ -1022,23 +1169,27 @@ if (dreamLikeButton) {
 
 
 /* =========================================================
-   FILTER PANEL OPEN
+   FILTER PANEL
    ========================================================= */
 
-function openFilterPanel() {
+function openFilter() {
 
     if (!filterPanel) return;
 
-    filterPanel.classList.add("show");
+    filterPanel.classList.add(
+        "show"
+    );
 
 }
 
 
-function closeFilterPanel() {
+function closeFilter() {
 
     if (!filterPanel) return;
 
-    filterPanel.classList.remove("show");
+    filterPanel.classList.remove(
+        "show"
+    );
 
 }
 
@@ -1047,7 +1198,7 @@ if (filterButton) {
 
     filterButton.addEventListener(
         "click",
-        openFilterPanel
+        openFilter
     );
 
 }
@@ -1057,7 +1208,7 @@ if (bottomFilterButton) {
 
     bottomFilterButton.addEventListener(
         "click",
-        openFilterPanel
+        openFilter
     );
 
 }
@@ -1067,7 +1218,7 @@ if (closeFilterButton) {
 
     closeFilterButton.addEventListener(
         "click",
-        closeFilterPanel
+        closeFilter
     );
 
 }
@@ -1101,7 +1252,9 @@ if (autoLightButton) {
 
             autoLightButton.setAttribute(
                 "aria-pressed",
-                String(autoLightEnabled)
+                String(
+                    autoLightEnabled
+                )
             );
 
 
@@ -1124,11 +1277,27 @@ if (autoLightButton) {
    COMMENTS
    ========================================================= */
 
+function escapeHTML(text) {
+
+    const element =
+        document.createElement(
+            "div"
+        );
+
+    element.textContent =
+        text;
+
+    return element.innerHTML;
+
+}
+
+
 function addComment() {
 
-    if (!commentInput || !commentsList) {
-        return;
-    }
+    if (
+        !commentInput ||
+        !commentsList
+    ) return;
 
 
     const text =
@@ -1138,19 +1307,24 @@ function addComment() {
     if (!text) return;
 
 
-    const comment =
-        document.createElement("div");
+    const item =
+        document.createElement(
+            "div"
+        );
 
 
-    comment.className =
+    item.className =
         "live-comment";
 
 
-    comment.innerHTML =
-        `<strong>You</strong> ${escapeHTML(text)}`;
+    item.innerHTML =
+        "<strong>You</strong> " +
+        escapeHTML(text);
 
 
-    commentsList.appendChild(comment);
+    commentsList.appendChild(
+        item
+    );
 
 
     commentInput.value = "";
@@ -1158,18 +1332,6 @@ function addComment() {
 
     commentsList.scrollTop =
         commentsList.scrollHeight;
-
-}
-
-
-function escapeHTML(text) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent = text;
-
-    return div.innerHTML;
 
 }
 
@@ -1190,7 +1352,9 @@ if (commentInput) {
         "keydown",
         function(event) {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter"
+            ) {
 
                 event.preventDefault();
 
@@ -1205,7 +1369,7 @@ if (commentInput) {
 
 
 /* =========================================================
-   COMMENT PANEL
+   COMMENT BUTTON
    ========================================================= */
 
 if (commentButton) {
@@ -1214,23 +1378,28 @@ if (commentButton) {
         "click",
         function() {
 
-            if (!commentInputArea) return;
-
-
-            const visible =
-                commentInputArea.classList.contains("show");
+            if (!commentInputArea)
+                return;
 
 
             commentInputArea.classList.toggle(
-                "show",
-                !visible
+                "show"
             );
 
 
-            if (!visible && commentInput) {
+            if (
+                commentInputArea.classList.contains(
+                    "show"
+                ) &&
+                commentInput
+            ) {
 
                 setTimeout(
-                    () => commentInput.focus(),
+                    function() {
+
+                        commentInput.focus();
+
+                    },
                     100
                 );
 
@@ -1252,14 +1421,14 @@ if (followButton) {
         "click",
         function() {
 
-            const following =
+            const active =
                 followButton.classList.toggle(
                     "following"
                 );
 
 
             followButton.textContent =
-                following
+                active
                     ? "Following"
                     : "Follow";
 
@@ -1280,6 +1449,7 @@ if (likeButton) {
         function() {
 
             likes++;
+
 
             if (likeCount) {
 
@@ -1322,9 +1492,11 @@ if (startButton) {
 
 function startLive() {
 
-    liveStarted = true;
+    liveStarted =
+        true;
 
-    seconds = 0;
+    seconds =
+        0;
 
 
     startButton.classList.add(
@@ -1340,16 +1512,21 @@ function startLive() {
     }
 
 
-    statusBox.textContent =
-        "🔴 CHUK AN CHUKK LIVE";
+    setStatus(
+        "🔴 CHUK AN CHUKK LIVE"
+    );
 
 
-    viewerCount.textContent =
-        String(
-            Math.floor(
-                Math.random() * 8
-            ) + 1
-        );
+    if (viewerCount) {
+
+        viewerCount.textContent =
+            String(
+                Math.floor(
+                    Math.random() * 8
+                ) + 1
+            );
+
+    }
 
 
     startTimer();
@@ -1357,9 +1534,14 @@ function startLive() {
 }
 
 
+/* =========================================================
+   STOP LIVE
+   ========================================================= */
+
 function stopLive() {
 
-    liveStarted = false;
+    liveStarted =
+        false;
 
 
     clearInterval(
@@ -1367,7 +1549,8 @@ function stopLive() {
     );
 
 
-    timerInterval = null;
+    timerInterval =
+        null;
 
 
     if (startButton) {
@@ -1387,12 +1570,9 @@ function stopLive() {
     }
 
 
-    if (statusBox) {
-
-        statusBox.textContent =
-            "📷 Kamera siap";
-
-    }
+    setStatus(
+        "📷 Kamera siap"
+    );
 
 
     if (viewerCount) {
@@ -1416,45 +1596,57 @@ function startTimer() {
     );
 
 
-    updateTimer();
-
-
-    timerInterval =
-        setInterval(
-            updateTimer,
-            1000
-        );
-
-}
-
-
-function updateTimer() {
-
-    seconds++;
-
-
-    const minutes =
-        Math.floor(
-            seconds / 60
-        );
-
-
-    const secs =
-        seconds % 60;
+    seconds =
+        0;
 
 
     if (liveTimer) {
 
         liveTimer.textContent =
-            String(minutes)
-                .padStart(2, "0")
-            +
-            ":"
-            +
-            String(secs)
-                .padStart(2, "0");
+            "00:00";
 
     }
+
+
+    timerInterval =
+        setInterval(
+            function() {
+
+                seconds++;
+
+
+                const minutes =
+                    Math.floor(
+                        seconds / 60
+                    );
+
+
+                const secs =
+                    seconds % 60;
+
+
+                if (liveTimer) {
+
+                    liveTimer.textContent =
+                        String(minutes)
+                            .padStart(
+                                2,
+                                "0"
+                            )
+                        +
+                        ":"
+                        +
+                        String(secs)
+                            .padStart(
+                                2,
+                                "0"
+                            );
+
+                }
+
+            },
+            1000
+        );
 
 }
 
@@ -1488,8 +1680,13 @@ if (closeLiveButton) {
 
 window.addEventListener(
     "resize",
-    resizeCanvas
+    function() {
+
+        resizeCanvas();
+
+    }
 );
+
 
 window.addEventListener(
     "orientationchange",
@@ -1497,7 +1694,7 @@ window.addEventListener(
 
         setTimeout(
             resizeCanvas,
-            250
+            300
         );
 
     }
@@ -1541,8 +1738,13 @@ async function initLive() {
 }
 
 
+/* =========================================================
+   START
+   ========================================================= */
+
 if (
-    document.readyState === "loading"
+    document.readyState ===
+    "loading"
 ) {
 
     document.addEventListener(
