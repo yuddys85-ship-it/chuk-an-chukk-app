@@ -1,8 +1,15 @@
-/* =========================================
+/* =========================================================
    CHUK AN CHUKK
-   LIVE CAMERA + BEAUTY FILTER
-   NON-MIRROR VERSION
-========================================= */
+   LIVE CAMERA CONTROLLER V2
+   NON-MIRROR • NO ZOOM • CANVAS RENDERER
+   ========================================================= */
+
+"use strict";
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
 
 let cameraStream = null;
 let currentCamera = "user";
@@ -14,165 +21,682 @@ let liveStarted = false;
 let likes = 0;
 let seconds = 0;
 let timerInterval = null;
+let animationFrame = null;
+
+let autoLightEnabled = true;
+
+const filters = {
+    plastic: 90,
+    glow: 65,
+    brightness: 35,
+    softFocus: 55,
+    detail: 25
+};
 
 
-/* =========================================
-   ELEMENT
-========================================= */
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
 
 const video = document.getElementById("camera");
+const canvas = document.getElementById("filterCanvas");
+const ctx = canvas ? canvas.getContext("2d", {
+    alpha: false
+}) : null;
+
 const statusBox = document.getElementById("cameraStatus");
-const startButton = document.getElementById("startLiveButton");
 
-const cameraButton = document.getElementById("cameraButton");
-const micButton = document.getElementById("micButton");
-const flipButton = document.getElementById("flipButton");
-const filterButton = document.getElementById("filterButton");
+const startButton =
+    document.getElementById("startLiveButton");
 
-const filterPanel = document.querySelector(".filter-panel");
-const faceGlow = document.getElementById("faceGlow");
+const startLiveText =
+    document.getElementById("startLiveText");
 
-const liveTime = document.getElementById("liveTime");
-const viewerCount = document.getElementById("viewerCount");
+const cameraButton =
+    document.getElementById("cameraButton");
 
-const likeButton = document.getElementById("likeButton");
-const likeCount = document.getElementById("likeCount");
+const cameraIcon =
+    document.getElementById("cameraIcon");
 
-const smoothRange = document.getElementById("smoothRange");
-const brightnessRange = document.getElementById("brightnessRange");
-const glowRange = document.getElementById("glowRange");
+const cameraText =
+    document.getElementById("cameraText");
+
+const micButton =
+    document.getElementById("micButton");
+
+const micIcon =
+    document.getElementById("micIcon");
+
+const micText =
+    document.getElementById("micText");
+
+const flipButton =
+    document.getElementById("flipButton");
+
+const bottomFlipButton =
+    document.getElementById("bottomFlipButton");
+
+const bottomMicButton =
+    document.getElementById("bottomMicButton");
+
+const filterButton =
+    document.getElementById("filterButton");
+
+const bottomFilterButton =
+    document.getElementById("bottomFilterButton");
+
+const filterPanel =
+    document.getElementById("filterPanel");
+
+const closeFilterButton =
+    document.getElementById("closeFilterButton");
+
+const dreamLikeButton =
+    document.getElementById("dreamLikeButton");
+
+const plasticSlider =
+    document.getElementById("plasticSlider");
+
+const glowSlider =
+    document.getElementById("glowSlider");
+
+const brightnessSlider =
+    document.getElementById("brightnessSlider");
+
+const softFocusSlider =
+    document.getElementById("softFocusSlider");
+
+const detailSlider =
+    document.getElementById("detailSlider");
+
+const plasticValue =
+    document.getElementById("plasticValue");
+
+const glowValue =
+    document.getElementById("glowValue");
+
+const brightnessValue =
+    document.getElementById("brightnessValue");
+
+const softFocusValue =
+    document.getElementById("softFocusValue");
+
+const detailValue =
+    document.getElementById("detailValue");
+
+const autoLightButton =
+    document.getElementById("autoLightButton");
+
+const commentButton =
+    document.getElementById("commentButton");
+
+const commentInputArea =
+    document.getElementById("commentInputArea");
+
+const commentInput =
+    document.getElementById("commentInput");
+
+const sendCommentButton =
+    document.getElementById("sendCommentButton");
+
+const commentsList =
+    document.getElementById("commentsList");
+
+const likeButton =
+    document.getElementById("likeButton");
+
+const likeCount =
+    document.getElementById("likeCount");
+
+const viewerCount =
+    document.getElementById("viewerCount");
+
+const liveTimer =
+    document.getElementById("liveTimer");
+
+const lightStatus =
+    document.getElementById("lightStatus");
+
+const followButton =
+    document.getElementById("followButton");
+
+const closeLiveButton =
+    document.getElementById("closeLiveButton");
 
 
+/* =========================================================
+   VIDEO SOURCE MUST NEVER BE VISIBLE
+   Canvas is the only visible camera.
+   ========================================================= */
 
-/* =========================================
-   FORCE NON-MIRROR
-========================================= */
+function prepareVideo() {
 
-function forceNormalCamera(){
+    if (!video) return;
 
-    if(!video) return;
+    video.muted = true;
+    video.autoplay = true;
+    video.playsInline = true;
+
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
 
     video.style.transform = "none";
     video.style.webkitTransform = "none";
-
-    video.removeAttribute("dir");
+    video.style.filter = "none";
 
 }
 
 
+/* =========================================================
+   CAMERA STATUS
+   ========================================================= */
 
-/* =========================================
-   START CAMERA
-========================================= */
+function setCameraStatus(message) {
 
-async function startCamera(){
+    if (statusBox) {
+        statusBox.textContent = message;
+    }
 
-    try{
-
-        if(cameraStream){
-
-            cameraStream
-                .getTracks()
-                .forEach(track => track.stop());
-
-        }
+}
 
 
-        cameraStream =
-            await navigator.mediaDevices.getUserMedia({
+/* =========================================================
+   CANVAS SIZE
+   ========================================================= */
 
-                video:{
-                    facingMode:{
-                        ideal:currentCamera
-                    },
+function resizeCanvas() {
 
-                    width:{
-                        ideal:1280
-                    },
+    if (!canvas) return;
 
-                    height:{
-                        ideal:720
-                    },
+    const width =
+        window.innerWidth || 360;
 
-                    frameRate:{
-                        ideal:30,
-                        max:30
-                    }
-                },
+    const height =
+        window.innerHeight || 640;
 
-                audio:{
-                    echoCancellation:true,
-                    noiseSuppression:true,
-                    autoGainControl:true
-                }
+    const dpr =
+        Math.min(window.devicePixelRatio || 1, 2);
 
-            });
+    canvas.width =
+        Math.floor(width * dpr);
 
+    canvas.height =
+        Math.floor(height * dpr);
 
-        video.srcObject =
-            cameraStream;
+    canvas.style.width =
+        width + "px";
+
+    canvas.style.height =
+        height + "px";
+
+}
 
 
-        video.autoplay = true;
-        video.muted = true;
-        video.playsInline = true;
+/* =========================================================
+   DRAW CAMERA
+   IMPORTANT:
+   - contain
+   - no crop
+   - no zoom
+   - no mirror
+   ========================================================= */
+
+function drawCamera() {
+
+    if (
+        !canvas ||
+        !ctx ||
+        !video ||
+        video.readyState < 2
+    ) {
+
+        animationFrame =
+            requestAnimationFrame(drawCamera);
+
+        return;
+
+    }
 
 
-        /* WAJIB NON-MIRROR */
+    const sourceWidth =
+        video.videoWidth;
 
-        forceNormalCamera();
-
-
-        try{
-
-            await video.play();
-
-        }catch(error){
-
-            console.log(
-                "Video autoplay:",
-                error
-            );
-
-        }
+    const sourceHeight =
+        video.videoHeight;
 
 
-        statusBox.textContent =
-            "✅ Kamera siap";
+    if (
+        !sourceWidth ||
+        !sourceHeight
+    ) {
+
+        animationFrame =
+            requestAnimationFrame(drawCamera);
+
+        return;
+
+    }
 
 
-        updateTracks();
+    const canvasWidth =
+        canvas.width;
+
+    const canvasHeight =
+        canvas.height;
 
 
-    }catch(error){
+    /* Clear */
 
-        console.error(
-            "❌ CAMERA ERROR:",
-            error
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+    );
+
+
+    /* =====================================================
+       CONTAIN MODE
+       Seluruh kamera terlihat.
+       Tidak ada crop.
+       ===================================================== */
+
+    const scale =
+        Math.min(
+            canvasWidth / sourceWidth,
+            canvasHeight / sourceHeight
         );
 
-        statusBox.textContent =
-            "❌ Kamera tidak tersedia";
+
+    const drawWidth =
+        sourceWidth * scale;
+
+    const drawHeight =
+        sourceHeight * scale;
 
 
-        alert(
-            "Kamera atau mikrofon belum diizinkan.\n\n" +
-            "Izinkan akses kamera dan mikrofon di browser."
+    const x =
+        (canvasWidth - drawWidth) / 2;
+
+    const y =
+        (canvasHeight - drawHeight) / 2;
+
+
+    /* =====================================================
+       FILTER
+       ===================================================== */
+
+    const brightness =
+        autoLightEnabled
+            ? Math.max(
+                100,
+                100 + filters.brightness * 0.35
+            )
+            : 100 + filters.brightness * 0.20;
+
+
+    const saturation =
+        100 + filters.glow * 0.12;
+
+
+    const contrast =
+        100 - filters.plastic * 0.04;
+
+
+    const blur =
+        filters.softFocus * 0.012;
+
+
+    ctx.filter =
+        `brightness(${brightness}%) ` +
+        `saturate(${saturation}%) ` +
+        `contrast(${contrast}%) ` +
+        `blur(${blur}px)`;
+
+
+    /* =====================================================
+       CRITICAL:
+       JANGAN gunakan scale(-1, 1).
+       Kamera ditampilkan NORMAL.
+       ===================================================== */
+
+    ctx.drawImage(
+        video,
+        x,
+        y,
+        drawWidth,
+        drawHeight
+    );
+
+
+    ctx.filter = "none";
+
+
+    /* =====================================================
+       SOFT GLOW OVERLAY
+       ===================================================== */
+
+    if (filters.glow > 0) {
+
+        const glowAlpha =
+            (filters.glow / 100) * 0.08;
+
+        ctx.fillStyle =
+            `rgba(255,255,255,${glowAlpha})`;
+
+        ctx.fillRect(
+            x,
+            y,
+            drawWidth,
+            drawHeight
         );
+
+    }
+
+
+    animationFrame =
+        requestAnimationFrame(drawCamera);
+
+}
+
+
+/* =========================================================
+   START RENDERER
+   ========================================================= */
+
+function startRenderer() {
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+    }
+
+    resizeCanvas();
+
+    animationFrame =
+        requestAnimationFrame(drawCamera);
+
+}
+
+
+/* =========================================================
+   STOP RENDERER
+   ========================================================= */
+
+function stopRenderer() {
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame = null;
 
     }
 
 }
 
 
+/* =========================================================
+   START CAMERA
+   ========================================================= */
 
-/* =========================================
-   TRACK CONTROL
-========================================= */
+async function startCamera() {
 
-function updateTracks(){
+    try {
 
-    if(!cameraStream) return;
+        setCameraStatus(
+            "📷 Menyiapkan kamera..."
+        );
+
+
+        if (
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
+        ) {
+
+            throw new Error(
+                "getUserMedia tidak tersedia"
+            );
+
+        }
+
+
+        /* Stop kamera lama */
+
+        stopCameraTracks();
+
+
+        /* =================================================
+           CAMERA CONSTRAINTS
+           ================================================= */
+
+        const constraints = {
+
+            video: {
+
+                facingMode: {
+                    exact: currentCamera
+                },
+
+                width: {
+                    ideal: 1280
+                },
+
+                height: {
+                    ideal: 720
+                },
+
+                frameRate: {
+                    ideal: 30,
+                    max: 30
+                }
+
+            },
+
+            audio: {
+
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true
+
+            }
+
+        };
+
+
+        try {
+
+            cameraStream =
+                await navigator.mediaDevices
+                    .getUserMedia(constraints);
+
+        } catch (firstError) {
+
+            console.warn(
+                "Exact camera gagal, mencoba fallback...",
+                firstError
+            );
+
+
+            cameraStream =
+                await navigator.mediaDevices
+                    .getUserMedia({
+
+                        video: {
+                            facingMode: currentCamera,
+                            width: {
+                                ideal: 1280
+                            },
+                            height: {
+                                ideal: 720
+                            }
+                        },
+
+                        audio: true
+
+                    });
+
+        }
+
+
+        /* Hubungkan stream */
+
+        video.srcObject =
+            cameraStream;
+
+
+        prepareVideo();
+
+
+        /* Tunggu metadata */
+
+        await new Promise(resolve => {
+
+            if (video.readyState >= 1) {
+
+                resolve();
+
+                return;
+
+            }
+
+
+            video.addEventListener(
+                "loadedmetadata",
+                resolve,
+                {
+                    once: true
+                }
+            );
+
+        });
+
+
+        try {
+
+            await video.play();
+
+        } catch (playError) {
+
+            console.warn(
+                "Video play:",
+                playError
+            );
+
+        }
+
+
+        /* Canvas */
+
+        resizeCanvas();
+        startRenderer();
+
+
+        setCameraStatus(
+            "✅ Kamera siap"
+        );
+
+
+        updateTracks();
+
+    } catch (error) {
+
+        console.error(
+            "CHUK CAMERA ERROR:",
+            error
+        );
+
+
+        setCameraStatus(
+            "❌ Kamera tidak tersedia"
+        );
+
+
+        if (error.name === "NotAllowedError") {
+
+            alert(
+                "Izin kamera/mikrofon ditolak.\n\n" +
+                "Silakan izinkan Kamera dan Mikrofon " +
+                "untuk Chuk an Chukk."
+            );
+
+        } else {
+
+            alert(
+                "Kamera tidak dapat digunakan.\n\n" +
+                "Pastikan halaman dibuka melalui HTTPS " +
+                "dan kamera tidak sedang digunakan aplikasi lain."
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   STOP CAMERA TRACKS
+   ========================================================= */
+
+function stopCameraTracks() {
+
+    if (!cameraStream) return;
+
+
+    cameraStream
+        .getTracks()
+        .forEach(track => {
+
+            try {
+                track.stop();
+            } catch (error) {
+                console.warn(error);
+            }
+
+        });
+
+
+    cameraStream = null;
+
+}
+
+
+/* =========================================================
+   STOP CAMERA
+   ========================================================= */
+
+function stopCamera() {
+
+    stopRenderer();
+
+    stopCameraTracks();
+
+
+    if (video) {
+
+        video.srcObject = null;
+
+    }
+
+}
+
+
+/* =========================================================
+   TRACK STATE
+   ========================================================= */
+
+function updateTracks() {
+
+    if (!cameraStream) return;
 
 
     const videoTrack =
@@ -182,7 +706,7 @@ function updateTracks(){
         cameraStream.getAudioTracks()[0];
 
 
-    if(videoTrack){
+    if (videoTrack) {
 
         videoTrack.enabled =
             cameraEnabled;
@@ -190,7 +714,7 @@ function updateTracks(){
     }
 
 
-    if(audioTrack){
+    if (audioTrack) {
 
         audioTrack.enabled =
             micEnabled;
@@ -198,490 +722,395 @@ function updateTracks(){
     }
 
 
-    if(cameraButton){
+    if (cameraIcon) {
 
-        cameraButton.innerHTML =
+        cameraIcon.textContent =
             cameraEnabled
-            ? "📹<small>Kamera</small>"
-            : "🚫<small>Kamera</small>";
+                ? "📹"
+                : "🚫";
 
     }
 
 
-    if(micButton){
+    if (cameraText) {
 
-        micButton.innerHTML =
+        cameraText.textContent =
+            cameraEnabled
+                ? "Camera"
+                : "Camera Off";
+
+    }
+
+
+    if (micIcon) {
+
+        micIcon.textContent =
             micEnabled
-            ? "🎤<small>Mic</small>"
-            : "🔇<small>Mic</small>";
+                ? "🎤"
+                : "🔇";
+
+    }
+
+
+    if (micText) {
+
+        micText.textContent =
+            micEnabled
+                ? "Mic"
+                : "Mic Off";
 
     }
 
 }
 
 
+/* =========================================================
+   TOGGLE CAMERA
+   ========================================================= */
 
-/* =========================================
-   CAMERA ON / OFF
-========================================= */
+function toggleCamera() {
 
-if(cameraButton){
+    cameraEnabled =
+        !cameraEnabled;
+
+    updateTracks();
+
+}
+
+
+/* =========================================================
+   TOGGLE MIC
+   ========================================================= */
+
+function toggleMic() {
+
+    micEnabled =
+        !micEnabled;
+
+    updateTracks();
+
+}
+
+
+/* =========================================================
+   CAMERA BUTTON
+   ========================================================= */
+
+if (cameraButton) {
 
     cameraButton.addEventListener(
         "click",
-        function(){
-
-            cameraEnabled =
-                !cameraEnabled;
-
-            updateTracks();
-
-        }
+        toggleCamera
     );
 
 }
 
 
+/* =========================================================
+   MIC BUTTON
+   ========================================================= */
 
-/* =========================================
-   MIC ON / OFF
-========================================= */
-
-if(micButton){
+if (micButton) {
 
     micButton.addEventListener(
         "click",
-        function(){
-
-            micEnabled =
-                !micEnabled;
-
-            updateTracks();
-
-        }
+        toggleMic
     );
 
 }
 
 
+/* =========================================================
+   BOTTOM MIC
+   ========================================================= */
 
-/* =========================================
+if (bottomMicButton) {
+
+    bottomMicButton.addEventListener(
+        "click",
+        toggleMic
+    );
+
+}
+
+
+/* =========================================================
    FLIP CAMERA
-========================================= */
+   ========================================================= */
 
-if(flipButton){
+async function flipCamera() {
+
+    currentCamera =
+        currentCamera === "user"
+            ? "environment"
+            : "user";
+
+
+    await startCamera();
+
+}
+
+
+if (flipButton) {
 
     flipButton.addEventListener(
         "click",
-        async function(){
-
-            currentCamera =
-                currentCamera === "user"
-                ? "environment"
-                : "user";
-
-
-            await startCamera();
-
-
-            /* TETAP NORMAL */
-
-            forceNormalCamera();
-
-        }
+        flipCamera
     );
 
 }
 
 
+if (bottomFlipButton) {
 
-/* =========================================
-   BEAUTY FILTER
-========================================= */
+    bottomFlipButton.addEventListener(
+        "click",
+        flipCamera
+    );
 
-function applyBeauty(){
-
-    if(!video) return;
-
-
-    const smooth =
-        Number(smoothRange.value);
-
-    const brightness =
-        Number(brightnessRange.value);
-
-    const glow =
-        Number(glowRange.value);
+}
 
 
-    video.style.filter = `
-        brightness(${brightness}%)
-        saturate(108%)
-        contrast(98%)
-        blur(${smooth / 100}px)
-    `;
+/* =========================================================
+   FILTER VALUES
+   ========================================================= */
 
+function updateFilterValues() {
 
-    if(faceGlow){
+    if (plasticSlider) {
 
-        faceGlow.style.opacity =
-            glow / 100;
+        filters.plastic =
+            Number(plasticSlider.value);
+
+    }
+
+    if (glowSlider) {
+
+        filters.glow =
+            Number(glowSlider.value);
+
+    }
+
+    if (brightnessSlider) {
+
+        filters.brightness =
+            Number(brightnessSlider.value);
+
+    }
+
+    if (softFocusSlider) {
+
+        filters.softFocus =
+            Number(softFocusSlider.value);
+
+    }
+
+    if (detailSlider) {
+
+        filters.detail =
+            Number(detailSlider.value);
 
     }
 
 
-    /* Filter tidak boleh mengubah mirror */
+    if (plasticValue) {
 
-    forceNormalCamera();
+        plasticValue.textContent =
+            filters.plastic;
+
+    }
+
+    if (glowValue) {
+
+        glowValue.textContent =
+            filters.glow;
+
+    }
+
+    if (brightnessValue) {
+
+        brightnessValue.textContent =
+            filters.brightness;
+
+    }
+
+    if (softFocusValue) {
+
+        softFocusValue.textContent =
+            filters.softFocus;
+
+    }
+
+    if (detailValue) {
+
+        detailValue.textContent =
+            filters.detail;
+
+    }
 
 }
 
 
+/* =========================================================
+   SLIDERS
+   ========================================================= */
 
-/* =========================================
-   RANGE
-========================================= */
+[
+    plasticSlider,
+    glowSlider,
+    brightnessSlider,
+    softFocusSlider,
+    detailSlider
 
-if(smoothRange){
+].forEach(slider => {
 
-    smoothRange.addEventListener(
+    if (!slider) return;
+
+
+    slider.addEventListener(
         "input",
-        applyBeauty
-    );
-
-}
-
-if(brightnessRange){
-
-    brightnessRange.addEventListener(
-        "input",
-        applyBeauty
-    );
-
-}
-
-if(glowRange){
-
-    glowRange.addEventListener(
-        "input",
-        applyBeauty
-    );
-
-}
-
-
-
-/* =========================================
-   FILTER BUTTONS
-========================================= */
-
-document
-.querySelectorAll(".filter-btn")
-.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        function(){
-
-            document
-            .querySelectorAll(".filter-btn")
-            .forEach(btn => {
-
-                btn.classList.remove(
-                    "active"
-                );
-
-            });
-
-
-            this.classList.add(
-                "active"
-            );
-
-
-            setFilter(
-                this.dataset.filter
-            );
-
-        }
+        updateFilterValues
     );
 
 });
 
 
+/* =========================================================
+   DREAM LIKE PRESET
+   ========================================================= */
 
-/* =========================================
-   FILTER PRESETS
-========================================= */
+if (dreamLikeButton) {
 
-function setFilter(filter){
+    dreamLikeButton.addEventListener(
+        "click",
+        function() {
 
-    if(!video) return;
-
-
-    switch(filter){
-
-        case "beauty":
-
-            smoothRange.value = 35;
-            brightnessRange.value = 105;
-            glowRange.value = 20;
-
-            video.style.filter = `
-                brightness(105%)
-                saturate(108%)
-                contrast(98%)
-                blur(.35px)
-            `;
-
-            break;
+            filters.plastic = 90;
+            filters.glow = 65;
+            filters.brightness = 35;
+            filters.softFocus = 55;
+            filters.detail = 25;
 
 
-        case "smooth":
+            if (plasticSlider) {
+                plasticSlider.value = 90;
+            }
 
-            smoothRange.value = 70;
-            brightnessRange.value = 103;
-            glowRange.value = 10;
+            if (glowSlider) {
+                glowSlider.value = 65;
+            }
 
-            video.style.filter = `
-                brightness(103%)
-                saturate(105%)
-                contrast(97%)
-                blur(.7px)
-            `;
+            if (brightnessSlider) {
+                brightnessSlider.value = 35;
+            }
 
-            break;
+            if (softFocusSlider) {
+                softFocusSlider.value = 55;
+            }
 
-
-        case "glow":
-
-            smoothRange.value = 35;
-            brightnessRange.value = 110;
-            glowRange.value = 65;
-
-            video.style.filter = `
-                brightness(110%)
-                saturate(112%)
-                contrast(96%)
-                blur(.3px)
-            `;
-
-            break;
+            if (detailSlider) {
+                detailSlider.value = 25;
+            }
 
 
-        case "warm":
+            updateFilterValues();
 
-            smoothRange.value = 25;
-            brightnessRange.value = 105;
-            glowRange.value = 15;
-
-            video.style.filter = `
-                brightness(105%)
-                saturate(125%)
-                sepia(18%)
-                contrast(98%)
-            `;
-
-            break;
-
-
-        case "cool":
-
-            smoothRange.value = 20;
-            brightnessRange.value = 105;
-            glowRange.value = 10;
-
-            video.style.filter = `
-                brightness(105%)
-                saturate(110%)
-                hue-rotate(12deg)
-                contrast(98%)
-            `;
-
-            break;
-
-
-        case "dramatic":
-
-            smoothRange.value = 0;
-            brightnessRange.value = 100;
-            glowRange.value = 0;
-
-            video.style.filter = `
-                contrast(125%)
-                saturate(120%)
-            `;
-
-            break;
-
-
-        case "bw":
-
-            smoothRange.value = 10;
-            brightnessRange.value = 105;
-            glowRange.value = 0;
-
-            video.style.filter = `
-                grayscale(100%)
-                brightness(105%)
-                contrast(108%)
-            `;
-
-            break;
-
-    }
-
-
-    if(faceGlow){
-
-        faceGlow.style.opacity =
-            Number(glowRange.value) / 100;
-
-    }
-
-
-    forceNormalCamera();
+        }
+    );
 
 }
 
 
+/* =========================================================
+   FILTER PANEL OPEN
+   ========================================================= */
 
-/* =========================================
-   FILTER PANEL
-========================================= */
+function openFilterPanel() {
 
-if(filterButton){
+    if (!filterPanel) return;
+
+    filterPanel.classList.add("show");
+
+}
+
+
+function closeFilterPanel() {
+
+    if (!filterPanel) return;
+
+    filterPanel.classList.remove("show");
+
+}
+
+
+if (filterButton) {
 
     filterButton.addEventListener(
         "click",
-        function(){
-
-            if(filterPanel){
-
-                filterPanel.classList.toggle(
-                    "show"
-                );
-
-            }
-
-        }
+        openFilterPanel
     );
 
 }
 
 
+if (bottomFilterButton) {
 
-/* =========================================
-   RESET FILTER
-========================================= */
-
-const resetFilter =
-    document.getElementById(
-        "resetFilter"
-    );
-
-
-if(resetFilter){
-
-    resetFilter.addEventListener(
+    bottomFilterButton.addEventListener(
         "click",
-        function(){
-
-            smoothRange.value = 0;
-            brightnessRange.value = 100;
-            glowRange.value = 0;
-
-
-            video.style.filter =
-                "none";
-
-
-            if(faceGlow){
-
-                faceGlow.style.opacity =
-                    0;
-
-            }
-
-
-            document
-            .querySelectorAll(".filter-btn")
-            .forEach(btn => {
-
-                btn.classList.remove(
-                    "active"
-                );
-
-            });
-
-
-            const beautyButton =
-                document.querySelector(
-                    '[data-filter="beauty"]'
-                );
-
-
-            if(beautyButton){
-
-                beautyButton.classList.add(
-                    "active"
-                );
-
-            }
-
-
-            forceNormalCamera();
-
-        }
+        openFilterPanel
     );
 
 }
 
 
+if (closeFilterButton) {
 
-/* =========================================
-   START / STOP LIVE
-========================================= */
-
-if(startButton){
-
-    startButton.addEventListener(
+    closeFilterButton.addEventListener(
         "click",
-        function(){
+        closeFilterPanel
+    );
 
-            liveStarted =
-                !liveStarted;
-
-
-            if(liveStarted){
-
-                startButton.classList.add(
-                    "live-active"
-                );
+}
 
 
-                startButton.innerHTML =
-                    "⏹️<small>Stop Live</small>";
+/* =========================================================
+   AUTO LIGHT
+   ========================================================= */
+
+if (autoLightButton) {
+
+    autoLightButton.addEventListener(
+        "click",
+        function() {
+
+            autoLightEnabled =
+                !autoLightEnabled;
 
 
-                statusBox.textContent =
-                    "🔴 CHUK AN CHUKK LIVE";
+            autoLightButton.textContent =
+                autoLightEnabled
+                    ? "ON"
+                    : "OFF";
 
 
-                seconds = 0;
-
-                startTimer();
-
-
-                viewerCount.textContent =
-                    Math.floor(
-                        Math.random() * 8
-                    ) + 1;
+            autoLightButton.classList.toggle(
+                "active",
+                autoLightEnabled
+            );
 
 
-            }else{
+            autoLightButton.setAttribute(
+                "aria-pressed",
+                String(autoLightEnabled)
+            );
 
-                stopLive();
+
+            if (lightStatus) {
+
+                lightStatus.textContent =
+                    autoLightEnabled
+                        ? "💡 Auto Light"
+                        : "💡 Auto Light OFF";
 
             }
 
@@ -691,115 +1120,168 @@ if(startButton){
 }
 
 
+/* =========================================================
+   COMMENTS
+   ========================================================= */
 
-/* =========================================
-   TIMER
-========================================= */
+function addComment() {
 
-function startTimer(){
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    timerInterval =
-        setInterval(
-            function(){
-
-                seconds++;
+    if (!commentInput || !commentsList) {
+        return;
+    }
 
 
-                const minutes =
-                    Math.floor(
-                        seconds / 60
-                    );
+    const text =
+        commentInput.value.trim();
 
 
-                const secs =
-                    seconds % 60;
+    if (!text) return;
 
 
-                if(liveTime){
+    const comment =
+        document.createElement("div");
 
-                    liveTime.textContent =
-                        String(minutes)
-                        .padStart(2,"0")
-                        +
-                        ":" +
-                        String(secs)
-                        .padStart(2,"0");
 
-                }
+    comment.className =
+        "live-comment";
 
-            },
-            1000
-        );
+
+    comment.innerHTML =
+        `<strong>You</strong> ${escapeHTML(text)}`;
+
+
+    commentsList.appendChild(comment);
+
+
+    commentInput.value = "";
+
+
+    commentsList.scrollTop =
+        commentsList.scrollHeight;
 
 }
 
 
+function escapeHTML(text) {
 
-/* =========================================
-   STOP LIVE
-========================================= */
+    const div =
+        document.createElement("div");
 
-function stopLive(){
+    div.textContent = text;
 
-    liveStarted = false;
-
-
-    clearInterval(
-        timerInterval
-    );
-
-
-    if(startButton){
-
-        startButton.classList.remove(
-            "live-active"
-        );
-
-
-        startButton.innerHTML =
-            "🔴<small>Mulai Live</small>";
-
-    }
-
-
-    if(statusBox){
-
-        statusBox.textContent =
-            "📷 Kamera siap";
-
-    }
-
-
-    if(viewerCount){
-
-        viewerCount.textContent =
-            "0";
-
-    }
+    return div.innerHTML;
 
 }
 
 
+if (sendCommentButton) {
 
-/* =========================================
+    sendCommentButton.addEventListener(
+        "click",
+        addComment
+    );
+
+}
+
+
+if (commentInput) {
+
+    commentInput.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                addComment();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   COMMENT PANEL
+   ========================================================= */
+
+if (commentButton) {
+
+    commentButton.addEventListener(
+        "click",
+        function() {
+
+            if (!commentInputArea) return;
+
+
+            const visible =
+                commentInputArea.classList.contains("show");
+
+
+            commentInputArea.classList.toggle(
+                "show",
+                !visible
+            );
+
+
+            if (!visible && commentInput) {
+
+                setTimeout(
+                    () => commentInput.focus(),
+                    100
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   FOLLOW
+   ========================================================= */
+
+if (followButton) {
+
+    followButton.addEventListener(
+        "click",
+        function() {
+
+            const following =
+                followButton.classList.toggle(
+                    "following"
+                );
+
+
+            followButton.textContent =
+                following
+                    ? "Following"
+                    : "Follow";
+
+        }
+    );
+
+}
+
+
+/* =========================================================
    LIKE
-========================================= */
+   ========================================================= */
 
-if(likeButton){
+if (likeButton) {
 
     likeButton.addEventListener(
         "click",
-        function(){
+        function() {
 
             likes++;
 
-
-            if(likeCount){
+            if (likeCount) {
 
                 likeCount.textContent =
                     likes;
@@ -812,22 +1294,182 @@ if(likeButton){
 }
 
 
+/* =========================================================
+   START LIVE
+   ========================================================= */
 
-/* =========================================
-   CLOSE LIVE
-========================================= */
+if (startButton) {
 
-const closeLive =
-    document.getElementById(
-        "closeLive"
+    startButton.addEventListener(
+        "click",
+        function() {
+
+            if (liveStarted) {
+
+                stopLive();
+
+            } else {
+
+                startLive();
+
+            }
+
+        }
+    );
+
+}
+
+
+function startLive() {
+
+    liveStarted = true;
+
+    seconds = 0;
+
+
+    startButton.classList.add(
+        "live-active"
     );
 
 
-if(closeLive){
+    if (startLiveText) {
 
-    closeLive.addEventListener(
+        startLiveText.textContent =
+            "Stop Live";
+
+    }
+
+
+    statusBox.textContent =
+        "🔴 CHUK AN CHUKK LIVE";
+
+
+    viewerCount.textContent =
+        String(
+            Math.floor(
+                Math.random() * 8
+            ) + 1
+        );
+
+
+    startTimer();
+
+}
+
+
+function stopLive() {
+
+    liveStarted = false;
+
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    timerInterval = null;
+
+
+    if (startButton) {
+
+        startButton.classList.remove(
+            "live-active"
+        );
+
+    }
+
+
+    if (startLiveText) {
+
+        startLiveText.textContent =
+            "Mulai Live";
+
+    }
+
+
+    if (statusBox) {
+
+        statusBox.textContent =
+            "📷 Kamera siap";
+
+    }
+
+
+    if (viewerCount) {
+
+        viewerCount.textContent =
+            "0";
+
+    }
+
+}
+
+
+/* =========================================================
+   TIMER
+   ========================================================= */
+
+function startTimer() {
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    updateTimer();
+
+
+    timerInterval =
+        setInterval(
+            updateTimer,
+            1000
+        );
+
+}
+
+
+function updateTimer() {
+
+    seconds++;
+
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+
+    const secs =
+        seconds % 60;
+
+
+    if (liveTimer) {
+
+        liveTimer.textContent =
+            String(minutes)
+                .padStart(2, "0")
+            +
+            ":"
+            +
+            String(secs)
+                .padStart(2, "0");
+
+    }
+
+}
+
+
+/* =========================================================
+   CLOSE LIVE
+   ========================================================= */
+
+if (closeLiveButton) {
+
+    closeLiveButton.addEventListener(
         "click",
-        function(){
+        function() {
+
+            stopLive();
 
             stopCamera();
 
@@ -840,46 +1482,39 @@ if(closeLive){
 }
 
 
+/* =========================================================
+   RESIZE
+   ========================================================= */
 
-/* =========================================
-   STOP CAMERA
-========================================= */
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
 
-function stopCamera(){
+window.addEventListener(
+    "orientationchange",
+    function() {
 
-    if(cameraStream){
-
-        cameraStream
-            .getTracks()
-            .forEach(track => {
-
-                track.stop();
-
-            });
-
-
-        cameraStream = null;
+        setTimeout(
+            resizeCanvas,
+            250
+        );
 
     }
+);
 
 
-    if(video){
-
-        video.srcObject = null;
-
-    }
-
-}
-
-
-
-/* =========================================
+/* =========================================================
    PAGE EXIT
-========================================= */
+   ========================================================= */
 
 window.addEventListener(
     "beforeunload",
-    function(){
+    function() {
+
+        clearInterval(
+            timerInterval
+        );
 
         stopCamera();
 
@@ -887,46 +1522,36 @@ window.addEventListener(
 );
 
 
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
 
-/* =========================================
-   INIT
-========================================= */
+async function initLive() {
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async function(){
+    prepareVideo();
 
-        /* Pastikan video selalu normal */
+    resizeCanvas();
 
-        forceNormalCamera();
+    updateFilterValues();
 
+    startRenderer();
 
-        /* Beauty default */
+    await startCamera();
 
-        if(smoothRange){
-            smoothRange.value = 35;
-        }
-
-        if(brightnessRange){
-            brightnessRange.value = 105;
-        }
-
-        if(glowRange){
-            glowRange.value = 20;
-        }
+}
 
 
-        applyBeauty();
+if (
+    document.readyState === "loading"
+) {
 
+    document.addEventListener(
+        "DOMContentLoaded",
+        initLive
+    );
 
-        /* Start camera */
+} else {
 
-        await startCamera();
+    initLive();
 
-
-        /* Force sekali lagi */
-
-        forceNormalCamera();
-
-    }
-);
+}
