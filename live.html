@@ -15,6 +15,76 @@
     <title>CHUK AN CHUKK — Live</title>
 
     <link rel="stylesheet" href="live.css">
+
+    <!-- =====================================================
+         CHUK FACE FILTER V2
+         MediaPipe Face Landmarker
+         ===================================================== -->
+    <script type="module">
+        import {
+            FaceLandmarker,
+            FilesetResolver
+        } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
+
+        window.ChukFaceLandmarker = null;
+
+        async function initChukFaceFilter() {
+            try {
+
+                console.log(
+                    "⏳ CHUK FACE FILTER V2 — Loading..."
+                );
+
+                const vision =
+                    await FilesetResolver.forVisionTasks(
+                        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm"
+                    );
+
+                window.ChukFaceLandmarker =
+                    await FaceLandmarker.createFromOptions(
+                        vision,
+                        {
+                            baseOptions: {
+                                modelAssetPath:
+                                    "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+
+                                delegate: "GPU"
+                            },
+
+                            runningMode: "VIDEO",
+
+                            numFaces: 1,
+
+                            minFaceDetectionConfidence: 0.5,
+
+                            minFacePresenceConfidence: 0.5,
+
+                            minTrackingConfidence: 0.5
+                        }
+                    );
+
+                console.log(
+                    "✅ CHUK FACE FILTER V2 READY"
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "❌ CHUK FACE FILTER V2 ERROR:",
+                    error
+                );
+
+                /*
+                 * Kamera tetap boleh berjalan
+                 * walaupun Face Landmarker gagal.
+                 */
+                window.ChukFaceLandmarker = null;
+            }
+        }
+
+        initChukFaceFilter();
+    </script>
+
 </head>
 
 <body>
