@@ -1,58 +1,62 @@
 /* =========================================================
    CHUK AN CHUKK
-   DREAM-LIKE FILTER
-   INTERNAL NAME: DreamLikePlastic
+   DREAM-LIKE-FILTER.JS
+   BEAUTY FILTER ENGINE
+   =========================================================
+
+   Internal name:
+   DreamLikePlastic
+
+   Fungsi:
+   - Menggambar kamera ke Canvas
+   - Tidak pernah mirror / flip horizontal
+   - Dream Like beauty effect
+   - Plastic skin
+   - Glow
+   - Brightness
+   - Soft Focus
+   - Detail
+   - Auto Light
+   - Bisa ON/OFF tanpa mematikan kamera
    ========================================================= */
 
-(function (window) {
+(function () {
 
     "use strict";
 
+
+    /* =====================================================
+       CLASS
+       ===================================================== */
 
     class DreamLikePlastic {
 
         constructor(video, canvas) {
 
             this.video = video;
-
             this.canvas = canvas;
 
-            this.ctx =
-                canvas.getContext(
-                    "2d",
-                    {
-                        alpha: false,
-                        willReadFrequently: false
-                    }
-                );
+            this.ctx = canvas.getContext("2d", {
+                alpha: false,
+                desynchronized: true
+            });
+
+            this.workCanvas = document.createElement("canvas");
+
+            this.workCtx = this.workCanvas.getContext("2d", {
+                alpha: false
+            });
+
+            this.blurCanvas = document.createElement("canvas");
+
+            this.blurCtx = this.blurCanvas.getContext("2d", {
+                alpha: false
+            });
 
 
-            this.workCanvas =
-                document.createElement(
-                    "canvas"
-                );
-
-            this.workCtx =
-                this.workCanvas.getContext(
-                    "2d"
-                );
-
-
-            this.blurCanvas =
-                document.createElement(
-                    "canvas"
-                );
-
-            this.blurCtx =
-                this.blurCanvas.getContext(
-                    "2d"
-                );
-
-
-            this.running = false;
-
-            this.animationFrame = null;
-
+            /* =================================================
+               DEFAULT SETTINGS
+               ================================================= */
 
             this.settings = {
 
@@ -71,19 +75,44 @@
             };
 
 
+            /* =================================================
+               STATE
+               ================================================= */
+
+            this.enabled = false;
+
             this.autoLight = true;
 
+            this.running = false;
+
+            this.animationFrame = null;
 
             this.lastWidth = 0;
 
             this.lastHeight = 0;
 
+
+            /* =================================================
+               PERFORMANCE
+               ================================================= */
+
+            this.maxWidth = 1280;
+
+            this.maxHeight = 1920;
+
+
+            /* =================================================
+               BIND
+               ================================================= */
+
+            this.render = this.render.bind(this);
+
         }
 
 
-        /* =================================================
+        /* =====================================================
            START
-           ================================================= */
+           ===================================================== */
 
         start() {
 
@@ -91,65 +120,112 @@
                 return;
             }
 
-
             this.running = true;
-
-
-            this.resize();
-
 
             this.render();
 
         }
 
 
-        /* =================================================
+        /* =====================================================
            STOP
-           ================================================= */
+           ===================================================== */
 
         stop() {
 
             this.running = false;
 
-
-            if (
-                this.animationFrame
-            ) {
+            if (this.animationFrame) {
 
                 cancelAnimationFrame(
                     this.animationFrame
                 );
 
+                this.animationFrame = null;
+
             }
-
-
-            this.animationFrame =
-                null;
 
         }
 
 
-        /* =================================================
+        /* =====================================================
+           ENABLE
+           ===================================================== */
+
+        enable() {
+
+            this.enabled = true;
+
+        }
+
+
+        /* =====================================================
+           DISABLE
+           ===================================================== */
+
+        disable() {
+
+            this.enabled = false;
+
+        }
+
+
+        /* =====================================================
+           TOGGLE
+           ===================================================== */
+
+        toggle() {
+
+            this.enabled = !this.enabled;
+
+            return this.enabled;
+
+        }
+
+
+        /* =====================================================
            RESIZE
-           ================================================= */
+           ===================================================== */
 
-        resize() {
+        resize(width, height) {
 
-            const width =
-                this.video.videoWidth ||
-                this.canvas.width ||
-                720;
+            width = Math.max(
+                320,
+                Math.floor(width || 720)
+            );
+
+            height = Math.max(
+                240,
+                Math.floor(height || 1280)
+            );
 
 
-            const height =
-                this.video.videoHeight ||
-                this.canvas.height ||
-                1280;
+            /*
+             * Batasi ukuran internal Canvas
+             * supaya Android tidak terlalu berat.
+             */
+
+            let scale = Math.min(
+                1,
+                this.maxWidth / width,
+                this.maxHeight / height
+            );
+
+
+            const targetWidth = Math.max(
+                320,
+                Math.floor(width * scale)
+            );
+
+            const targetHeight = Math.max(
+                240,
+                Math.floor(height * scale)
+            );
 
 
             if (
-                width <= 0 ||
-                height <= 0
+                this.lastWidth === targetWidth &&
+                this.lastHeight === targetHeight
             ) {
 
                 return;
@@ -157,9 +233,71 @@
             }
 
 
+            this.lastWidth = targetWidth;
+
+            this.lastHeight = targetHeight;
+
+
+            this.canvas.width = targetWidth;
+
+            this.canvas.height = targetHeight;
+
+
+            this.workCanvas.width = targetWidth;
+
+            this.workCanvas.height = targetHeight;
+
+
+            this.blurCanvas.width = targetWidth;
+
+            this.blurCanvas.height = targetHeight;
+
+
+            /*
+             * Pastikan Canvas tidak pernah di-mirror.
+             */
+
+            this.ctx.setTransform(
+                1,
+                0,
+                0,
+                1,
+                0,
+                0
+            );
+
+            this.workCtx.setTransform(
+                1,
+                0,
+                0,
+                1,
+                0,
+                0
+            );
+
+            this.blurCtx.setTransform(
+                1,
+                0,
+                0,
+                1,
+                0,
+                0
+            );
+
+        }
+
+
+        /* =====================================================
+           SETTING
+           ===================================================== */
+
+        setSetting(name, value) {
+
             if (
-                this.lastWidth === width &&
-                this.lastHeight === height
+                !Object.prototype.hasOwnProperty.call(
+                    this.settings,
+                    name
+                )
             ) {
 
                 return;
@@ -167,60 +305,30 @@
             }
 
 
-            this.lastWidth =
-                width;
-
-            this.lastHeight =
-                height;
+            value = Number(value);
 
 
-            this.canvas.width =
-                width;
+            if (!Number.isFinite(value)) {
 
-            this.canvas.height =
-                height;
-
-
-            this.workCanvas.width =
-                width;
-
-            this.workCanvas.height =
-                height;
-
-
-            this.blurCanvas.width =
-                width;
-
-            this.blurCanvas.height =
-                height;
-
-        }
-
-
-        /* =================================================
-           SETTINGS
-           ================================================= */
-
-        setSetting(
-            name,
-            value
-        ) {
-
-            if (
-                Object.prototype.hasOwnProperty
-                    .call(
-                        this.settings,
-                        name
-                    )
-            ) {
-
-                this.settings[name] =
-                    Number(value);
+                return;
 
             }
 
+
+            value = Math.max(
+                0,
+                Math.min(100, value)
+            );
+
+
+            this.settings[name] = value;
+
         }
 
+
+        /* =====================================================
+           MULTIPLE SETTINGS
+           ===================================================== */
 
         setSettings(settings) {
 
@@ -229,26 +337,13 @@
             }
 
 
-            Object.keys(
-                settings
-            ).forEach(
-                (key) => {
+            Object.keys(settings).forEach(
+                name => {
 
-                    if (
-                        Object.prototype
-                            .hasOwnProperty
-                            .call(
-                                this.settings,
-                                key
-                            )
-                    ) {
-
-                        this.settings[key] =
-                            Number(
-                                settings[key]
-                            );
-
-                    }
+                    this.setSetting(
+                        name,
+                        settings[name]
+                    );
 
                 }
             );
@@ -256,110 +351,200 @@
         }
 
 
+        /* =====================================================
+           AUTO LIGHT
+           ===================================================== */
+
         setAutoLight(enabled) {
 
-            this.autoLight =
-                Boolean(enabled);
+            this.autoLight = Boolean(enabled);
 
         }
 
 
-        /* =================================================
-           RENDER
-           ================================================= */
+        /* =====================================================
+           GET SETTINGS
+           ===================================================== */
 
-        render() {
+        getSettings() {
 
-            if (!this.running) {
-                return;
+            return {
+                ...this.settings
+            };
+
+        }
+
+
+        /* =====================================================
+           DRAW VIDEO COVER
+           =====================================================
+
+           Sangat penting:
+
+           TIDAK ADA:
+
+           ctx.scale(-1, 1)
+
+           TIDAK ADA:
+
+           translate + scale negatif.
+
+           Jadi frame kamera digambar NORMAL.
+           ===================================================== */
+
+        drawVideoCover(ctx, source, width, height) {
+
+            if (
+                !source ||
+                !source.videoWidth ||
+                !source.videoHeight
+            ) {
+
+                return false;
+
             }
 
+
+            const sourceWidth =
+                source.videoWidth;
+
+            const sourceHeight =
+                source.videoHeight;
+
+
+            const sourceRatio =
+                sourceWidth / sourceHeight;
+
+            const targetRatio =
+                width / height;
+
+
+            let sx = 0;
+
+            let sy = 0;
+
+            let sw = sourceWidth;
+
+            let sh = sourceHeight;
+
+
+            /* =================================================
+               CROP HORIZONTAL
+               ================================================= */
+
+            if (sourceRatio > targetRatio) {
+
+                sw =
+                    sourceHeight * targetRatio;
+
+                sx =
+                    (sourceWidth - sw) / 2;
+
+            }
+
+
+            /* =================================================
+               CROP VERTICAL
+               ================================================= */
+
+            else if (sourceRatio < targetRatio) {
+
+                sh =
+                    sourceWidth / targetRatio;
+
+                sy =
+                    (sourceHeight - sh) / 2;
+
+            }
+
+
+            /*
+             * Reset transform.
+             */
+
+            ctx.setTransform(
+                1,
+                0,
+                0,
+                1,
+                0,
+                0
+            );
+
+
+            /*
+             * Tidak ada horizontal flip.
+             */
+
+            ctx.drawImage(
+                source,
+                sx,
+                sy,
+                sw,
+                sh,
+                0,
+                0,
+                width,
+                height
+            );
+
+
+            return true;
+
+        }
+
+
+        /* =====================================================
+           DRAW ORIGINAL
+           ===================================================== */
+
+        drawOriginal() {
 
             if (
                 !this.video ||
                 this.video.readyState < 2
             ) {
 
-                this.animationFrame =
-                    requestAnimationFrame(
-                        () => this.render()
-                    );
-
-                return;
+                return false;
 
             }
 
-
-            try {
-
-                this.resize();
-
-
-                if (
-                    this.canvas.width <= 0 ||
-                    this.canvas.height <= 0
-                ) {
-
-                    this.animationFrame =
-                        requestAnimationFrame(
-                            () => this.render()
-                        );
-
-                    return;
-
-                }
-
-
-                this.applyFilter();
-
-            } catch (error) {
-
-                console.error(
-                    "❌ Dream filter render error:",
-                    error
-                );
-
-
-                /*
-                   Jangan biarkan error filter
-                   menghentikan loop kamera.
-                */
-
-            }
-
-
-            this.animationFrame =
-                requestAnimationFrame(
-                    () => this.render()
-                );
-
-        }
-
-
-        /* =================================================
-           APPLY FILTER
-           ================================================= */
-
-        applyFilter() {
 
             const width =
                 this.canvas.width;
-
 
             const height =
                 this.canvas.height;
 
 
-            /*
-               Frame asli
-            */
+            if (!width || !height) {
 
-            this.workCtx.clearRect(
-                0,
-                0,
+                return false;
+
+            }
+
+
+            return this.drawVideoCover(
+                this.ctx,
+                this.video,
                 width,
                 height
             );
+
+        }
+
+
+        /* =====================================================
+           COPY FRAME
+           ===================================================== */
+
+        copyFrame() {
+
+            const width =
+                this.canvas.width;
+
+            const height =
+                this.canvas.height;
 
 
             this.drawVideoCover(
@@ -369,41 +554,73 @@
                 height
             );
 
+        }
+
+
+        /* =====================================================
+           AUTO LIGHT CALCULATION
+           ===================================================== */
+
+        calculateBrightness() {
+
+            const width =
+                this.workCanvas.width;
+
+            const height =
+                this.workCanvas.height;
+
+
+            if (!width || !height) {
+
+                return 0.5;
+
+            }
+
 
             /*
-               Ambil frame
-            */
+             * Sampling kecil agar ringan.
+             */
 
-            const image =
-                this.workCtx.getImageData(
-                    0,
-                    0,
-                    width,
-                    height
-                );
+            const sampleWidth = 32;
+
+            const sampleHeight = 32;
+
+
+            const sampleCanvas =
+                document.createElement("canvas");
+
+
+            sampleCanvas.width =
+                sampleWidth;
+
+            sampleCanvas.height =
+                sampleHeight;
+
+
+            const sampleCtx =
+                sampleCanvas.getContext("2d");
+
+
+            sampleCtx.drawImage(
+                this.workCanvas,
+                0,
+                0,
+                sampleWidth,
+                sampleHeight
+            );
 
 
             const data =
-                image.data;
+                sampleCtx.getImageData(
+                    0,
+                    0,
+                    sampleWidth,
+                    sampleHeight
+                ).data;
 
 
-            const plastic =
-                this.settings.plastic / 100;
+            let total = 0;
 
-
-            const brightness =
-                this.settings.brightness / 100;
-
-
-            const detail =
-                this.settings.detail / 100;
-
-
-            /*
-               Beauty skin sederhana.
-               Bekerja pada warna kulit,
-               bukan AI face segmentation.
-            */
 
             for (
                 let i = 0;
@@ -411,152 +628,171 @@
                 i += 4
             ) {
 
-                const r =
-                    data[i];
+                const r = data[i];
+
+                const g = data[i + 1];
+
+                const b = data[i + 2];
 
 
-                const g =
-                    data[i + 1];
+                const brightness =
+                    (
+                        r * 0.299 +
+                        g * 0.587 +
+                        b * 0.114
+                    ) / 255;
 
 
-                const b =
-                    data[i + 2];
+                total += brightness;
+
+            }
 
 
-                const max =
-                    Math.max(
-                        r,
-                        g,
-                        b
-                    );
+            return total /
+                (data.length / 4);
+
+        }
 
 
-                const min =
-                    Math.min(
-                        r,
-                        g,
-                        b
-                    );
+        /* =====================================================
+           APPLY FILTER
+           ===================================================== */
+
+        applyFilter() {
+
+            const width =
+                this.canvas.width;
+
+            const height =
+                this.canvas.height;
 
 
-                const skinLike =
-                    r > 60 &&
-                    r > g * 1.08 &&
-                    r > b * 1.12 &&
-                    (max - min) > 15;
+            if (!width || !height) {
+
+                return;
+
+            }
 
 
-                if (skinLike) {
+            /*
+             * Ambil frame asli.
+             */
 
-                    /*
-                       Plastic Skin
-                    */
-
-                    const avg =
-                        (r + g + b) /
-                        3;
+            this.copyFrame();
 
 
-                    data[i] =
-                        r +
-                        (avg - r) *
-                        plastic *
-                        0.18;
+            const plastic =
+                this.settings.plastic / 100;
+
+            const glow =
+                this.settings.glow / 100;
+
+            const brightness =
+                this.settings.brightness / 100;
+
+            const softFocus =
+                this.settings.softFocus / 100;
+
+            const detail =
+                this.settings.detail / 100;
+
+            const strength =
+                this.settings.strength / 100;
 
 
-                    data[i + 1] =
-                        g +
-                        (avg - g) *
-                        plastic *
-                        0.10;
+            /* =================================================
+               AUTO LIGHT
+               ================================================= */
+
+            let autoBrightness = 0;
 
 
-                    data[i + 2] =
-                        b +
-                        (avg - b) *
-                        plastic *
-                        0.08;
+            if (this.autoLight) {
 
-                }
-
-
-                /*
-                   Brightness
-                */
-
-                const boost =
-                    1 +
-                    brightness *
-                    0.18;
-
-
-                data[i] =
-                    Math.min(
-                        255,
-                        data[i] *
-                        boost
-                    );
-
-
-                data[i + 1] =
-                    Math.min(
-                        255,
-                        data[i + 1] *
-                        boost
-                    );
-
-
-                data[i + 2] =
-                    Math.min(
-                        255,
-                        data[i + 2] *
-                        boost
-                    );
+                const current =
+                    this.calculateBrightness();
 
 
                 /*
-                   Face detail protection
-                */
+                 * Jika terlalu gelap,
+                 * tambahkan brightness.
+                 */
 
-                if (
-                    detail > 0 &&
-                    skinLike
-                ) {
+                if (current < 0.45) {
 
-                    data[i] =
-                        data[i] * 0.98 +
-                        r * 0.02;
-
-                    data[i + 1] =
-                        data[i + 1] * 0.98 +
-                        g * 0.02;
-
-                    data[i + 2] =
-                        data[i + 2] * 0.98 +
-                        b * 0.02;
+                    autoBrightness =
+                        Math.min(
+                            0.25,
+                            (0.45 - current) * 0.8
+                        );
 
                 }
 
             }
 
 
-            this.workCtx.putImageData(
-                image,
+            /* =================================================
+               BASE FILTER
+               ================================================= */
+
+            const brightnessBoost =
+                (
+                    brightness * 0.18 +
+                    autoBrightness
+                ) * strength;
+
+
+            const contrast =
+                1 +
+                (
+                    plastic * 0.08 *
+                    strength
+                );
+
+
+            const saturation =
+                1 +
+                (
+                    glow * 0.12 *
+                    strength
+                );
+
+
+            const blurAmount =
+                softFocus * 2.2;
+
+
+            /*
+             * Filter dasar.
+             */
+
+            this.ctx.save();
+
+
+            this.ctx.setTransform(
+                1,
+                0,
+                0,
+                1,
                 0,
                 0
             );
 
 
-            /*
-               Soft Focus
-            */
+            this.ctx.filter =
+                "brightness(" +
+                (1 + brightnessBoost) +
+                ") " +
+                "contrast(" +
+                contrast +
+                ") " +
+                "saturate(" +
+                saturation +
+                ")";
 
-            const soft =
-                this.settings.softFocus /
-                100;
 
-
-            this.ctx.clearRect(
+            this.ctx.drawImage(
+                this.workCanvas,
                 0,
                 0,
                 width,
@@ -564,7 +800,14 @@
             );
 
 
-            if (soft > 0.01) {
+            this.ctx.restore();
+
+
+            /* =================================================
+               SOFT FOCUS
+               ================================================= */
+
+            if (softFocus > 0) {
 
                 this.blurCtx.clearRect(
                     0,
@@ -576,49 +819,26 @@
 
                 this.blurCtx.filter =
                     "blur(" +
-                    (
-                        soft * 2.2
-                    ).toFixed(1) +
+                    blurAmount +
                     "px)";
 
 
                 this.blurCtx.drawImage(
                     this.workCanvas,
                     0,
-                    0
-                );
-
-
-                this.blurCtx.filter =
-                    "none";
-
-
-                /*
-                   Original
-                */
-
-                this.ctx.globalAlpha =
-                    1;
-
-
-                this.ctx.drawImage(
-                    this.workCanvas,
                     0,
-                    0
+                    width,
+                    height
                 );
 
 
-                /*
-                   Glow / Soft
-                */
-
-                const glow =
-                    this.settings.glow /
-                    100;
+                this.ctx.save();
 
 
                 this.ctx.globalAlpha =
-                    glow * 0.18;
+                    softFocus *
+                    0.24 *
+                    strength;
 
 
                 this.ctx.globalCompositeOperation =
@@ -628,180 +848,278 @@
                 this.ctx.drawImage(
                     this.blurCanvas,
                     0,
-                    0
+                    0,
+                    width,
+                    height
                 );
 
 
+                this.ctx.restore();
+
+            }
+
+
+            /* =================================================
+               DREAM GLOW
+               ================================================= */
+
+            if (glow > 0) {
+
+                this.ctx.save();
+
+
                 this.ctx.globalAlpha =
-                    1;
+                    glow *
+                    0.16 *
+                    strength;
+
 
                 this.ctx.globalCompositeOperation =
-                    "source-over";
+                    "screen";
 
-            } else {
+
+                this.ctx.filter =
+                    "blur(" +
+                    (2 + glow * 5) +
+                    "px)";
+
 
                 this.ctx.drawImage(
                     this.workCanvas,
                     0,
-                    0
+                    0,
+                    width,
+                    height
                 );
 
+
+                this.ctx.restore();
+
             }
+
+
+            /* =================================================
+               SKIN SOFTENING
+               ================================================= */
+
+            if (plastic > 0) {
+
+                this.ctx.save();
+
+
+                this.ctx.globalAlpha =
+                    plastic *
+                    0.10 *
+                    strength;
+
+
+                this.ctx.globalCompositeOperation =
+                    "soft-light";
+
+
+                this.ctx.filter =
+                    "blur(" +
+                    (1 + plastic * 2.5) +
+                    "px)";
+
+
+                this.ctx.drawImage(
+                    this.workCanvas,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+
+                this.ctx.restore();
+
+            }
+
+
+            /* =================================================
+               DETAIL
+               =================================================
+
+               Detail sedikit dikembalikan supaya wajah
+               tidak terlalu blur.
+               ================================================= */
+
+            if (detail > 0) {
+
+                this.ctx.save();
+
+
+                this.ctx.globalAlpha =
+                    detail *
+                    0.10 *
+                    strength;
+
+
+                this.ctx.globalCompositeOperation =
+                    "overlay";
+
+
+                this.ctx.filter =
+                    "contrast(1.12)";
+
+
+                this.ctx.drawImage(
+                    this.workCanvas,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+
+                this.ctx.restore();
+
+            }
+
+
+            /*
+             * Reset filter untuk frame berikutnya.
+             */
+
+            this.ctx.filter = "none";
 
         }
 
 
-        /* =================================================
-           DRAW VIDEO COVER
-           ================================================= */
+        /* =====================================================
+           RENDER
+           ===================================================== */
 
-        drawVideoCover(
-            context,
-            source,
-            targetWidth,
-            targetHeight
-        ) {
+        render() {
 
-            const sourceWidth =
-                source.videoWidth ||
-                targetWidth;
-
-
-            const sourceHeight =
-                source.videoHeight ||
-                targetHeight;
-
-
-            if (
-                sourceWidth <= 0 ||
-                sourceHeight <= 0
-            ) {
+            if (!this.running) {
 
                 return;
 
             }
 
 
-            const sourceRatio =
-                sourceWidth /
-                sourceHeight;
-
-
-            const targetRatio =
-                targetWidth /
-                targetHeight;
-
-
-            let drawWidth;
-
-            let drawHeight;
-
-            let x;
-
-            let y;
-
-
-            /*
-               COVER:
-               layar penuh tanpa black bar.
-            */
-
             if (
-                sourceRatio >
-                targetRatio
+                !this.video ||
+                this.video.readyState < 2 ||
+                !this.video.videoWidth ||
+                !this.video.videoHeight
             ) {
 
-                drawHeight =
-                    targetHeight;
+                this.animationFrame =
+                    requestAnimationFrame(
+                        this.render
+                    );
 
-
-                drawWidth =
-                    targetHeight *
-                    sourceRatio;
-
-
-                x =
-                    (
-                        targetWidth -
-                        drawWidth
-                    ) / 2;
-
-
-                y = 0;
-
-            } else {
-
-                drawWidth =
-                    targetWidth;
-
-
-                drawHeight =
-                    targetWidth /
-                    sourceRatio;
-
-
-                x = 0;
-
-
-                y =
-                    (
-                        targetHeight -
-                        drawHeight
-                    ) / 2;
+                return;
 
             }
 
 
-            context.drawImage(
-                source,
-                x,
-                y,
-                drawWidth,
-                drawHeight
-            );
+            /*
+             * Jika ukuran Canvas belum benar,
+             * gunakan ukuran viewport.
+             */
+
+            if (
+                !this.canvas.width ||
+                !this.canvas.height
+            ) {
+
+                const width =
+                    window.innerWidth ||
+                    this.video.videoWidth ||
+                    720;
+
+                const height =
+                    window.innerHeight ||
+                    this.video.videoHeight ||
+                    1280;
+
+
+                this.resize(
+                    width,
+                    height
+                );
+
+            }
+
+
+            /* =================================================
+               FILTER OFF
+               ================================================= */
+
+            if (!this.enabled) {
+
+                this.drawOriginal();
+
+            }
+
+
+            /* =================================================
+               FILTER ON
+               ================================================= */
+
+            else {
+
+                try {
+
+                    this.applyFilter();
+
+                } catch (error) {
+
+                    console.warn(
+                        "Dream Like filter error:",
+                        error
+                    );
+
+                    /*
+                     * PENTING:
+                     * Kalau filter error, kamera TIDAK
+                     * boleh mati.
+                     *
+                     * Kembali tampilkan kamera asli.
+                     */
+
+                    this.drawOriginal();
+
+                }
+
+            }
+
+
+            this.animationFrame =
+                requestAnimationFrame(
+                    this.render
+                );
 
         }
 
 
-        /* =================================================
-           COMPATIBILITY NAME
-           ================================================= */
+        /* =====================================================
+           PUBLIC RENDER ORIGINAL
+           ===================================================== */
 
-        drawVideoContain(
-            context,
-            source,
-            targetWidth,
-            targetHeight
-        ) {
+        renderOriginal() {
 
-            /*
-               Nama internal tetap dipertahankan
-               untuk kompatibilitas kode lama.
-            */
-
-            this.drawVideoCover(
-                context,
-                source,
-                targetWidth,
-                targetHeight
-            );
+            return this.drawOriginal();
 
         }
 
     }
 
 
-    /* =====================================================
-       GLOBAL
-       ===================================================== */
+    /* =========================================================
+       GLOBAL EXPORT
+       ========================================================= */
 
     window.DreamLikePlastic =
         DreamLikePlastic;
 
 
     console.log(
-        "✨ DreamLikePlastic loaded"
+        "✅ DreamLikePlastic filter engine loaded"
     );
 
-
-})(window);
+})();
