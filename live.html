@@ -16,40 +16,52 @@
 
     <link rel="stylesheet" href="live.css">
 
+
     <!-- =====================================================
          CHUK FACE FILTER V2
          MediaPipe Face Landmarker
          ===================================================== -->
+
     <script type="module">
+
         import {
             FaceLandmarker,
             FilesetResolver
         } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
 
+
         window.ChukFaceLandmarker = null;
 
+
         async function initChukFaceFilter() {
+
             try {
 
                 console.log(
                     "⏳ CHUK FACE FILTER V2 — Loading..."
                 );
 
+
                 const vision =
                     await FilesetResolver.forVisionTasks(
                         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm"
                     );
 
+
                 window.ChukFaceLandmarker =
                     await FaceLandmarker.createFromOptions(
                         vision,
                         {
+
                             baseOptions: {
+
                                 modelAssetPath:
                                     "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
 
                                 delegate: "GPU"
+
                             },
+
 
                             runningMode: "VIDEO",
 
@@ -60,12 +72,15 @@
                             minFacePresenceConfidence: 0.5,
 
                             minTrackingConfidence: 0.5
+
                         }
                     );
+
 
                 console.log(
                     "✅ CHUK FACE FILTER V2 READY"
                 );
+
 
             } catch (error) {
 
@@ -74,24 +89,110 @@
                     error
                 );
 
-                /*
-                 * Kamera tetap boleh berjalan
-                 * walaupun Face Landmarker gagal.
-                 */
                 window.ChukFaceLandmarker = null;
+
             }
+
         }
 
+
         initChukFaceFilter();
+
+    </script>
+
+
+    <!-- =====================================================
+         CHUK BODY / PERSON SEGMENTATION V4
+         MediaPipe Image Segmenter
+         ===================================================== -->
+
+    <script type="module">
+
+        import {
+            ImageSegmenter,
+            FilesetResolver
+        } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
+
+
+        window.ChukPersonSegmenter = null;
+
+
+        async function initChukPersonSegmenter() {
+
+            try {
+
+                console.log(
+                    "⏳ CHUK BODY SEGMENTER V4 — Loading..."
+                );
+
+
+                const vision =
+                    await FilesetResolver.forVisionTasks(
+                        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm"
+                    );
+
+
+                window.ChukPersonSegmenter =
+                    await ImageSegmenter.createFromOptions(
+                        vision,
+                        {
+
+                            baseOptions: {
+
+                                modelAssetPath:
+                                    "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite",
+
+                                delegate: "GPU"
+
+                            },
+
+
+                            runningMode: "VIDEO",
+
+
+                            outputCategoryMask: true,
+
+                            outputConfidenceMasks: false
+
+                        }
+                    );
+
+
+                console.log(
+                    "✅ CHUK BODY SEGMENTER V4 READY"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "❌ CHUK BODY SEGMENTER V4 ERROR:",
+                    error
+                );
+
+                window.ChukPersonSegmenter = null;
+
+            }
+
+        }
+
+
+        initChukPersonSegmenter();
+
     </script>
 
 </head>
+
 
 <body>
 
 <div id="liveApp" class="live-app">
 
-    <!-- CAMERA SOURCE -->
+
+    <!-- =====================================================
+         CAMERA SOURCE
+         ===================================================== -->
+
     <video
         id="camera"
         class="camera-source"
@@ -102,11 +203,16 @@
         preload="none"
     ></video>
 
+
     <!-- Canvas utama kamera -->
+
     <canvas id="filterCanvas"></canvas>
 
 
-    <!-- TOP BAR -->
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
     <header class="live-header">
 
         <button
@@ -119,31 +225,49 @@
             ✕
         </button>
 
+
         <div class="live-title">
+
             <span class="live-dot"></span>
+
             <span>LIVE</span>
+
         </div>
 
+
         <div class="viewer-box">
+
             <span class="viewer-icon">👁</span>
+
             <span id="viewerCount">0</span>
+
         </div>
 
     </header>
 
 
     <!-- CAMERA STATUS -->
-    <div id="cameraStatus" class="camera-status">
+
+    <div
+        id="cameraStatus"
+        class="camera-status"
+    >
         Menyiapkan kamera...
     </div>
 
 
-    <!-- HOST INFORMATION -->
+    <!-- =====================================================
+         HOST INFORMATION
+         ===================================================== -->
+
     <section class="host-info">
 
         <div class="host-avatar">
+
             <span>👤</span>
+
         </div>
+
 
         <div class="host-details">
 
@@ -151,11 +275,13 @@
                 Chuk an Chukk
             </strong>
 
+
             <span id="hostUsername">
                 @chukanchukk
             </span>
 
         </div>
+
 
         <button
             id="followButton"
@@ -169,14 +295,20 @@
 
 
     <!-- LIVE DESCRIPTION -->
+
     <div class="live-description">
+
         <span id="liveDescription">
             Selamat datang di Chuk an Chukk Live 🔥
         </span>
+
     </div>
 
 
-    <!-- COMMENTS -->
+    <!-- =====================================================
+         COMMENTS
+         ===================================================== -->
+
     <section
         id="commentsContainer"
         class="comments-container"
@@ -192,6 +324,7 @@
 
 
     <!-- LIKE -->
+
     <div class="like-area">
 
         <button
@@ -201,15 +334,26 @@
             aria-label="Like"
             title="Like"
         >
-            <span class="side-icon">❤️</span>
-            <span id="likeCount">0</span>
+
+            <span class="side-icon">
+                ❤️
+            </span>
+
+            <span id="likeCount">
+                0
+            </span>
+
         </button>
 
     </div>
 
 
-    <!-- RIGHT SIDE CONTROLS -->
+    <!-- =====================================================
+         RIGHT SIDE CONTROLS
+         ===================================================== -->
+
     <aside class="side-controls">
+
 
         <button
             id="commentButton"
@@ -218,8 +362,15 @@
             aria-label="Komentar"
             title="Komentar"
         >
-            <span class="side-icon">💬</span>
-            <span>Chat</span>
+
+            <span class="side-icon">
+                💬
+            </span>
+
+            <span>
+                Chat
+            </span>
+
         </button>
 
 
@@ -230,8 +381,15 @@
             aria-label="Balik Kamera"
             title="Balik Kamera"
         >
-            <span class="side-icon">🔄</span>
-            <span>Flip</span>
+
+            <span class="side-icon">
+                🔄
+            </span>
+
+            <span>
+                Flip
+            </span>
+
         </button>
 
 
@@ -242,6 +400,7 @@
             aria-label="Kamera"
             title="Kamera"
         >
+
             <span
                 id="cameraIcon"
                 class="side-icon"
@@ -249,9 +408,11 @@
                 📷
             </span>
 
+
             <span id="cameraText">
                 Camera
             </span>
+
         </button>
 
 
@@ -262,6 +423,7 @@
             aria-label="Microphone"
             title="Microphone"
         >
+
             <span
                 id="micIcon"
                 class="side-icon"
@@ -269,9 +431,11 @@
                 🎤
             </span>
 
+
             <span id="micText">
                 Mic
             </span>
+
         </button>
 
 
@@ -280,16 +444,26 @@
             class="side-button filter-button"
             type="button"
             aria-label="Filter"
-            title="Filter wajah"
+            title="Filter wajah dan tubuh"
         >
-            <span class="side-icon">✨</span>
-            <span>Filter</span>
+
+            <span class="side-icon">
+                ✨
+            </span>
+
+            <span>
+                Filter
+            </span>
+
         </button>
 
     </aside>
 
 
-    <!-- BEAUTY FILTER PANEL -->
+    <!-- =====================================================
+         BEAUTY FILTER PANEL
+         ===================================================== -->
+
     <section
         id="filterPanel"
         class="filter-panel"
@@ -299,12 +473,18 @@
         <div class="filter-panel-header">
 
             <div>
-                <strong>✨ Beauty Filter</strong>
+
+                <strong>
+                    ✨ Beauty Filter V4
+                </strong>
+
 
                 <small>
-                    Dream Like
+                    Face + Body
                 </small>
+
             </div>
+
 
             <button
                 id="closeFilterButton"
@@ -318,7 +498,8 @@
         </div>
 
 
-        <!-- Preset -->
+        <!-- PRESET -->
+
         <button
             id="dreamLikeButton"
             class="dream-filter-button"
@@ -328,13 +509,22 @@
         </button>
 
 
-        <!-- Plastic -->
+        <!-- PLASTIC -->
+
         <div class="filter-control">
 
             <div class="filter-label">
-                <span>Plastic</span>
-                <span id="plasticValue">90</span>
+
+                <span>
+                    Plastic
+                </span>
+
+                <span id="plasticValue">
+                    90
+                </span>
+
             </div>
+
 
             <input
                 id="plasticSlider"
@@ -347,13 +537,22 @@
         </div>
 
 
-        <!-- Glow -->
+        <!-- GLOW -->
+
         <div class="filter-control">
 
             <div class="filter-label">
-                <span>Glow</span>
-                <span id="glowValue">65</span>
+
+                <span>
+                    Glow
+                </span>
+
+                <span id="glowValue">
+                    65
+                </span>
+
             </div>
+
 
             <input
                 id="glowSlider"
@@ -366,13 +565,22 @@
         </div>
 
 
-        <!-- Brightness -->
+        <!-- BRIGHTNESS -->
+
         <div class="filter-control">
 
             <div class="filter-label">
-                <span>Brightness</span>
-                <span id="brightnessValue">35</span>
+
+                <span>
+                    Brightness
+                </span>
+
+                <span id="brightnessValue">
+                    35
+                </span>
+
             </div>
+
 
             <input
                 id="brightnessSlider"
@@ -385,13 +593,22 @@
         </div>
 
 
-        <!-- Soft Focus -->
+        <!-- SOFT FOCUS -->
+
         <div class="filter-control">
 
             <div class="filter-label">
-                <span>Soft Focus</span>
-                <span id="softFocusValue">55</span>
+
+                <span>
+                    Soft Focus
+                </span>
+
+                <span id="softFocusValue">
+                    55
+                </span>
+
             </div>
+
 
             <input
                 id="softFocusSlider"
@@ -404,13 +621,22 @@
         </div>
 
 
-        <!-- Detail -->
+        <!-- DETAIL -->
+
         <div class="filter-control">
 
             <div class="filter-label">
-                <span>Detail</span>
-                <span id="detailValue">25</span>
+
+                <span>
+                    Detail
+                </span>
+
+                <span id="detailValue">
+                    25
+                </span>
+
             </div>
+
 
             <input
                 id="detailSlider"
@@ -423,16 +649,23 @@
         </div>
 
 
-        <!-- Auto Light -->
+        <!-- AUTO LIGHT -->
+
         <div class="filter-option">
 
             <div>
-                <strong>💡 Auto Light</strong>
+
+                <strong>
+                    💡 Auto Light
+                </strong>
+
 
                 <small>
                     Sesuaikan pencahayaan otomatis
                 </small>
+
             </div>
+
 
             <button
                 id="autoLightButton"
@@ -448,7 +681,10 @@
     </section>
 
 
-    <!-- COMMENT INPUT -->
+    <!-- =====================================================
+         COMMENT INPUT
+         ===================================================== -->
+
     <section
         id="commentInputArea"
         class="comment-input-area"
@@ -462,6 +698,7 @@
             placeholder="Tulis komentar..."
         >
 
+
         <button
             id="sendCommentButton"
             type="button"
@@ -473,8 +710,12 @@
     </section>
 
 
-    <!-- BOTTOM LIVE CONTROLS -->
+    <!-- =====================================================
+         BOTTOM LIVE CONTROLS
+         ===================================================== -->
+
     <footer class="live-controls">
+
 
         <button
             id="bottomMicButton"
@@ -483,7 +724,11 @@
             aria-label="Microphone"
         >
             🎤
-            <span>Mic</span>
+
+            <span>
+                Mic
+            </span>
+
         </button>
 
 
@@ -494,7 +739,11 @@
             aria-label="Filter"
         >
             ✨
-            <span>Filter</span>
+
+            <span>
+                Filter
+            </span>
+
         </button>
 
 
@@ -504,9 +753,11 @@
             type="button"
         >
             🔴
+
             <span id="startLiveText">
                 Mulai Live
             </span>
+
         </button>
 
 
@@ -517,13 +768,18 @@
             aria-label="Flip Kamera"
         >
             🔄
-            <span>Flip</span>
+
+            <span>
+                Flip
+            </span>
+
         </button>
 
     </footer>
 
 
     <!-- LIVE TIMER -->
+
     <div
         id="liveTimer"
         class="live-timer"
@@ -533,6 +789,7 @@
 
 
     <!-- LIGHT STATUS -->
+
     <div
         id="lightStatus"
         class="light-status"
@@ -550,8 +807,10 @@
 <!-- Beauty Filter Engine -->
 <script src="beauty-filter.js"></script>
 
+
 <!-- Live Controller -->
 <script src="live.js"></script>
+
 
 </body>
 </html>
