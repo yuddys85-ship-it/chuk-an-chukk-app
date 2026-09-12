@@ -1,7 +1,9 @@
 /* =========================================================
    CHUK AN CHUKK
-   BEAUTY FILTER V2
-   FACE-AWARE BEAUTY ENGINE
+   BEAUTY FILTER V4
+   FACE + FULL BODY BEAUTY
+   MediaPipe Person Segmentation
+   Compatible with current live.js V2
    ========================================================= */
 
 window.ChukBeauty = (() => {
@@ -20,20 +22,107 @@ window.ChukBeauty = (() => {
 
         detail: 22,
 
-        faceDetected: false
+        faceDetected: false,
+
+        bodyDetected: false
 
     };
 
 
     /* =====================================================
-       BASIC STATE
+       INTERNAL CANVAS
+       ===================================================== */
+
+    let bodyMaskCanvas = null;
+    let bodyMaskCtx = null;
+
+    let bodyLayerCanvas = null;
+    let bodyLayerCtx = null;
+
+    let glowLayerCanvas = null;
+    let glowLayerCtx = null;
+
+    let lastWidth = 0;
+    let lastHeight = 0;
+
+
+    function ensureCanvases(width, height) {
+
+        if (
+            bodyMaskCanvas &&
+            lastWidth === width &&
+            lastHeight === height
+        ) {
+            return;
+        }
+
+
+        lastWidth = width;
+        lastHeight = height;
+
+
+        bodyMaskCanvas =
+            document.createElement("canvas");
+
+        bodyMaskCanvas.width = width;
+        bodyMaskCanvas.height = height;
+
+
+        bodyMaskCtx =
+            bodyMaskCanvas.getContext("2d", {
+                willReadFrequently: true
+            });
+
+
+        bodyLayerCanvas =
+            document.createElement("canvas");
+
+        bodyLayerCanvas.width = width;
+        bodyLayerCanvas.height = height;
+
+
+        bodyLayerCtx =
+            bodyLayerCanvas.getContext("2d");
+
+
+        glowLayerCanvas =
+            document.createElement("canvas");
+
+        glowLayerCanvas.width = width;
+        glowLayerCanvas.height = height;
+
+
+        glowLayerCtx =
+            glowLayerCanvas.getContext("2d");
+
+    }
+
+
+    /* =====================================================
+       STATE
        ===================================================== */
 
     function set(name, value) {
 
-        if (!(name in state)) return;
+        if (!(name in state)) {
+            return;
+        }
 
-        state[name] = Number(value);
+
+        if (
+            name === "faceDetected" ||
+            name === "bodyDetected"
+        ) {
+
+            state[name] =
+                Boolean(value);
+
+            return;
+        }
+
+
+        state[name] =
+            Number(value);
 
     }
 
@@ -61,7 +150,8 @@ window.ChukBeauty = (() => {
 
     function toggle() {
 
-        state.enabled = !state.enabled;
+        state.enabled =
+            !state.enabled;
 
         return state.enabled;
 
@@ -110,11 +200,11 @@ window.ChukBeauty = (() => {
 
         state.enabled = true;
 
-        state.smooth = 55;
+        state.smooth = 58;
 
         state.brightness = 18;
 
-        state.glow = 20;
+        state.glow = 22;
 
         state.warmth = 4;
 
@@ -141,7 +231,7 @@ window.ChukBeauty = (() => {
 
 
     /* =====================================================
-       CSS CAMERA FILTER
+       CSS FILTER
        ===================================================== */
 
     function getCSSFilter() {
@@ -154,13 +244,18 @@ window.ChukBeauty = (() => {
 
 
         const brightness =
-            100 + state.brightness * 0.35;
+            100 +
+            state.brightness * 0.30;
+
 
         const contrast =
-            100 + state.detail * 0.05;
+            100 +
+            state.detail * 0.04;
+
 
         const saturation =
-            100 + state.warmth * 1.5;
+            100 +
+            state.warmth * 1.4;
 
 
         return `
@@ -168,6 +263,593 @@ window.ChukBeauty = (() => {
             contrast(${contrast}%)
             saturate(${saturation}%)
         `;
+
+    }
+
+
+    /* =====================================================
+       GET PERSON SEGMENTATION
+       ===================================================== */
+
+    function getPersonMask(
+        video,
+        timestamp
+    ) {
+
+        const segmenter =
+            window.ChukPersonSegmenter;
+
+
+        if (
+            !segmenter ||
+            !video ||
+            video.readyState < 2
+        ) {
+
+            return null;
+
+        }
+
+
+        try {
+
+            const result =
+                segmenter.segmentForVideo(
+                    video,
+                    timestamp
+                );
+
+
+            if (
+                !result ||
+                !result.categoryMask
+            ) {
+
+                return null;
+
+            }
+
+
+            return result.categoryMask;
+
+        } catch (error) {
+
+            console.warn(
+                "CHUK BODY SEGMENTATION:",
+                error
+            );
+
+
+            return null;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       BUILD BODY MASK
+       ===================================================== */
+
+    function buildBodyMask(
+        categoryMask,
+        width,
+        height
+    ) {
+
+        if (!categoryMask) {
+
+            return false;
+
+        }
+
+
+        ensureCanvases(
+            width,
+            height
+        );
+
+
+        const mask =
+            categoryMask;
+
+
+        const maskWidth =
+            mask.width;
+
+
+        const maskHeight =
+            mask.height;
+
+
+        if (
+            !maskWidth ||
+            !maskHeight
+        ) {
+
+            return false;
+
+        }
+
+
+        try {
+
+            const maskData =
+                mask.getAsUint8Array();
+
+
+            if (!maskData) {
+
+                return false;
+
+            }
+
+
+            const imageData =
+                bodyMaskCtx.createImageData(
+                    width,
+                    height
+                );
+
+
+            const pixels =
+                imageData.data;
+
+
+            const scaleX =
+                maskWidth / width;
+
+
+            const scaleY =
+                maskHeight / height;
+
+
+            let detected = false;
+
+
+            for (
+                let y = 0;
+                y < height;
+                y++
+            ) {
+
+                const sy =
+                    Math.min(
+                        maskHeight - 1,
+                        Math.floor(
+                            y * scaleY
+                        )
+                    );
+
+
+                for (
+                    let x = 0;
+                    x < width;
+                    x++
+                ) {
+
+                    const sx =
+                        Math.min(
+                            maskWidth - 1,
+                            Math.floor(
+                                x * scaleX
+                            )
+                        );
+
+
+                    const index =
+                        sy * maskWidth +
+                        sx;
+
+
+                    const category =
+                        maskData[index];
+
+
+                    const pixel =
+                        (
+                            y * width +
+                            x
+                        ) * 4;
+
+
+                    /*
+                     * Selfie/person segmentation
+                     * normally uses person category.
+                     *
+                     * 0 = background
+                     * 1 = person
+                     */
+
+                    if (
+                        category > 0
+                    ) {
+
+                        pixels[pixel] = 255;
+
+                        pixels[pixel + 1] = 255;
+
+                        pixels[pixel + 2] = 255;
+
+                        pixels[pixel + 3] = 255;
+
+                        detected = true;
+
+                    } else {
+
+                        pixels[pixel] = 0;
+
+                        pixels[pixel + 1] = 0;
+
+                        pixels[pixel + 2] = 0;
+
+                        pixels[pixel + 3] = 0;
+
+                    }
+
+                }
+
+            }
+
+
+            bodyMaskCtx.putImageData(
+                imageData,
+                0,
+                0
+            );
+
+
+            state.bodyDetected =
+                detected;
+
+
+            return detected;
+
+        } catch (error) {
+
+            console.warn(
+                "CHUK BODY MASK ERROR:",
+                error
+            );
+
+
+            state.bodyDetected =
+                false;
+
+
+            return false;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       SOFT BODY BEAUTY
+       ===================================================== */
+
+    function applyBodyBeauty(
+        ctx,
+        sourceCanvas,
+        width,
+        height
+    ) {
+
+        if (
+            !state.enabled ||
+            !bodyMaskCanvas
+        ) {
+
+            return;
+
+        }
+
+
+        const smooth =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    state.smooth
+                )
+            );
+
+
+        if (smooth <= 0) {
+
+            return;
+
+        }
+
+
+        /*
+         * Clear previous layer
+         */
+
+        bodyLayerCtx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        /*
+         * Softened full-frame copy
+         */
+
+        bodyLayerCtx.save();
+
+
+        bodyLayerCtx.filter =
+            `blur(${Math.max(
+                0.4,
+                smooth * 0.035
+            )}px)`;
+
+
+        bodyLayerCtx.drawImage(
+            sourceCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        bodyLayerCtx.restore();
+
+
+        /*
+         * Keep only the person.
+         */
+
+        bodyLayerCtx.globalCompositeOperation =
+            "destination-in";
+
+
+        bodyLayerCtx.drawImage(
+            bodyMaskCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        bodyLayerCtx.globalCompositeOperation =
+            "source-over";
+
+
+        /*
+         * Blend softened body over original.
+         */
+
+        ctx.save();
+
+
+        ctx.globalAlpha =
+            Math.min(
+                0.70,
+                smooth / 120
+            );
+
+
+        ctx.drawImage(
+            bodyLayerCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        ctx.restore();
+
+    }
+
+
+    /* =====================================================
+       BODY LIGHT
+       ===================================================== */
+
+    function applyBodyLight(
+        ctx,
+        width,
+        height
+    ) {
+
+        if (
+            !state.enabled ||
+            !bodyMaskCanvas
+        ) {
+
+            return;
+
+        }
+
+
+        const amount =
+            Math.min(
+                0.20,
+                state.brightness / 450
+            );
+
+
+        if (amount <= 0) {
+
+            return;
+
+        }
+
+
+        glowLayerCtx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        glowLayerCtx.fillStyle =
+            `rgba(
+                255,
+                244,
+                232,
+                ${amount}
+            )`;
+
+
+        glowLayerCtx.fillRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        glowLayerCtx.globalCompositeOperation =
+            "destination-in";
+
+
+        glowLayerCtx.drawImage(
+            bodyMaskCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        glowLayerCtx.globalCompositeOperation =
+            "source-over";
+
+
+        ctx.save();
+
+
+        ctx.globalCompositeOperation =
+            "screen";
+
+
+        ctx.globalAlpha =
+            0.85;
+
+
+        ctx.drawImage(
+            glowLayerCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        ctx.restore();
+
+    }
+
+
+    /* =====================================================
+       BODY GLOW
+       ===================================================== */
+
+    function applyBodyGlow(
+        ctx,
+        sourceCanvas,
+        width,
+        height
+    ) {
+
+        if (
+            !state.enabled ||
+            !bodyMaskCanvas ||
+            state.glow <= 0
+        ) {
+
+            return;
+
+        }
+
+
+        glowLayerCtx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        /*
+         * Create soft glow from person.
+         */
+
+        glowLayerCtx.save();
+
+
+        glowLayerCtx.filter =
+            `blur(${2 +
+                state.glow * 0.025
+            }px)`;
+
+
+        glowLayerCtx.globalAlpha =
+            Math.min(
+                0.16,
+                state.glow / 600
+            );
+
+
+        glowLayerCtx.drawImage(
+            sourceCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        glowLayerCtx.restore();
+
+
+        /*
+         * Mask glow to body.
+         */
+
+        glowLayerCtx.globalCompositeOperation =
+            "destination-in";
+
+
+        glowLayerCtx.drawImage(
+            bodyMaskCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        glowLayerCtx.globalCompositeOperation =
+            "source-over";
+
+
+        ctx.save();
+
+
+        ctx.globalCompositeOperation =
+            "screen";
+
+
+        ctx.drawImage(
+            glowLayerCanvas,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        ctx.restore();
 
     }
 
@@ -193,39 +875,46 @@ window.ChukBeauty = (() => {
         }
 
 
-        const points = landmarks;
-
-
         let minX = 1;
+
         let minY = 1;
 
         let maxX = 0;
+
         let maxY = 0;
 
 
-        for (const point of points) {
+        for (const point of landmarks) {
 
             if (!point) continue;
 
-            minX = Math.min(
-                minX,
-                point.x
-            );
 
-            minY = Math.min(
-                minY,
-                point.y
-            );
+            minX =
+                Math.min(
+                    minX,
+                    point.x
+                );
 
-            maxX = Math.max(
-                maxX,
-                point.x
-            );
 
-            maxY = Math.max(
-                maxY,
-                point.y
-            );
+            minY =
+                Math.min(
+                    minY,
+                    point.y
+                );
+
+
+            maxX =
+                Math.max(
+                    maxX,
+                    point.x
+                );
+
+
+            maxY =
+                Math.max(
+                    maxY,
+                    point.y
+                );
 
         }
 
@@ -241,27 +930,29 @@ window.ChukBeauty = (() => {
 
 
         const centerX =
-            ((minX + maxX) / 2) * width;
+            ((minX + maxX) / 2) *
+            width;
+
 
         const centerY =
-            ((minY + maxY) / 2) * height;
-
-
-        const faceWidth =
-            (maxX - minX) * width;
-
-        const faceHeight =
-            (maxY - minY) * height;
+            ((minY + maxY) / 2) *
+            height;
 
 
         const radiusX =
-            faceWidth * 0.53;
+            (maxX - minX) *
+            width *
+            0.54;
+
 
         const radiusY =
-            faceHeight * 0.56;
+            (maxY - minY) *
+            height *
+            0.57;
 
 
         ctx.beginPath();
+
 
         ctx.ellipse(
             centerX,
@@ -273,161 +964,14 @@ window.ChukBeauty = (() => {
             Math.PI * 2
         );
 
+
         return ctx;
 
     }
 
 
     /* =====================================================
-       CUT DETAIL AREAS
-       Keep eyes / mouth sharper
-       ===================================================== */
-
-    function cutDetailAreas(
-        ctx,
-        landmarks,
-        width,
-        height
-    ) {
-
-        if (
-            !landmarks ||
-            landmarks.length < 400
-        ) {
-
-            return;
-
-        }
-
-
-        /*
-         * MediaPipe Face Landmarker
-         * approximate eye / mouth regions.
-         */
-
-
-        const areas = [
-
-            /*
-             * Left eye
-             */
-            [
-                [33, 133],
-                [159, 145]
-            ],
-
-            /*
-             * Right eye
-             */
-            [
-                [362, 263],
-                [386, 374]
-            ],
-
-            /*
-             * Mouth
-             */
-            [
-                [61, 291],
-                [13, 14]
-            ]
-
-        ];
-
-
-        ctx.save();
-
-
-        ctx.globalCompositeOperation =
-            "destination-out";
-
-
-        for (const area of areas) {
-
-            const horizontal =
-                area[0];
-
-            const vertical =
-                area[1];
-
-
-            const p1 =
-                landmarks[horizontal[0]];
-
-            const p2 =
-                landmarks[horizontal[1]];
-
-            const p3 =
-                landmarks[vertical[0]];
-
-            const p4 =
-                landmarks[vertical[1]];
-
-
-            if (
-                !p1 ||
-                !p2 ||
-                !p3 ||
-                !p4
-            ) {
-
-                continue;
-
-            }
-
-
-            const cx =
-                (
-                    p1.x +
-                    p2.x
-                ) / 2 * width;
-
-
-            const cy =
-                (
-                    p3.y +
-                    p4.y
-                ) / 2 * height;
-
-
-            const rx =
-                Math.abs(
-                    p2.x -
-                    p1.x
-                ) * width * 0.72;
-
-
-            const ry =
-                Math.abs(
-                    p4.y -
-                    p3.y
-                ) * height * 0.95;
-
-
-            ctx.beginPath();
-
-            ctx.ellipse(
-                cx,
-                cy,
-                Math.max(rx, 5),
-                Math.max(ry, 5),
-                0,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-
-        }
-
-
-        ctx.restore();
-
-    }
-
-
-    /* =====================================================
-       FACE SMOOTHING
+       FACE SMOOTH
        ===================================================== */
 
     function applyFaceSmooth(
@@ -450,24 +994,22 @@ window.ChukBeauty = (() => {
 
 
         const maskCanvas =
-            document.createElement("canvas");
+            document.createElement(
+                "canvas"
+            );
 
-        maskCanvas.width = width;
-        maskCanvas.height = height;
+
+        maskCanvas.width =
+            width;
+
+        maskCanvas.height =
+            height;
 
 
         const maskCtx =
-            maskCanvas.getContext("2d");
-
-
-        /*
-         * Face mask
-         */
-
-        maskCtx.fillStyle =
-            "#ffffff";
-
-        maskCtx.beginPath();
+            maskCanvas.getContext(
+                "2d"
+            );
 
 
         const face =
@@ -489,25 +1031,18 @@ window.ChukBeauty = (() => {
         face.fillStyle =
             "#ffffff";
 
+
         face.fill();
 
-
-        /*
-         * Feather mask
-         */
 
         maskCtx.globalCompositeOperation =
             "source-in";
 
 
-        /*
-         * Slightly softened copy
-         */
-
         maskCtx.filter =
             `blur(${Math.max(
                 1,
-                state.smooth * 0.045
+                state.smooth * 0.05
             )}px)`;
 
 
@@ -520,16 +1055,12 @@ window.ChukBeauty = (() => {
         );
 
 
-        /*
-         * Draw softened face
-         */
-
         ctx.save();
 
 
         ctx.globalAlpha =
             Math.min(
-                0.82,
+                0.78,
                 state.smooth / 100
             );
 
@@ -562,7 +1093,8 @@ window.ChukBeauty = (() => {
         if (
             !state.enabled ||
             !landmarks ||
-            !landmarks.length
+            !landmarks.length ||
+            state.glow <= 0
         ) {
 
             return;
@@ -570,20 +1102,28 @@ window.ChukBeauty = (() => {
         }
 
 
-        const maskCanvas =
-            document.createElement("canvas");
+        const glowCanvas =
+            document.createElement(
+                "canvas"
+            );
 
-        maskCanvas.width = width;
-        maskCanvas.height = height;
+
+        glowCanvas.width =
+            width;
+
+        glowCanvas.height =
+            height;
 
 
-        const maskCtx =
-            maskCanvas.getContext("2d");
+        const glowCtx =
+            glowCanvas.getContext(
+                "2d"
+            );
 
 
         const face =
             createFaceMask(
-                maskCtx,
+                glowCtx,
                 landmarks,
                 width,
                 height
@@ -597,26 +1137,25 @@ window.ChukBeauty = (() => {
         }
 
 
-        /*
-         * Soft white / warm glow.
-         */
-
         face.fillStyle =
             `rgba(
                 255,
                 240,
                 225,
                 ${Math.min(
-                    0.22,
-                    state.glow / 450
+                    0.20,
+                    state.glow / 500
                 )}
             )`;
+
 
         face.shadowColor =
             "rgba(255,240,225,0.35)";
 
+
         face.shadowBlur =
-            18 + state.glow * 0.18;
+            12 +
+            state.glow * 0.20;
 
 
         face.fill();
@@ -628,12 +1167,13 @@ window.ChukBeauty = (() => {
         ctx.globalCompositeOperation =
             "screen";
 
+
         ctx.globalAlpha =
-            0.65;
+            0.75;
 
 
         ctx.drawImage(
-            maskCanvas,
+            glowCanvas,
             0,
             0
         );
@@ -645,7 +1185,7 @@ window.ChukBeauty = (() => {
 
 
     /* =====================================================
-       MAIN FACE FILTER
+       MAIN V4
        ===================================================== */
 
     function apply(
@@ -663,62 +1203,120 @@ window.ChukBeauty = (() => {
         }
 
 
+        /*
+         * V4 menerima body mask yang dibuat
+         * oleh segmenter.
+         *
+         * Jika segmenter belum siap,
+         * wajah tetap bisa diproses.
+         */
+
         if (
-            !landmarks ||
-            !landmarks.length
+            state.bodyDetected &&
+            bodyMaskCanvas
         ) {
 
-            return;
+            /*
+             * 1. Full body smoothing
+             */
 
-        }
-
-
-        /*
-         * 1. Face smoothing
-         */
-
-        applyFaceSmooth(
-            ctx,
-            sourceCanvas,
-            landmarks,
-            width,
-            height
-        );
-
-
-        /*
-         * 2. Keep important facial details sharp.
-         */
-
-        /*
-         * Detail preservation is intentionally
-         * subtle to prevent holes in the image.
-         */
-
-        if (state.detail > 35) {
-
-            ctx.save();
-
-            ctx.globalAlpha =
-                Math.min(
-                    0.18,
-                    state.detail / 500
-                );
-
-            ctx.filter =
-                "contrast(105%)";
-
-            ctx.drawImage(
+            applyBodyBeauty(
+                ctx,
                 sourceCanvas,
-                0,
-                0,
                 width,
                 height
             );
 
-            ctx.restore();
+
+            /*
+             * 2. Body brightness
+             */
+
+            applyBodyLight(
+                ctx,
+                width,
+                height
+            );
+
+
+            /*
+             * 3. Body glow
+             */
+
+            applyBodyGlow(
+                ctx,
+                sourceCanvas,
+                width,
+                height
+            );
 
         }
+
+
+        /*
+         * 4. Face enhancement
+         */
+
+        if (
+            landmarks &&
+            landmarks.length
+        ) {
+
+            applyFaceSmooth(
+                ctx,
+                sourceCanvas,
+                landmarks,
+                width,
+                height
+            );
+
+
+            applyFaceGlow(
+                ctx,
+                landmarks,
+                width,
+                height
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       V4 SEGMENTATION UPDATE
+       Dipanggil dari live.js jika tersedia.
+       ===================================================== */
+
+    function updateBodyMask(
+        video,
+        timestamp,
+        width,
+        height
+    ) {
+
+        const categoryMask =
+            getPersonMask(
+                video,
+                timestamp
+            );
+
+
+        if (!categoryMask) {
+
+            state.bodyDetected =
+                false;
+
+            return false;
+
+        }
+
+
+        return buildBodyMask(
+            categoryMask,
+            width,
+            height
+        );
 
     }
 
@@ -751,9 +1349,19 @@ window.ChukBeauty = (() => {
 
         getCSSFilter,
 
-        createFaceMask,
+        getPersonMask,
 
-        cutDetailAreas,
+        buildBodyMask,
+
+        updateBodyMask,
+
+        applyBodyBeauty,
+
+        applyBodyLight,
+
+        applyBodyGlow,
+
+        createFaceMask,
 
         applyFaceSmooth,
 
