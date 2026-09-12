@@ -23,9 +23,8 @@
 
     <!-- =====================================================
          CAMERA SOURCE
-         Video asli disembunyikan.
-         Tampilan kamera utama menggunakan Canvas agar
-         tidak mengikuti efek mirror preview browser.
+         Video hanya sebagai sumber kamera.
+         Tampilan utama dirender oleh filterCanvas.
          ===================================================== -->
 
     <video
@@ -38,7 +37,7 @@
         preload="none"
     ></video>
 
-    <!-- Kamera + filter ditampilkan melalui Canvas -->
+    <!-- Canvas utama kamera -->
     <canvas id="filterCanvas"></canvas>
 
 
@@ -126,8 +125,6 @@
 
     <!-- =====================================================
          COMMENTS
-         Model TikTok:
-         komentar muncul di bagian bawah kiri.
          ===================================================== -->
 
     <section
@@ -136,17 +133,16 @@
         aria-label="Komentar Live"
     >
 
-        <div id="commentsList" class="comments-list">
-
-            <!-- Komentar akan dibuat oleh live.js -->
-
-        </div>
+        <div
+            id="commentsList"
+            class="comments-list"
+        ></div>
 
     </section>
 
 
     <!-- =====================================================
-         LIKE AREA
+         LIKE
          ===================================================== -->
 
     <div class="like-area">
@@ -250,8 +246,8 @@
 
 
     <!-- =====================================================
-         FILTER PANEL
-         Default: TERSEMBUNYI
+         BEAUTY FILTER PANEL
+         Filter sekarang ditangani langsung oleh live.js
          ===================================================== -->
 
     <section
@@ -266,7 +262,7 @@
                 <strong>✨ Beauty Filter</strong>
 
                 <small>
-                    Dream Like Plastic
+                    Dream Like
                 </small>
             </div>
 
@@ -282,7 +278,7 @@
         </div>
 
 
-        <!-- Dream Like -->
+        <!-- Preset -->
         <button
             id="dreamLikeButton"
             class="dream-filter-button"
@@ -519,14 +515,11 @@
 </div>
 
 
-<!-- =========================================================
+<!-- =====================================================
      JAVASCRIPT
-     ========================================================= -->
+     ===================================================== -->
 
-<!-- Beauty filter -->
-<script src="dream-like-filter.js"></script>
-
-<!-- Live controller -->
+<!-- Hanya satu controller Live -->
 <script src="live.js"></script>
 
 </body>
