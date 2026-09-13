@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,177 +11,14 @@
     >
 
     <meta name="theme-color" content="#000000">
+
     <meta name="mobile-web-app-capable" content="yes">
+
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <title>CHUK AN CHUKK — Live</title>
 
     <link rel="stylesheet" href="live.css">
-
-
-    <!-- =====================================================
-         CHUK FACE FILTER V2
-         MediaPipe Face Landmarker
-         ===================================================== -->
-
-    <script type="module">
-
-        import {
-            FaceLandmarker,
-            FilesetResolver
-        } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
-
-
-        window.ChukFaceLandmarker = null;
-
-
-        async function initChukFaceFilter() {
-
-            try {
-
-                console.log(
-                    "⏳ CHUK FACE FILTER V2 — Loading..."
-                );
-
-
-                const vision =
-                    await FilesetResolver.forVisionTasks(
-                        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm"
-                    );
-
-
-                window.ChukFaceLandmarker =
-                    await FaceLandmarker.createFromOptions(
-                        vision,
-                        {
-
-                            baseOptions: {
-
-                                modelAssetPath:
-                                    "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-
-                                delegate: "GPU"
-
-                            },
-
-
-                            runningMode: "VIDEO",
-
-                            numFaces: 1,
-
-                            minFaceDetectionConfidence: 0.5,
-
-                            minFacePresenceConfidence: 0.5,
-
-                            minTrackingConfidence: 0.5
-
-                        }
-                    );
-
-
-                console.log(
-                    "✅ CHUK FACE FILTER V2 READY"
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "❌ CHUK FACE FILTER V2 ERROR:",
-                    error
-                );
-
-                window.ChukFaceLandmarker = null;
-
-            }
-
-        }
-
-
-        initChukFaceFilter();
-
-    </script>
-
-
-    <!-- =====================================================
-         CHUK BODY / PERSON SEGMENTATION V4
-         MediaPipe Image Segmenter
-         ===================================================== -->
-
-    <script type="module">
-
-        import {
-            ImageSegmenter,
-            FilesetResolver
-        } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.mjs";
-
-
-        window.ChukPersonSegmenter = null;
-
-
-        async function initChukPersonSegmenter() {
-
-            try {
-
-                console.log(
-                    "⏳ CHUK BODY SEGMENTER V4 — Loading..."
-                );
-
-
-                const vision =
-                    await FilesetResolver.forVisionTasks(
-                        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm"
-                    );
-
-
-                window.ChukPersonSegmenter =
-                    await ImageSegmenter.createFromOptions(
-                        vision,
-                        {
-
-                            baseOptions: {
-
-                                modelAssetPath:
-                                    "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite",
-
-                                delegate: "GPU"
-
-                            },
-
-
-                            runningMode: "VIDEO",
-
-
-                            outputCategoryMask: true,
-
-                            outputConfidenceMasks: false
-
-                        }
-                    );
-
-
-                console.log(
-                    "✅ CHUK BODY SEGMENTER V4 READY"
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "❌ CHUK BODY SEGMENTER V4 ERROR:",
-                    error
-                );
-
-                window.ChukPersonSegmenter = null;
-
-            }
-
-        }
-
-
-        initChukPersonSegmenter();
-
-    </script>
 
 </head>
 
@@ -190,7 +29,7 @@
 
 
     <!-- =====================================================
-         CAMERA SOURCE
+         CAMERA
          ===================================================== -->
 
     <video
@@ -204,8 +43,7 @@
     ></video>
 
 
-    <!-- Canvas utama kamera -->
-
+    <!-- Camera rendering canvas -->
     <canvas id="filterCanvas"></canvas>
 
 
@@ -246,7 +84,9 @@
     </header>
 
 
-    <!-- CAMERA STATUS -->
+    <!-- =====================================================
+         CAMERA STATUS
+         ===================================================== -->
 
     <div
         id="cameraStatus"
@@ -257,15 +97,13 @@
 
 
     <!-- =====================================================
-         HOST INFORMATION
+         HOST
          ===================================================== -->
 
     <section class="host-info">
 
         <div class="host-avatar">
-
             <span>👤</span>
-
         </div>
 
 
@@ -274,7 +112,6 @@
             <strong id="hostName">
                 Chuk an Chukk
             </strong>
-
 
             <span id="hostUsername">
                 @chukanchukk
@@ -294,7 +131,9 @@
     </section>
 
 
-    <!-- LIVE DESCRIPTION -->
+    <!-- =====================================================
+         DESCRIPTION
+         ===================================================== -->
 
     <div class="live-description">
 
@@ -323,7 +162,9 @@
     </section>
 
 
-    <!-- LIKE -->
+    <!-- =====================================================
+         LIKE
+         ===================================================== -->
 
     <div class="like-area">
 
@@ -349,11 +190,13 @@
 
 
     <!-- =====================================================
-         RIGHT SIDE CONTROLS
+         SIDE CONTROLS
          ===================================================== -->
 
     <aside class="side-controls">
 
+
+        <!-- COMMENT -->
 
         <button
             id="commentButton"
@@ -374,6 +217,8 @@
         </button>
 
 
+        <!-- FLIP -->
+
         <button
             id="flipButton"
             class="side-button"
@@ -393,6 +238,8 @@
         </button>
 
 
+        <!-- CAMERA -->
+
         <button
             id="cameraButton"
             class="side-button"
@@ -408,13 +255,14 @@
                 📷
             </span>
 
-
             <span id="cameraText">
                 Camera
             </span>
 
         </button>
 
+
+        <!-- MICROPHONE -->
 
         <button
             id="micButton"
@@ -431,7 +279,6 @@
                 🎤
             </span>
 
-
             <span id="micText">
                 Mic
             </span>
@@ -439,12 +286,17 @@
         </button>
 
 
+        <!-- FILTER BUTTON
+             Hanya tombol sementara.
+             Mesin filter sudah dihapus.
+        -->
+
         <button
             id="filterButton"
             class="side-button filter-button"
             type="button"
             aria-label="Filter"
-            title="Filter wajah dan tubuh"
+            title="Filter sementara dinonaktifkan"
         >
 
             <span class="side-icon">
@@ -458,227 +310,6 @@
         </button>
 
     </aside>
-
-
-    <!-- =====================================================
-         BEAUTY FILTER PANEL
-         ===================================================== -->
-
-    <section
-        id="filterPanel"
-        class="filter-panel"
-        aria-label="Pengaturan Filter"
-    >
-
-        <div class="filter-panel-header">
-
-            <div>
-
-                <strong>
-                    ✨ Beauty Filter V4
-                </strong>
-
-
-                <small>
-                    Face + Body
-                </small>
-
-            </div>
-
-
-            <button
-                id="closeFilterButton"
-                type="button"
-                class="panel-close"
-                aria-label="Tutup Filter"
-            >
-                ✕
-            </button>
-
-        </div>
-
-
-        <!-- PRESET -->
-
-        <button
-            id="dreamLikeButton"
-            class="dream-filter-button"
-            type="button"
-        >
-            ✨ Dream Like
-        </button>
-
-
-        <!-- PLASTIC -->
-
-        <div class="filter-control">
-
-            <div class="filter-label">
-
-                <span>
-                    Plastic
-                </span>
-
-                <span id="plasticValue">
-                    90
-                </span>
-
-            </div>
-
-
-            <input
-                id="plasticSlider"
-                type="range"
-                min="0"
-                max="100"
-                value="90"
-            >
-
-        </div>
-
-
-        <!-- GLOW -->
-
-        <div class="filter-control">
-
-            <div class="filter-label">
-
-                <span>
-                    Glow
-                </span>
-
-                <span id="glowValue">
-                    65
-                </span>
-
-            </div>
-
-
-            <input
-                id="glowSlider"
-                type="range"
-                min="0"
-                max="100"
-                value="65"
-            >
-
-        </div>
-
-
-        <!-- BRIGHTNESS -->
-
-        <div class="filter-control">
-
-            <div class="filter-label">
-
-                <span>
-                    Brightness
-                </span>
-
-                <span id="brightnessValue">
-                    35
-                </span>
-
-            </div>
-
-
-            <input
-                id="brightnessSlider"
-                type="range"
-                min="0"
-                max="100"
-                value="35"
-            >
-
-        </div>
-
-
-        <!-- SOFT FOCUS -->
-
-        <div class="filter-control">
-
-            <div class="filter-label">
-
-                <span>
-                    Soft Focus
-                </span>
-
-                <span id="softFocusValue">
-                    55
-                </span>
-
-            </div>
-
-
-            <input
-                id="softFocusSlider"
-                type="range"
-                min="0"
-                max="100"
-                value="55"
-            >
-
-        </div>
-
-
-        <!-- DETAIL -->
-
-        <div class="filter-control">
-
-            <div class="filter-label">
-
-                <span>
-                    Detail
-                </span>
-
-                <span id="detailValue">
-                    25
-                </span>
-
-            </div>
-
-
-            <input
-                id="detailSlider"
-                type="range"
-                min="0"
-                max="100"
-                value="25"
-            >
-
-        </div>
-
-
-        <!-- AUTO LIGHT -->
-
-        <div class="filter-option">
-
-            <div>
-
-                <strong>
-                    💡 Auto Light
-                </strong>
-
-
-                <small>
-                    Sesuaikan pencahayaan otomatis
-                </small>
-
-            </div>
-
-
-            <button
-                id="autoLightButton"
-                class="toggle-button active"
-                type="button"
-                aria-pressed="true"
-            >
-                ON
-            </button>
-
-        </div>
-
-    </section>
 
 
     <!-- =====================================================
@@ -711,11 +342,13 @@
 
 
     <!-- =====================================================
-         BOTTOM LIVE CONTROLS
+         BOTTOM CONTROLS
          ===================================================== -->
 
     <footer class="live-controls">
 
+
+        <!-- MIC -->
 
         <button
             id="bottomMicButton"
@@ -723,6 +356,7 @@
             type="button"
             aria-label="Microphone"
         >
+
             🎤
 
             <span>
@@ -732,12 +366,16 @@
         </button>
 
 
+        <!-- FILTER -->
+
         <button
             id="bottomFilterButton"
             class="bottom-control"
             type="button"
             aria-label="Filter"
+            title="Filter sementara dinonaktifkan"
         >
+
             ✨
 
             <span>
@@ -747,11 +385,14 @@
         </button>
 
 
+        <!-- START LIVE -->
+
         <button
             id="startLiveButton"
             class="start-live-button"
             type="button"
         >
+
             🔴
 
             <span id="startLiveText">
@@ -761,12 +402,15 @@
         </button>
 
 
+        <!-- FLIP -->
+
         <button
             id="bottomFlipButton"
             class="bottom-control"
             type="button"
             aria-label="Flip Kamera"
         >
+
             🔄
 
             <span>
@@ -778,7 +422,9 @@
     </footer>
 
 
-    <!-- LIVE TIMER -->
+    <!-- =====================================================
+         TIMER
+         ===================================================== -->
 
     <div
         id="liveTimer"
@@ -788,29 +434,28 @@
     </div>
 
 
-    <!-- LIGHT STATUS -->
+    <!-- =====================================================
+         LIGHT STATUS
+         ===================================================== -->
 
     <div
         id="lightStatus"
         class="light-status"
     >
-        💡 Auto Light
+        💡 Camera Ready
     </div>
+
 
 </div>
 
 
 <!-- =====================================================
-     JAVASCRIPT
+     ONLY LIVE CONTROLLER
      ===================================================== -->
 
-<!-- Beauty Filter Engine -->
-<script src="beauty-filter.js"></script>
-
-
-<!-- Live Controller -->
 <script src="live.js"></script>
 
 
 </body>
+
 </html>
