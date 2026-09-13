@@ -8,15 +8,28 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const video = document.getElementById("camera");
-    const flipButton = document.getElementById("flipCameraButton");
-    const menuButton = document.getElementById("menuButton");
-    const liveApp = document.getElementById("liveApp");
+    const video =
+        document.getElementById("camera");
+
+    const flipButton =
+        document.getElementById("flipCameraButton");
+
+    const menuButton =
+        document.getElementById("menuButton");
+
+    const liveApp =
+        document.getElementById("liveApp");
+
 
     if (!video || !liveApp) {
-        console.error("❌ Elemen Live tidak ditemukan");
+
+        console.error(
+            "❌ Elemen Live tidak ditemukan"
+        );
+
         return;
     }
+
 
     /* =====================================================
        PROFILE USER
@@ -27,10 +40,29 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             const saved =
-                localStorage.getItem("chukUserProfile");
+                localStorage.getItem(
+                    "chukUserProfile"
+                );
 
             if (saved) {
-                return JSON.parse(saved);
+
+                const profile =
+                    JSON.parse(saved);
+
+                return {
+
+                    piUsername:
+                        profile.piUsername || "",
+
+                    displayName:
+                        profile.displayName ||
+                        profile.piUsername ||
+                        "CHUK USER",
+
+                    avatar:
+                        profile.avatar ||
+                        "assets/logo.png"
+                };
             }
 
         } catch (error) {
@@ -41,144 +73,74 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+
         return {
+
             piUsername: "",
+
             displayName: "CHUK USER",
+
             avatar: "assets/logo.png"
         };
     }
 
+
     /* =====================================================
-       TAMPILKAN USER
+       USER PROFILE DI LIVE
        ===================================================== */
 
     const userDisplay =
         document.createElement("div");
 
-   /* =========================================================
-   REFRESH PROFILE LIVE
-   ========================================================= */
+    userDisplay.id =
+        "liveUserDisplay";
 
-function refreshLiveProfile() {
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                "chukUserProfile"
-            );
-
-        console.log(
-            "👤 DATA PROFILE LIVE:",
-            saved
-        );
-
-        if (!saved) {
-
-            console.log(
-                "ℹ️ Belum ada data profile tersimpan"
-            );
-
-            return;
-        }
-
-        const profile =
-            JSON.parse(saved);
-
-        const avatar =
-            document.getElementById(
-                "liveUserAvatar"
-            );
-
-        const name =
-            document.getElementById(
-                "liveUserName"
-            );
-
-        if (name) {
-
-            name.textContent =
-                profile.displayName ||
-                profile.piUsername ||
-                "CHUK USER";
-        }
-
-        if (avatar) {
-
-            avatar.src =
-                profile.avatar ||
-                "assets/logo.png";
-
-            avatar.onerror = () => {
-
-                avatar.src =
-                    "assets/logo.png";
-            };
-        }
-
-        console.log(
-            "✅ Profile Live ditampilkan"
-        );
-
-    } catch (error) {
-
-        console.error(
-            "❌ Gagal menampilkan profile Live:",
-            error
-        );
-    }
-}
-
-
-/* =========================================================
-   JALANKAN PROFILE
-   ========================================================= */
-
-refreshLiveProfile();
-
-
-/* =========================================================
-   UPDATE JIKA KEMBALI DARI PROFILE
-   ========================================================= */
-
-window.addEventListener(
-    "focus",
-    () => {
-
-        refreshLiveProfile();
-
-    }
-);
-    userDisplay.id = "liveUserDisplay";
 
     userDisplay.innerHTML = `
+
         <img
             id="liveUserAvatar"
             src="assets/logo.png"
-            alt="User"
+            alt="Foto Profil"
         >
 
         <span id="liveUserName">
             CHUK USER
         </span>
+
     `;
 
-    liveApp.appendChild(userDisplay);
 
-    function updateLiveProfile() {
+    liveApp.appendChild(
+        userDisplay
+    );
+
+
+    /* =====================================================
+       UPDATE PROFILE
+       ===================================================== */
+
+    function refreshLiveProfile() {
 
         const profile =
             getUserProfile();
+
 
         const avatar =
             document.getElementById(
                 "liveUserAvatar"
             );
 
+
         const name =
             document.getElementById(
                 "liveUserName"
             );
+
+
+        /* ================================================
+           NAMA
+           ================================================ */
 
         if (name) {
 
@@ -188,11 +150,17 @@ window.addEventListener(
                 "CHUK USER";
         }
 
+
+        /* ================================================
+           FOTO
+           ================================================ */
+
         if (avatar) {
 
             avatar.src =
                 profile.avatar ||
                 "assets/logo.png";
+
 
             avatar.onerror = () => {
 
@@ -200,27 +168,68 @@ window.addEventListener(
                     "assets/logo.png";
             };
         }
-    }
 
-    updateLiveProfile();
+
+        console.log(
+            "👤 PROFILE LIVE:",
+            profile.displayName
+        );
+
+        console.log(
+            "📷 FOTO PROFILE:",
+            profile.avatar
+        );
+    }
 
 
     /* =====================================================
-       ROOM
+       JALANKAN SETELAH ELEMEN SUDAH DIBUAT
+       ===================================================== */
+
+    refreshLiveProfile();
+
+
+    /* =====================================================
+       CEK KEMBALI SAAT KEMBALI KE LIVE
+       ===================================================== */
+
+    window.addEventListener(
+        "focus",
+        () => {
+
+            refreshLiveProfile();
+
+        }
+    );
+
+
+    /* =====================================================
+       DATA ROOM
        ===================================================== */
 
     window.liveRoom = {
+
         name: "",
+
         screens: 2
     };
+
+
+    /* =====================================================
+       NAMA ROOM DI LAYAR
+       ===================================================== */
 
     const liveRoomDisplay =
         document.createElement("div");
 
+
     liveRoomDisplay.id =
         "liveRoomDisplay";
 
-    liveRoomDisplay.textContent = "";
+
+    liveRoomDisplay.textContent =
+        "";
+
 
     liveApp.appendChild(
         liveRoomDisplay
@@ -239,12 +248,26 @@ window.addEventListener(
 
 
     video.autoplay = true;
+
     video.muted = true;
+
     video.playsInline = true;
 
-    video.setAttribute("autoplay", "");
-    video.setAttribute("muted", "");
-    video.setAttribute("playsinline", "");
+
+    video.setAttribute(
+        "autoplay",
+        ""
+    );
+
+    video.setAttribute(
+        "muted",
+        ""
+    );
+
+    video.setAttribute(
+        "playsinline",
+        ""
+    );
 
 
     /* =====================================================
@@ -253,7 +276,9 @@ window.addEventListener(
 
     function updateMirror() {
 
-        if (facingMode === "user") {
+        if (
+            facingMode === "user"
+        ) {
 
             video.style.transform =
                 "scaleX(-1)";
@@ -277,11 +302,14 @@ window.addEventListener(
             currentStream
                 .getTracks()
                 .forEach(track => {
+
                     track.stop();
+
                 });
 
             currentStream = null;
         }
+
 
         video.srcObject = null;
     }
@@ -297,6 +325,7 @@ window.addEventListener(
 
         switching = true;
 
+
         try {
 
             console.log(
@@ -304,32 +333,46 @@ window.addEventListener(
                 facingMode
             );
 
+
             stopCamera();
 
+
             const stream =
-                await navigator.mediaDevices
+                await navigator
+                    .mediaDevices
                     .getUserMedia({
 
                         video: {
+
                             facingMode: {
-                                ideal: facingMode
+
+                                ideal:
+                                    facingMode
                             },
 
                             width: {
+
                                 ideal: 1280
                             },
 
                             height: {
+
                                 ideal: 720
                             }
+
                         },
 
                         audio: false
                     });
 
-            currentStream = stream;
 
-            video.srcObject = stream;
+            currentStream =
+                stream;
+
+
+            video.srcObject =
+                stream;
+
 
             updateMirror();
 
@@ -349,36 +392,43 @@ window.addEventListener(
                     playError
                 );
 
-                /*
-                   Stream tetap aktif.
-                   Kita coba play lagi saat layar disentuh.
-                */
 
                 const resumeVideo =
                     async () => {
 
                         try {
+
                             await video.play();
+
                         } catch (e) {
+
                             console.warn(e);
                         }
-
-                        document.removeEventListener(
-                            "click",
-                            resumeVideo
-                        );
                     };
+
 
                 document.addEventListener(
                     "click",
                     resumeVideo,
-                    { once: true }
+                    {
+                        once: true
+                    }
                 );
             }
+
 
             console.log(
                 "✅ KAMERA AKTIF"
             );
+
+
+            console.log(
+                "📐 Resolusi:",
+                video.videoWidth,
+                "x",
+                video.videoHeight
+            );
+
 
         } catch (error) {
 
@@ -387,6 +437,7 @@ window.addEventListener(
                 error.name,
                 error.message
             );
+
 
             if (
                 error.name ===
@@ -432,12 +483,15 @@ window.addEventListener(
 
                 if (switching) return;
 
+
                 facingMode =
                     facingMode === "user"
                         ? "environment"
                         : "user";
 
+
                 await startCamera();
+
             }
         );
     }
@@ -453,10 +507,20 @@ window.addEventListener(
             "click",
             () => {
 
+                console.log(
+                    "☰ MENU DITEKAN"
+                );
+
+
                 let roomPanel =
                     document.getElementById(
                         "roomPanel"
                     );
+
+
+                /* =========================================
+                   TUTUP MENU
+                   ========================================= */
 
                 if (roomPanel) {
 
@@ -465,13 +529,20 @@ window.addEventListener(
                     return;
                 }
 
+
+                /* =========================================
+                   BUAT PANEL
+                   ========================================= */
+
                 roomPanel =
                     document.createElement(
                         "div"
                     );
 
+
                 roomPanel.id =
                     "roomPanel";
+
 
                 roomPanel.innerHTML = `
 
@@ -553,6 +624,7 @@ window.addEventListener(
                     </div>
                 `;
 
+
                 liveApp.appendChild(
                     roomPanel
                 );
@@ -567,24 +639,30 @@ window.addEventListener(
                         "#roomNameInput"
                     );
 
+
                 if (input) {
 
                     input.value =
                         window.liveRoom.name;
+
 
                     input.addEventListener(
                         "input",
                         () => {
 
                             const name =
-                                input.value.trim();
+                                input.value
+                                    .trim();
+
 
                             window.liveRoom.name =
                                 name;
 
+
                             liveRoomDisplay
                                 .textContent =
                                 name;
+
                         }
                     );
                 }
@@ -599,6 +677,7 @@ window.addEventListener(
                         ".room-option"
                     );
 
+
                 buttons.forEach(
                     button => {
 
@@ -608,6 +687,7 @@ window.addEventListener(
 
                                 buttons.forEach(
                                     b => {
+
                                         b.classList
                                             .remove(
                                                 "selected"
@@ -615,31 +695,51 @@ window.addEventListener(
                                     }
                                 );
 
+
                                 button.classList
                                     .add(
                                         "selected"
                                     );
 
-                                window.liveRoom.screens =
+
+                                window.liveRoom
+                                    .screens =
                                     Number(
-                                        button.dataset.room
+                                        button
+                                            .dataset
+                                            .room
                                     );
+
+
+                                console.log(
+                                    "🎥 Jumlah layar:",
+                                    window.liveRoom.screens
+                                );
+
                             }
                         );
                     }
                 );
 
 
+                /* =========================================
+                   DEFAULT ROOM
+                   ========================================= */
+
                 const defaultButton =
                     roomPanel.querySelector(
                         '[data-room="2"]'
                     );
 
+
                 if (defaultButton) {
 
                     defaultButton.classList
-                        .add("selected");
+                        .add(
+                            "selected"
+                        );
                 }
+
             }
         );
     }
@@ -663,7 +763,7 @@ window.addEventListener(
 
 
     /* =====================================================
-       START
+       START CAMERA
        ===================================================== */
 
     startCamera();
