@@ -116,3 +116,43 @@ body {
     transform: scaleX(-1) !important;
     -webkit-transform: scaleX(-1) !important;
 }
+
+/* =========================================================
+   TOMBOL PINDAH KAMERA
+   ========================================================= */
+
+.flip-camera-button {
+    position: fixed;
+    top: 20px;
+    right: 18px;
+
+    width: 48px;
+    height: 48px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #ffffff;
+    color: #111111;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.flip-camera-button:active {
+    transform: scale(0.88);
+    opacity: 0.8;
+}
