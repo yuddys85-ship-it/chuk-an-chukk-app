@@ -492,3 +492,121 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
 });
+
+/* =========================================================
+   USER PROFILE DI LIVE
+   ========================================================= */
+
+#liveUserDisplay {
+
+    position: fixed !important;
+
+    top: 18px !important;
+    left: 18px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 9px !important;
+
+    max-width: 60vw !important;
+
+    padding: 4px 10px 4px 4px !important;
+
+    border-radius: 28px !important;
+
+    background: rgba(0,0,0,0.45) !important;
+
+    color: #fff !important;
+
+    z-index: 99998 !important;
+
+    pointer-events: none !important;
+
+    backdrop-filter: blur(8px) !important;
+
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+
+/* =========================================================
+   FOTO USER
+   ========================================================= */
+
+#liveUserAvatar {
+
+    width: 42px !important;
+    height: 42px !important;
+
+    border-radius: 50% !important;
+
+    object-fit: cover !important;
+
+    display: block !important;
+
+    background: #222 !important;
+
+    border: 2px solid rgba(255,255,255,0.9) !important;
+
+    flex-shrink: 0 !important;
+}
+
+
+/* =========================================================
+   NAMA USER
+   ========================================================= */
+
+#liveUserName {
+
+    max-width: 40vw !important;
+
+    overflow: hidden !important;
+
+    white-space: nowrap !important;
+
+    text-overflow: ellipsis !important;
+
+    font-size: 15px !important;
+
+    font-weight: 700 !important;
+
+    color: #fff !important;
+}
+
+
+/* =========================================================
+   JARAK DENGAN TOMBOL ATAS
+   ========================================================= */
+
+.menu-button,
+.flip-camera-button {
+
+    z-index: 99999 !important;
+}
+
+
+/* =========================================================
+   HP KECIL
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    #liveUserDisplay {
+
+        left: 10px !important;
+
+        top: 14px !important;
+    }
+
+    #liveUserAvatar {
+
+        width: 38px !important;
+        height: 38px !important;
+    }
+
+    #liveUserName {
+
+        font-size: 14px !important;
+    }
+}
