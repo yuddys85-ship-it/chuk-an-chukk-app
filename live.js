@@ -1,235 +1,154 @@
-/* =========================================================
-   CHUK AN CHUKK
-   LIVE.JS — NATIVE CAMERA CLEAN
-   V1
-   ========================================================= */
-
 "use strict";
 
-console.log("📷 CHUK LIVE — NATIVE CAMERA START");
-
+/* =========================================================
+   CHUK AN CHUKK
+   LIVE CAMERA — FRONT / BACK SWITCH
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
 
     const video = document.getElementById("camera");
+    const flipButton = document.getElementById("flipCameraButton");
 
     if (!video) {
-        console.error("❌ Element #camera tidak ditemukan");
+        console.error("❌ #camera tidak ditemukan");
         return;
     }
 
-    /* =====================================================
-       VIDEO SETTINGS
-       ===================================================== */
+    let currentStream = null;
+    let facingMode = "user";
 
     video.autoplay = true;
     video.muted = true;
     video.playsInline = true;
 
-    video.setAttribute("autoplay", "");
-    video.setAttribute("muted", "");
-    video.setAttribute("playsinline", "");
-    video.setAttribute("webkit-playsinline", "");
-
-
-    /* =====================================================
-       CAMERA STATE
-       ===================================================== */
-
-    let currentStream = null;
-
-    let facingMode = "user";
-
-
-    /* =====================================================
-       START CAMERA
-       ===================================================== */
-
     async function startCamera() {
 
         try {
+            console.log("📷 Membuka kamera:", facingMode);
 
-            console.log(
-                "📷 Membuka kamera:",
-                facingMode
-            );
-
-
-            /* Hentikan kamera sebelumnya */
-
+            /* Matikan kamera sebelumnya */
             if (currentStream) {
-
-                currentStream
-                    .getTracks()
-                    .forEach(track => track.stop());
-
+                currentStream.getTracks().forEach(track => track.stop());
                 currentStream = null;
             }
 
-
-            /* Request camera */
-
-            const stream =
-                await navigator.mediaDevices.getUserMedia({
-
-                    video: {
-                        facingMode: facingMode,
-
-                        width: {
-                            ideal: 1280
-                        },
-
-                        height: {
-                            ideal: 720
-                        },
-
-                        frameRate: {
-                            ideal: 30,
-                            max: 30
-                        }
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: {
+                        ideal: facingMode
                     },
-
-                    audio: false
-
-                });
-
+                    width: {
+                        ideal: 1280
+                    },
+                    height: {
+                        ideal: 720
+                    },
+                    frameRate: {
+                        ideal: 30,
+                        max: 30
+                    }
+                },
+                audio: false
+            });
 
             currentStream = stream;
 
-
-            /* Pasang stream langsung ke video */
-
             video.srcObject = stream;
 
+            /* Kamera depan tidak mirror.
+               Kamera belakang normal. */
+            if (facingMode === "user") {
+                video.style.transform = "scaleX(-1)";
+                video.style.webkitTransform = "scaleX(-1)";
+            } else {
+                video.style.transform = "none";
+                video.style.webkitTransform = "none";
+            }
 
             await video.play();
 
-
-            console.log(
-                "✅ KAMERA AKTIF"
-            );
-
-
-            console.log(
-                "📐 Resolusi:",
-                video.videoWidth,
-                "x",
-                video.videoHeight
-            );
-
+            console.log("✅ Kamera aktif:", facingMode);
 
         } catch (error) {
 
-            console.error(
-                "❌ Kamera gagal:",
-                error
-            );
+            console.error("❌ Kamera gagal:", error);
 
-
-            /*
-             * Fallback untuk browser/device
-             * yang tidak menerima facingMode.
-             */
-
+            /* Coba kamera biasa sebagai fallback */
             try {
 
-                const stream =
-                    await navigator.mediaDevices.getUserMedia({
-
-                        video: true,
-
-                        audio: false
-
-                    });
-
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
 
                 currentStream = stream;
-
                 video.srcObject = stream;
+
+                video.style.transform = "none";
+                video.style.webkitTransform = "none";
 
                 await video.play();
 
-
-                console.log(
-                    "✅ KAMERA AKTIF — FALLBACK"
-                );
-
+                console.log("✅ Kamera fallback aktif");
 
             } catch (fallbackError) {
 
                 console.error(
-                    "❌ Fallback kamera juga gagal:",
+                    "❌ Kamera fallback juga gagal:",
                     fallbackError
                 );
+            }
+        }
+    }
 
+    /* =====================================================
+       TOMBOL PINDAH KAMERA
+       ===================================================== */
+
+    if (flipButton) {
+
+        flipButton.addEventListener("click", async () => {
+
+            if (facingMode === "user") {
+                facingMode = "environment";
+            } else {
+                facingMode = "user";
             }
 
-        }
+            console.log("🔄 Pindah kamera ke:", facingMode);
+
+            await startCamera();
+        });
+
+    } else {
+
+        console.warn("⚠️ Tombol #flipCameraButton tidak ditemukan");
 
     }
 
-
     /* =====================================================
-       CAMERA FLIP
-       Dipasang sebagai fungsi global untuk penggunaan nanti
-       ===================================================== */
-
-    window.chukFlipCamera = async function () {
-
-        facingMode =
-            facingMode === "user"
-                ? "environment"
-                : "user";
-
-
-        console.log(
-            "🔄 Ganti kamera:",
-            facingMode
-        );
-
-
-        await startCamera();
-
-    };
-
-
-    /* =====================================================
-       START
+       CEK SUPPORT KAMERA
        ===================================================== */
 
     if (
         !navigator.mediaDevices ||
         !navigator.mediaDevices.getUserMedia
     ) {
-
-        console.error(
-            "❌ Browser tidak mendukung getUserMedia"
-        );
-
+        console.error("❌ Browser tidak mendukung kamera");
         return;
     }
 
-
+    /* Mulai kamera depan */
     await startCamera();
 
+    /* Matikan kamera saat keluar */
+    window.addEventListener("beforeunload", () => {
 
-    /* =====================================================
-       CLEANUP
-       ===================================================== */
-
-    window.addEventListener(
-        "beforeunload",
-        () => {
-
-            if (currentStream) {
-
-                currentStream
-                    .getTracks()
-                    .forEach(track => track.stop());
-
-            }
-
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
         }
-    );
+
+    });
 
 });
