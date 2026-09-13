@@ -118,7 +118,7 @@ body {
 }
 
 /* =========================================================
-   TOMBOL PINDAH KAMERA
+   TOMBOL PINDAH KAMERA — TRANSPARAN
    ========================================================= */
 
 .flip-camera-button {
@@ -132,8 +132,8 @@ body {
     border: none;
     border-radius: 50%;
 
-    background: #ffffff;
-    color: #111111;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
 
     font-size: 28px;
     font-weight: 700;
@@ -147,7 +147,7 @@ body {
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
 
     transition: transform 0.15s ease, opacity 0.15s ease;
 }
