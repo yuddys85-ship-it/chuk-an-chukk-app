@@ -55,6 +55,100 @@ document.addEventListener("DOMContentLoaded", () => {
     const userDisplay =
         document.createElement("div");
 
+   /* =========================================================
+   REFRESH PROFILE LIVE
+   ========================================================= */
+
+function refreshLiveProfile() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                "chukUserProfile"
+            );
+
+        console.log(
+            "👤 DATA PROFILE LIVE:",
+            saved
+        );
+
+        if (!saved) {
+
+            console.log(
+                "ℹ️ Belum ada data profile tersimpan"
+            );
+
+            return;
+        }
+
+        const profile =
+            JSON.parse(saved);
+
+        const avatar =
+            document.getElementById(
+                "liveUserAvatar"
+            );
+
+        const name =
+            document.getElementById(
+                "liveUserName"
+            );
+
+        if (name) {
+
+            name.textContent =
+                profile.displayName ||
+                profile.piUsername ||
+                "CHUK USER";
+        }
+
+        if (avatar) {
+
+            avatar.src =
+                profile.avatar ||
+                "assets/logo.png";
+
+            avatar.onerror = () => {
+
+                avatar.src =
+                    "assets/logo.png";
+            };
+        }
+
+        console.log(
+            "✅ Profile Live ditampilkan"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ Gagal menampilkan profile Live:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   JALANKAN PROFILE
+   ========================================================= */
+
+refreshLiveProfile();
+
+
+/* =========================================================
+   UPDATE JIKA KEMBALI DARI PROFILE
+   ========================================================= */
+
+window.addEventListener(
+    "focus",
+    () => {
+
+        refreshLiveProfile();
+
+    }
+);
     userDisplay.id = "liveUserDisplay";
 
     userDisplay.innerHTML = `
