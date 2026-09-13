@@ -8,12 +8,9 @@ html,
 body {
     margin: 0 !important;
     padding: 0 !important;
-
     width: 100% !important;
     height: 100% !important;
-
     overflow: hidden !important;
-
     background: #000 !important;
 }
 
@@ -23,30 +20,21 @@ body {
 
 #liveApp {
     position: fixed !important;
-
     inset: 0 !important;
-
     width: 100vw !important;
     height: 100vh !important;
-
     overflow: hidden !important;
-
     background: #000 !important;
-
     z-index: 1 !important;
 }
 
 /* =========================================================
    KAMERA
-   PENTING:
-   VIDEO TIDAK BOLEH MENANGKAP SENTUHAN
    ========================================================= */
 
 #camera {
     position: absolute !important;
-
     inset: 0 !important;
-
     width: 100% !important;
     height: 100% !important;
 
@@ -54,7 +42,6 @@ body {
     object-position: center center !important;
 
     display: block !important;
-
     background: #000 !important;
 
     opacity: 1 !important;
@@ -87,7 +74,6 @@ body {
     border-radius: 50% !important;
 
     background: transparent !important;
-
     color: #fff !important;
 
     font-size: 30px !important;
@@ -103,7 +89,6 @@ body {
     z-index: 99999 !important;
 
     pointer-events: auto !important;
-
     cursor: pointer !important;
 
     touch-action: manipulation !important;
@@ -133,7 +118,6 @@ body {
     border-radius: 50% !important;
 
     background: transparent !important;
-
     color: #fff !important;
 
     font-size: 30px !important;
@@ -148,7 +132,6 @@ body {
     z-index: 99999 !important;
 
     pointer-events: auto !important;
-
     cursor: pointer !important;
 
     touch-action: manipulation !important;
@@ -178,7 +161,6 @@ body {
     border-radius: 50% !important;
 
     background: transparent !important;
-
     color: #fff !important;
 
     display: flex !important;
@@ -188,7 +170,6 @@ body {
     z-index: 99999 !important;
 
     pointer-events: auto !important;
-
     cursor: pointer !important;
 
     touch-action: manipulation !important;
@@ -209,7 +190,6 @@ body {
     fill: none !important;
 
     stroke: currentColor !important;
-
     stroke-width: 2 !important;
 
     stroke-linecap: round !important;
@@ -226,7 +206,6 @@ body {
 .flip-camera-button:active,
 .share-live-button:active {
     transform: scale(0.88) !important;
-
     opacity: 0.7 !important;
 }
 
@@ -236,7 +215,6 @@ body {
 
 #filterCanvas {
     display: none !important;
-
     pointer-events: none !important;
 }
 
@@ -324,7 +302,6 @@ body {
 
 .room-name-input:focus {
     border-color: rgba(255,255,255,0.80) !important;
-
     background: rgba(255,255,255,0.15) !important;
 }
 
@@ -438,15 +415,12 @@ body {
 
     #roomPanel {
         width: 245px !important;
-
         right: 12px !important;
     }
-
 }
 
 /* =========================================================
    NAMA ROOM DI LAYAR LIVE
-   ATAS SEBELAH KIRI
    ========================================================= */
 
 #liveRoomDisplay {
@@ -487,14 +461,18 @@ body {
 
 /* =========================================================
    USER PROFILE DI LIVE
+   POSISI: 1/4 LAYAR DARI BAWAH
    ========================================================= */
 
 #liveUserDisplay {
 
     position: fixed !important;
 
-    top: 18px !important;
     left: 18px !important;
+
+    bottom: 25vh !important;
+
+    top: auto !important;
 
     display: flex !important;
 
@@ -508,7 +486,7 @@ body {
 
     border-radius: 28px !important;
 
-    background: rgba(0,0,0,0.45) !important;
+    background: rgba(0, 0, 0, 0.45) !important;
 
     color: #fff !important;
 
@@ -521,6 +499,9 @@ body {
     -webkit-backdrop-filter: blur(8px) !important;
 }
 
+/* =========================================================
+   FOTO PROFIL
+   ========================================================= */
 
 #liveUserAvatar {
 
@@ -541,6 +522,9 @@ body {
     flex-shrink: 0 !important;
 }
 
+/* =========================================================
+   NAMA USER
+   ========================================================= */
 
 #liveUserName {
 
@@ -559,6 +543,9 @@ body {
     color: #fff !important;
 }
 
+/* =========================================================
+   HP KECIL
+   ========================================================= */
 
 @media (max-width: 380px) {
 
@@ -566,17 +553,14 @@ body {
 
         left: 10px !important;
 
-        top: 14px !important;
+        bottom: 25vh !important;
     }
-
 
     #liveUserAvatar {
 
         width: 38px !important;
-
         height: 38px !important;
     }
-
 
     #liveUserName {
 
