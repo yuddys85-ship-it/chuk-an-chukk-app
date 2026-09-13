@@ -443,3 +443,44 @@ body {
     }
 
 }
+
+/* =========================================================
+   NAMA ROOM DI LAYAR LIVE
+   ATAS SEBELAH KIRI
+   ========================================================= */
+
+#liveRoomDisplay {
+    position: fixed !important;
+
+    top: 20px !important;
+    left: 18px !important;
+
+    max-width: 55vw !important;
+
+    padding: 8px 13px !important;
+
+    box-sizing: border-box !important;
+
+    color: #fff !important;
+
+    background: rgba(0, 0, 0, 0.45) !important;
+
+    border-radius: 20px !important;
+
+    font-size: 15px !important;
+    font-weight: 700 !important;
+
+    line-height: 1.2 !important;
+
+    white-space: nowrap !important;
+
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+
+    z-index: 99998 !important;
+
+    pointer-events: none !important;
+
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+}
