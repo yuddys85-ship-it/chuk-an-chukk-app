@@ -1,18 +1,15 @@
 /* =========================================================
    CHUK AN CHUKK
-   LIVE CAMERA — CLEAN NATIVE
+   LIVE CAMERA + ROOM MENU
    ========================================================= */
 
 html,
 body {
     margin: 0 !important;
     padding: 0 !important;
-
     width: 100% !important;
     height: 100% !important;
-
     overflow: hidden !important;
-
     background: #000 !important;
 }
 
@@ -28,7 +25,6 @@ body {
     height: 100vh !important;
 
     background: #000 !important;
-
     overflow: hidden !important;
 }
 
@@ -58,7 +54,6 @@ body {
 
     filter: none !important;
 
-    /* Mirror diatur oleh live.js */
     transform: none !important;
     -webkit-transform: none !important;
 
@@ -74,120 +69,118 @@ body {
 }
 
 /* =========================================================
-   PINDAH KAMERA — KIRI DARI MENU
+   PINDAH KAMERA
    ========================================================= */
 
 .flip-camera-button {
     position: fixed !important;
 
-    top: 20px;
-    right: 76px;
-    left: auto;
+    top: 20px !important;
+    right: 76px !important;
 
-    width: 48px;
-    height: 48px;
+    width: 48px !important;
+    height: 48px !important;
 
-    padding: 0;
+    padding: 0 !important;
 
-    border: none;
-    border-radius: 50%;
+    border: none !important;
+    border-radius: 50% !important;
 
     background: transparent !important;
 
-    color: #fff;
+    color: #fff !important;
 
-    font-size: 30px;
-    font-weight: 700;
+    font-size: 30px !important;
+    font-weight: 700 !important;
 
-    line-height: 1;
+    line-height: 1 !important;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
-    z-index: 9999;
+    z-index: 9999 !important;
 
-    cursor: pointer;
+    cursor: pointer !important;
 
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent !important;
 
     box-shadow: none !important;
 }
 
 /* =========================================================
-   MENU — POJOK KANAN
+   MENU
    ========================================================= */
 
 .menu-button {
     position: fixed !important;
 
-    top: 20px;
-    right: 18px;
-    left: auto;
+    top: 20px !important;
+    right: 18px !important;
 
-    width: 48px;
-    height: 48px;
+    width: 48px !important;
+    height: 48px !important;
 
-    padding: 0;
+    padding: 0 !important;
 
-    border: none;
-    border-radius: 50%;
+    border: none !important;
+    border-radius: 50% !important;
 
     background: transparent !important;
 
-    color: #fff;
+    color: #fff !important;
 
-    font-size: 30px;
-    font-weight: 700;
+    font-size: 30px !important;
+    font-weight: 700 !important;
 
-    line-height: 1;
+    line-height: 1 !important;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
-    z-index: 9999;
+    z-index: 9999 !important;
 
-    cursor: pointer;
+    cursor: pointer !important;
 
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent !important;
 
     box-shadow: none !important;
 }
 
 /* =========================================================
-   SHARE LIVE — KANAN BAWAH
+   SHARE
    ========================================================= */
 
 .share-live-button {
     position: fixed !important;
 
-    right: 18px;
-    bottom: 24px;
+    right: 18px !important;
+    bottom: 24px !important;
 
-    width: 52px;
-    height: 52px;
+    width: 52px !important;
+    height: 52px !important;
 
-    padding: 0;
+    padding: 0 !important;
 
-    border: none;
-    border-radius: 50%;
+    border: none !important;
+    border-radius: 50% !important;
 
     background: transparent !important;
 
-    color: #fff;
+    color: #fff !important;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
-    z-index: 9999;
+    z-index: 9999 !important;
 
-    cursor: pointer;
+    cursor: pointer !important;
 
     box-shadow: none !important;
 
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent !important;
 }
 
 /* =========================================================
@@ -195,17 +188,17 @@ body {
    ========================================================= */
 
 .share-live-button svg {
-    width: 34px;
-    height: 34px;
+    width: 34px !important;
+    height: 34px !important;
 
-    fill: none;
+    fill: none !important;
 
-    stroke: currentColor;
+    stroke: currentColor !important;
 
-    stroke-width: 2;
+    stroke-width: 2 !important;
 
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
 }
 
 /* =========================================================
@@ -215,9 +208,8 @@ body {
 .menu-button:active,
 .flip-camera-button:active,
 .share-live-button:active {
-    transform: scale(0.88);
-
-    opacity: 0.7;
+    transform: scale(0.88) !important;
+    opacity: 0.7 !important;
 }
 
 /* =========================================================
@@ -227,27 +219,82 @@ body {
 #roomPanel {
     position: fixed !important;
 
-    top: 76px;
-    left: 18px;
+    top: 78px !important;
+    right: 18px !important;
+    left: auto !important;
 
-    width: 240px;
+    width: 260px !important;
 
-    padding: 18px;
+    padding: 18px !important;
 
-    box-sizing: border-box;
+    box-sizing: border-box !important;
 
-    background: rgba(0, 0, 0, 0.82);
+    background: rgba(0, 0, 0, 0.86) !important;
 
-    color: #fff;
+    color: #fff !important;
 
-    border-radius: 16px;
+    border-radius: 16px !important;
 
-    z-index: 10000;
+    z-index: 10000 !important;
 
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.50) !important;
 
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* =========================================================
+   NAMA ROOM — PALING ATAS
+   ========================================================= */
+
+.room-name-label {
+    display: block !important;
+
+    font-size: 14px !important;
+    font-weight: 700 !important;
+
+    margin: 0 0 7px 0 !important;
+
+    color: #fff !important;
+}
+
+/* =========================================================
+   INPUT NAMA ROOM
+   ========================================================= */
+
+.room-name-input {
+    display: block !important;
+
+    width: 100% !important;
+    height: 44px !important;
+
+    padding: 0 12px !important;
+
+    box-sizing: border-box !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.30) !important;
+
+    border-radius: 10px !important;
+
+    outline: none !important;
+
+    background: rgba(255, 255, 255, 0.10) !important;
+
+    color: #fff !important;
+
+    font-size: 14px !important;
+
+    margin: 0 0 18px 0 !important;
+}
+
+.room-name-input::placeholder {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.room-name-input:focus {
+    border-color: rgba(255, 255, 255, 0.80) !important;
+
+    background: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* =========================================================
@@ -255,10 +302,12 @@ body {
    ========================================================= */
 
 .room-title {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 20px !important;
+    font-weight: 700 !important;
 
-    margin-bottom: 4px;
+    margin: 0 0 4px 0 !important;
+
+    color: #fff !important;
 }
 
 /* =========================================================
@@ -266,10 +315,12 @@ body {
    ========================================================= */
 
 .room-live {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 16px !important;
+    font-weight: 600 !important;
 
-    margin-bottom: 12px;
+    margin: 0 0 12px 0 !important;
+
+    color: #fff !important;
 }
 
 /* =========================================================
@@ -277,23 +328,25 @@ body {
    ========================================================= */
 
 .room-subtitle {
-    font-size: 13px;
+    font-size: 13px !important;
 
-    opacity: 0.75;
+    opacity: 0.75 !important;
 
-    margin-bottom: 12px;
+    margin: 0 0 12px 0 !important;
+
+    color: #fff !important;
 }
 
 /* =========================================================
-   PILIHAN ROOM 2 — 9
+   PILIHAN ROOM
    ========================================================= */
 
 .room-options {
-    display: grid;
+    display: grid !important;
 
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr) !important;
 
-    gap: 8px;
+    gap: 8px !important;
 }
 
 /* =========================================================
@@ -301,25 +354,25 @@ body {
    ========================================================= */
 
 .room-option {
-    width: 100%;
-    height: 42px;
+    width: 100% !important;
+    height: 42px !important;
 
-    padding: 0;
+    padding: 0 !important;
 
-    border: 1px solid rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
 
-    border-radius: 10px;
+    border-radius: 10px !important;
 
-    background: rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.10) !important;
 
-    color: #fff;
+    color: #fff !important;
 
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 16px !important;
+    font-weight: 700 !important;
 
-    cursor: pointer;
+    cursor: pointer !important;
 
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent !important;
 }
 
 /* =========================================================
@@ -327,11 +380,11 @@ body {
    ========================================================= */
 
 .room-option.selected {
-    background: #fff;
+    background: #fff !important;
 
-    color: #000;
+    color: #000 !important;
 
-    border-color: #fff;
+    border-color: #fff !important;
 }
 
 /* =========================================================
@@ -339,5 +392,18 @@ body {
    ========================================================= */
 
 .room-option:active {
-    transform: scale(0.94);
+    transform: scale(0.94) !important;
+}
+
+/* =========================================================
+   HP KECIL
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    #roomPanel {
+        width: 245px !important;
+        right: 12px !important;
+    }
+
 }
