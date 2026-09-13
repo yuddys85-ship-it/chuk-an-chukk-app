@@ -274,3 +274,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
 });
+
+if (menuButton) {
+
+    menuButton.addEventListener("click", () => {
+
+        let roomMenu = document.getElementById("roomMenu");
+
+        if (!roomMenu) {
+
+            roomMenu = document.createElement("div");
+
+            roomMenu.id = "roomMenu";
+            roomMenu.textContent = "Room";
+
+            roomMenu.style.position = "fixed";
+            roomMenu.style.top = "75px";
+            roomMenu.style.left = "18px";
+            roomMenu.style.zIndex = "10000";
+
+            roomMenu.style.padding = "12px 20px";
+
+            roomMenu.style.background = "rgba(0, 0, 0, 0.75)";
+            roomMenu.style.color = "#ffffff";
+
+            roomMenu.style.borderRadius = "12px";
+
+            roomMenu.style.fontSize = "16px";
+            roomMenu.style.fontWeight = "600";
+
+            document.getElementById("liveApp").appendChild(roomMenu);
+
+        } else {
+
+            roomMenu.remove();
+
+        }
+
+    });
+
+}
