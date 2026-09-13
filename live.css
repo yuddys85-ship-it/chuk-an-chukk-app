@@ -107,3 +107,12 @@ body {
     -webkit-backdrop-filter: none !important;
 }
 
+/* =========================================================
+   CHUK AN CHUKK
+   NATIVE CAMERA — NO MIRROR
+   ========================================================= */
+
+#camera {
+    transform: scaleX(-1) !important;
+    -webkit-transform: scaleX(-1) !important;
+}
