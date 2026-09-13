@@ -730,137 +730,280 @@ body{
 }
 
 /* =========================================================
-   CHUK AN CHUKK — TOUCH / BUTTON FIX V1
-   Pastikan semua kontrol berada di atas camera canvas
+   CHUK AN CHUKK
+   LIVE BUTTON FIX V2
+   Semua kontrol di atas camera canvas
    ========================================================= */
 
-.live-app{
-    position:relative !important;
-    isolation:isolate !important;
+/* APP */
+#liveApp,
+.live-app {
+    position: relative !important;
+    isolation: isolate !important;
 }
 
-/* Canvas hanya untuk gambar kamera */
-#filterCanvas{
-    z-index:1 !important;
-    pointer-events:none !important;
+/* CAMERA CANVAS */
+#filterCanvas {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
 }
 
-/* Semua UI harus berada di atas canvas */
-.live-header,
-.camera-status,
-.host-info,
-.live-description,
-.comments-container,
-.like-area,
-.side-controls,
-.filter-panel,
-.comment-input-area,
-.live-controls,
+/* =========================================================
+   TOP HEADER
+   ========================================================= */
+
+.live-header {
+    position: absolute !important;
+    z-index: 100 !important;
+    pointer-events: auto !important;
+}
+
+.live-header button,
+#closeLiveButton {
+    position: relative !important;
+    z-index: 101 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+/* =========================================================
+   CAMERA STATUS
+   Jangan menghalangi tombol
+   ========================================================= */
+
+.camera-status {
+    z-index: 20 !important;
+    pointer-events: none !important;
+}
+
+/* =========================================================
+   HOST
+   ========================================================= */
+
+.host-info {
+    position: absolute !important;
+    z-index: 90 !important;
+    pointer-events: none !important;
+}
+
+#followButton {
+    position: relative !important;
+    z-index: 91 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+/* =========================================================
+   LIKE
+   ========================================================= */
+
+.like-area {
+    position: absolute !important;
+    z-index: 100 !important;
+    pointer-events: none !important;
+}
+
+#likeButton {
+    position: relative !important;
+    z-index: 101 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+/* =========================================================
+   RIGHT SIDE BUTTONS
+   ========================================================= */
+
+.side-controls {
+    position: absolute !important;
+    z-index: 100 !important;
+    pointer-events: auto !important;
+}
+
+.side-controls button,
+.side-button {
+    position: relative !important;
+    z-index: 101 !important;
+
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+
+    cursor: pointer !important;
+}
+
+/* ID LAMA */
+#commentButton,
+#flipButton,
+#cameraButton,
+#micButton,
+#filterButton {
+    position: relative !important;
+    z-index: 102 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+/* =========================================================
+   BEAUTY PANEL
+   ========================================================= */
+
+#filterPanel,
+.filter-panel {
+    position: absolute !important;
+    z-index: 200 !important;
+}
+
+/* JS memakai class ACTIVE */
+#filterPanel.active {
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
+    display: block !important;
+}
+
+/* Saat tertutup */
+#filterPanel:not(.active) {
+    pointer-events: none !important;
+}
+
+/* Semua isi panel */
+#filterPanel button,
+#filterPanel input,
+#filterPanel label {
+    position: relative !important;
+    z-index: 201 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+/* Tombol tutup */
+#closeFilterButton {
+    position: relative !important;
+    z-index: 210 !important;
+    pointer-events: auto !important;
+}
+
+/* Dream */
+#dreamLikeButton {
+    pointer-events: auto !important;
+}
+
+/* Slider */
+#plasticSlider,
+#glowSlider,
+#brightnessSlider,
+#softFocusSlider,
+#detailSlider {
+    pointer-events: auto !important;
+    touch-action: pan-x !important;
+}
+
+/* Auto Light */
+#autoLightButton {
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+/* =========================================================
+   COMMENT INPUT
+   ========================================================= */
+
+.comment-input-area {
+    position: absolute !important;
+    z-index: 150 !important;
+    pointer-events: auto !important;
+}
+
+#commentInput,
+#sendCommentButton {
+    position: relative !important;
+    z-index: 151 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+/* =========================================================
+   BOTTOM CONTROLS
+   ========================================================= */
+
+.live-controls {
+    position: absolute !important;
+    z-index: 150 !important;
+    pointer-events: auto !important;
+}
+
+.live-controls button {
+    position: relative !important;
+    z-index: 151 !important;
+
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+
+    cursor: pointer !important;
+}
+
+/* ID BOTTOM */
+#bottomMicButton,
+#bottomFilterButton,
+#startLiveButton,
+#bottomFlipButton {
+    position: relative !important;
+    z-index: 152 !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+/* =========================================================
+   TIMER / STATUS
+   Jangan menutup tombol
+   ========================================================= */
+
 .live-timer,
-.light-status{
-    position:absolute !important;
+.light-status {
+    pointer-events: none !important;
 }
 
-/* HEADER */
-.live-header{
-    z-index:100 !important;
-    pointer-events:auto !important;
+/* =========================================================
+   COMMENT CONTAINER
+   Jangan menutup tombol
+   ========================================================= */
+
+.comments-container {
+    pointer-events: none !important;
 }
 
-.live-header button{
-    position:relative !important;
-    z-index:101 !important;
-    pointer-events:auto !important;
+.comments-container button {
+    pointer-events: auto !important;
 }
 
-/* RIGHT SIDE BUTTON */
-.side-controls{
-    z-index:110 !important;
-    pointer-events:auto !important;
-}
+/* =========================================================
+   UNIVERSAL TOUCH FIX
+   ========================================================= */
 
-.side-controls button{
-    position:relative !important;
-    z-index:111 !important;
-    pointer-events:auto !important;
-    touch-action:manipulation !important;
-}
-
-/* LIKE */
-.like-area{
-    z-index:110 !important;
-    pointer-events:auto !important;
-}
-
-.like-area button{
-    pointer-events:auto !important;
-    touch-action:manipulation !important;
-}
-
-/* FILTER PANEL */
-.filter-panel{
-    z-index:120 !important;
-}
-
-.filter-panel.active{
-    transform:translateY(0) !important;
-    pointer-events:auto !important;
-}
-
-/* PANEL BUTTON */
-.filter-panel button,
-.filter-panel input{
-    position:relative !important;
-    z-index:121 !important;
-    pointer-events:auto !important;
-    touch-action:manipulation !important;
-}
-
-/* COMMENT */
-.comment-input-area{
-    z-index:115 !important;
-    pointer-events:auto !important;
-}
-
-.comment-input-area input,
-.comment-input-area button{
-    pointer-events:auto !important;
-    touch-action:manipulation !important;
-}
-
-/* BOTTOM CONTROL */
-.live-controls{
-    z-index:130 !important;
-    pointer-events:auto !important;
-}
-
-.live-controls button{
-    position:relative !important;
-    z-index:131 !important;
-    pointer-events:auto !important;
-    touch-action:manipulation !important;
-}
-
-/* Jangan biarkan elemen status menutup tombol */
-.camera-status,
-.live-timer,
-.light-status{
-    pointer-events:none !important;
-}
-
-/* Host info tidak menghalangi kontrol lain */
-.host-info{
-    pointer-events:none !important;
-}
-
-.host-info button{
-    pointer-events:auto !important;
-}
-
-/* Android touch */
 button,
-input[type="range"]{
-    -webkit-user-select:none !important;
-    user-select:none !important;
-    -webkit-tap-highlight-color:transparent !important;
+input,
+select,
+textarea {
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+button {
+    cursor: pointer !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* =========================================================
+   IMPORTANT:
+   Canvas tidak boleh menerima sentuhan.
+   UI di atas canvas yang menerima sentuhan.
+   ========================================================= */
+
+canvas#filterCanvas {
+    pointer-events: none !important;
+}
+
+video#camera {
+    pointer-events: none !important;
 }
