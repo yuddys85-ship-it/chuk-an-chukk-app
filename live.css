@@ -1,72 +1,38 @@
 /* =========================================================
    CHUK AN CHUKK
-   LIVE CAMERA — NATURAL CLEAN
-   Tanpa Beauty Filter / Tanpa MediaPipe
-   ========================================================= */
-
-#liveApp {
-    background: #000 !important;
-}
-
-/* Kamera sumber */
-#camera {
-    display: block !important;
-
-    width: 100% !important;
-    height: 100% !important;
-
-    object-fit: contain !important;
-    object-position: center center !important;
-
-    background: #000 !important;
-
-    filter: none !important;
-    opacity: 1 !important;
-
-    transform: none !important;
-    -webkit-transform: none !important;
-
-    mix-blend-mode: normal !important;
-}
-
-/* Canvas kamera */
-#filterCanvas {
-    display: block !important;
-
-    width: 100% !important;
-    height: 100% !important;
-
-    background: #000 !important;
-
-    filter: none !important;
-    opacity: 1 !important;
-
-    mix-blend-mode: normal !important;
-}
-/* =========================================================
-   CAMERA NATIVE MODE
-   Tidak ada canvas
-   Tidak ada filter
+   LIVE CAMERA — CLEAN NATIVE
    ========================================================= */
 
 html,
 body {
     margin: 0 !important;
     padding: 0 !important;
+
     width: 100% !important;
     height: 100% !important;
+
     overflow: hidden !important;
     background: #000 !important;
 }
 
+/* =========================================================
+   LIVE APP
+   ========================================================= */
+
 #liveApp {
     position: fixed !important;
     inset: 0 !important;
+
     width: 100vw !important;
     height: 100vh !important;
+
     background: #000 !important;
     overflow: hidden !important;
 }
+
+/* =========================================================
+   KAMERA NATIVE
+   ========================================================= */
 
 #camera {
     display: block !important;
@@ -89,45 +55,36 @@ body {
     visibility: visible !important;
 
     filter: none !important;
+
+    /* Mirror diatur oleh live.js */
     transform: none !important;
     -webkit-transform: none !important;
 
     mix-blend-mode: normal !important;
 }
 
-/* Kalau canvas lama masih dibuat oleh JS,
-   jangan tampilkan. */
+/* =========================================================
+   CANVAS LAMA — MATIKAN
+   ========================================================= */
+
 #filterCanvas {
     display: none !important;
 }
-/* Jangan ada efek transparan */
-#camera,
-#filterCanvas {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
 
 /* =========================================================
-   CHUK AN CHUKK
-   NATIVE CAMERA — NO MIRROR
+   TOMBOL MENU — KIRI ATAS
    ========================================================= */
 
-#camera {
-    transform: scaleX(-1) !important;
-    -webkit-transform: scaleX(-1) !important;
-}
+.menu-button {
+    position: fixed !important;
 
-/* =========================================================
-   TOMBOL PINDAH KAMERA — TANPA BACKGROUND
-   ========================================================= */
-
-.flip-camera-button {
-    position: fixed;
     top: 20px;
-    right: 18px;
+    left: 18px;
 
     width: 48px;
     height: 48px;
+
+    padding: 0;
 
     border: none;
     border-radius: 50%;
@@ -135,8 +92,9 @@ body {
     background: transparent !important;
     color: #ffffff;
 
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
+    line-height: 1;
 
     display: flex;
     align-items: center;
@@ -150,6 +108,48 @@ body {
     box-shadow: none !important;
 }
 
+/* =========================================================
+   TOMBOL PINDAH KAMERA — KANAN ATAS
+   ========================================================= */
+
+.flip-camera-button {
+    position: fixed !important;
+
+    top: 20px;
+    right: 18px;
+
+    width: 48px;
+    height: 48px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent !important;
+    color: #ffffff;
+
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    box-shadow: none !important;
+}
+
+/* =========================================================
+   EFEK TEKAN TOMBOL
+   ========================================================= */
+
+.menu-button:active,
 .flip-camera-button:active {
     transform: scale(0.88);
     opacity: 0.7;
