@@ -1,162 +1,109 @@
 /* =========================================================
    CHUK AN CHUKK
-   BEAUTY FILTER V4
-   FACE + FULL BODY BEAUTY
-   MediaPipe Person Segmentation
-   Compatible with current live.js V2
+   BEAUTY FILTER V5 — ULTRA LIGHT
+   Fokus:
+   - Kamera tetap smooth
+   - Beauty full-frame
+   - Tidak melakukan blur/masking berat setiap frame
+   - Tetap kompatibel dengan live.js
    ========================================================= */
 
-window.ChukBeauty = (() => {
+(function () {
+    "use strict";
 
-    const state = {
-
-        enabled: true,
-
-        smooth: 45,
-
-        brightness: 18,
-
-        glow: 18,
-
-        warmth: 4,
-
-        detail: 22,
-
-        faceDetected: false,
-
-        bodyDetected: false
-
-    };
-
-
-    /* =====================================================
-       INTERNAL CANVAS
-       ===================================================== */
-
-    let bodyMaskCanvas = null;
-    let bodyMaskCtx = null;
-
-    let bodyLayerCanvas = null;
-    let bodyLayerCtx = null;
-
-    let glowLayerCanvas = null;
-    let glowLayerCtx = null;
-
-    let lastWidth = 0;
-    let lastHeight = 0;
-
-
-    function ensureCanvases(width, height) {
-
-        if (
-            bodyMaskCanvas &&
-            lastWidth === width &&
-            lastHeight === height
-        ) {
-            return;
-        }
-
-
-        lastWidth = width;
-        lastHeight = height;
-
-
-        bodyMaskCanvas =
-            document.createElement("canvas");
-
-        bodyMaskCanvas.width = width;
-        bodyMaskCanvas.height = height;
-
-
-        bodyMaskCtx =
-            bodyMaskCanvas.getContext("2d", {
-                willReadFrequently: true
-            });
-
-
-        bodyLayerCanvas =
-            document.createElement("canvas");
-
-        bodyLayerCanvas.width = width;
-        bodyLayerCanvas.height = height;
-
-
-        bodyLayerCtx =
-            bodyLayerCanvas.getContext("2d");
-
-
-        glowLayerCanvas =
-            document.createElement("canvas");
-
-        glowLayerCanvas.width = width;
-        glowLayerCanvas.height = height;
-
-
-        glowLayerCtx =
-            glowLayerCanvas.getContext("2d");
-
-    }
-
+    console.log("✨ CHUK BEAUTY FILTER V5 — LOADING");
 
     /* =====================================================
        STATE
        ===================================================== */
 
+    const state = {
+        enabled: true,
+
+        smooth: 45,
+        brightness: 18,
+        glow: 18,
+        warmth: 4,
+        detail: 22,
+
+        faceDetected: false,
+        bodyDetected: false
+    };
+
+    /* =====================================================
+       BASIC HELPERS
+       ===================================================== */
+
+    function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, Number(value) || 0));
+    }
+
+    /* =====================================================
+       SET
+       ===================================================== */
+
     function set(name, value) {
 
         if (!(name in state)) {
+            console.warn("⚠️ Beauty property tidak ditemukan:", name);
             return;
         }
 
+        switch (name) {
 
-        if (
-            name === "faceDetected" ||
-            name === "bodyDetected"
-        ) {
+            case "smooth":
+            case "brightness":
+            case "glow":
+            case "warmth":
+            case "detail":
 
-            state[name] =
-                Boolean(value);
+                state[name] = clamp(value, 0, 100);
+                break;
 
-            return;
+            case "enabled":
+
+                state.enabled = Boolean(value);
+                break;
+
+            default:
+
+                state[name] = value;
         }
-
-
-        state[name] =
-            Number(value);
-
     }
 
+    /* =====================================================
+       GET
+       ===================================================== */
 
     function get(name) {
-
         return state[name];
-
     }
 
+    /* =====================================================
+       ENABLE / DISABLE
+       ===================================================== */
 
     function enable() {
-
         state.enabled = true;
-
+        console.log("✨ Beauty ON");
     }
-
 
     function disable() {
-
         state.enabled = false;
-
+        console.log("✨ Beauty OFF");
     }
-
 
     function toggle() {
+        state.enabled = !state.enabled;
 
-        state.enabled =
-            !state.enabled;
+        console.log(
+            state.enabled
+                ? "✨ Beauty ON"
+                : "✨ Beauty OFF"
+        );
 
         return state.enabled;
-
     }
-
 
     /* =====================================================
        PRESETS
@@ -165,171 +112,104 @@ window.ChukBeauty = (() => {
     function reset() {
 
         state.enabled = true;
-
         state.smooth = 45;
-
         state.brightness = 18;
-
         state.glow = 18;
-
         state.warmth = 4;
-
         state.detail = 22;
 
+        console.log("✨ Beauty RESET");
     }
-
 
     function natural() {
 
         state.enabled = true;
-
         state.smooth = 25;
-
         state.brightness = 8;
-
         state.glow = 8;
-
         state.warmth = 2;
+        state.detail = 15;
 
-        state.detail = 35;
-
+        console.log("🌿 Natural preset");
     }
-
 
     function beauty() {
 
         state.enabled = true;
-
-        state.smooth = 58;
-
-        state.brightness = 18;
-
-        state.glow = 22;
-
-        state.warmth = 4;
-
+        state.smooth = 50;
+        state.brightness = 15;
+        state.glow = 20;
+        state.warmth = 5;
         state.detail = 20;
 
+        console.log("💎 Beauty preset");
     }
-
 
     function dream() {
 
         state.enabled = true;
-
-        state.smooth = 72;
-
-        state.brightness = 25;
-
+        state.smooth = 65;
+        state.brightness = 20;
         state.glow = 35;
+        state.warmth = 8;
+        state.detail = 15;
 
-        state.warmth = 6;
-
-        state.detail = 12;
-
+        console.log("✨ Dream preset");
     }
 
-
     /* =====================================================
-       CSS FILTER
+       LIGHTWEIGHT CSS FILTER
        ===================================================== */
 
     function getCSSFilter() {
 
         if (!state.enabled) {
-
             return "none";
-
         }
 
+        /*
+         * Tidak memakai blur().
+         * Blur pada setiap frame menyebabkan kamera patah-patah
+         * terutama di HP.
+         */
 
         const brightness =
-            100 +
-            state.brightness * 0.30;
-
-
-        const contrast =
-            100 +
-            state.detail * 0.04;
-
+            1 + (state.brightness / 100) * 0.35;
 
         const saturation =
-            100 +
-            state.warmth * 1.4;
+            1 + (state.smooth / 100) * 0.12;
 
+        const contrast =
+            1 - (state.detail / 100) * 0.06;
 
-        return `
-            brightness(${brightness}%)
-            contrast(${contrast}%)
-            saturate(${saturation}%)
-        `;
-
+        return [
+            `brightness(${brightness})`,
+            `saturate(${saturation})`,
+            `contrast(${contrast})`
+        ].join(" ");
     }
 
-
     /* =====================================================
-       GET PERSON SEGMENTATION
+       OPTIONAL AI API
        ===================================================== */
 
-    function getPersonMask(
-        video,
-        timestamp
-    ) {
+    /*
+     * API ini tetap disediakan agar live.js lama tidak error.
+     *
+     * V5 TIDAK menjalankan ImageSegmenter setiap frame.
+     * Prioritas utama adalah smooth camera.
+     */
 
-        const segmenter =
-            window.ChukPersonSegmenter;
+    function getPersonMask(video, timestamp) {
 
+        /*
+         * Sengaja tidak menjalankan segmentation di sini.
+         * MediaPipe segmentation adalah salah satu sumber
+         * beban CPU/GPU terbesar.
+         */
 
-        if (
-            !segmenter ||
-            !video ||
-            video.readyState < 2
-        ) {
-
-            return null;
-
-        }
-
-
-        try {
-
-            const result =
-                segmenter.segmentForVideo(
-                    video,
-                    timestamp
-                );
-
-
-            if (
-                !result ||
-                !result.categoryMask
-            ) {
-
-                return null;
-
-            }
-
-
-            return result.categoryMask;
-
-        } catch (error) {
-
-            console.warn(
-                "CHUK BODY SEGMENTATION:",
-                error
-            );
-
-
-            return null;
-
-        }
-
+        return null;
     }
-
-
-    /* =====================================================
-       BUILD BODY MASK
-       ===================================================== */
 
     function buildBodyMask(
         categoryMask,
@@ -337,855 +217,58 @@ window.ChukBeauty = (() => {
         height
     ) {
 
-        if (!categoryMask) {
+        state.bodyDetected = false;
 
-            return false;
-
-        }
-
-
-        ensureCanvases(
-            width,
-            height
-        );
-
-
-        const mask =
-            categoryMask;
-
-
-        const maskWidth =
-            mask.width;
-
-
-        const maskHeight =
-            mask.height;
-
-
-        if (
-            !maskWidth ||
-            !maskHeight
-        ) {
-
-            return false;
-
-        }
-
-
-        try {
-
-            const maskData =
-                mask.getAsUint8Array();
-
-
-            if (!maskData) {
-
-                return false;
-
-            }
-
-
-            const imageData =
-                bodyMaskCtx.createImageData(
-                    width,
-                    height
-                );
-
-
-            const pixels =
-                imageData.data;
-
-
-            const scaleX =
-                maskWidth / width;
-
-
-            const scaleY =
-                maskHeight / height;
-
-
-            let detected = false;
-
-
-            for (
-                let y = 0;
-                y < height;
-                y++
-            ) {
-
-                const sy =
-                    Math.min(
-                        maskHeight - 1,
-                        Math.floor(
-                            y * scaleY
-                        )
-                    );
-
-
-                for (
-                    let x = 0;
-                    x < width;
-                    x++
-                ) {
-
-                    const sx =
-                        Math.min(
-                            maskWidth - 1,
-                            Math.floor(
-                                x * scaleX
-                            )
-                        );
-
-
-                    const index =
-                        sy * maskWidth +
-                        sx;
-
-
-                    const category =
-                        maskData[index];
-
-
-                    const pixel =
-                        (
-                            y * width +
-                            x
-                        ) * 4;
-
-
-                    /*
-                     * Selfie/person segmentation
-                     * normally uses person category.
-                     *
-                     * 0 = background
-                     * 1 = person
-                     */
-
-                    if (
-                        category > 0
-                    ) {
-
-                        pixels[pixel] = 255;
-
-                        pixels[pixel + 1] = 255;
-
-                        pixels[pixel + 2] = 255;
-
-                        pixels[pixel + 3] = 255;
-
-                        detected = true;
-
-                    } else {
-
-                        pixels[pixel] = 0;
-
-                        pixels[pixel + 1] = 0;
-
-                        pixels[pixel + 2] = 0;
-
-                        pixels[pixel + 3] = 0;
-
-                    }
-
-                }
-
-            }
-
-
-            bodyMaskCtx.putImageData(
-                imageData,
-                0,
-                0
-            );
-
-
-            state.bodyDetected =
-                detected;
-
-
-            return detected;
-
-        } catch (error) {
-
-            console.warn(
-                "CHUK BODY MASK ERROR:",
-                error
-            );
-
-
-            state.bodyDetected =
-                false;
-
-
-            return false;
-
-        }
-
+        return false;
     }
 
-
-    /* =====================================================
-       SOFT BODY BEAUTY
-       ===================================================== */
-
-    function applyBodyBeauty(
-        ctx,
-        sourceCanvas,
+    function updateBodyMask(
+        video,
+        timestamp,
         width,
         height
     ) {
 
-        if (
-            !state.enabled ||
-            !bodyMaskCanvas
-        ) {
-
-            return;
-
-        }
-
-
-        const smooth =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    state.smooth
-                )
-            );
-
-
-        if (smooth <= 0) {
-
-            return;
-
-        }
-
-
         /*
-         * Clear previous layer
+         * Disabled pada V5 Ultra Light.
+         * Kamera akan jauh lebih ringan.
          */
 
-        bodyLayerCtx.clearRect(
-            0,
-            0,
-            width,
-            height
-        );
+        state.bodyDetected = false;
 
-
-        /*
-         * Softened full-frame copy
-         */
-
-        bodyLayerCtx.save();
-
-
-        bodyLayerCtx.filter =
-            `blur(${Math.max(
-                0.4,
-                smooth * 0.035
-            )}px)`;
-
-
-        bodyLayerCtx.drawImage(
-            sourceCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        bodyLayerCtx.restore();
-
-
-        /*
-         * Keep only the person.
-         */
-
-        bodyLayerCtx.globalCompositeOperation =
-            "destination-in";
-
-
-        bodyLayerCtx.drawImage(
-            bodyMaskCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        bodyLayerCtx.globalCompositeOperation =
-            "source-over";
-
-
-        /*
-         * Blend softened body over original.
-         */
-
-        ctx.save();
-
-
-        ctx.globalAlpha =
-            Math.min(
-                0.70,
-                smooth / 120
-            );
-
-
-        ctx.drawImage(
-            bodyLayerCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        ctx.restore();
-
+        return false;
     }
 
-
     /* =====================================================
-       BODY LIGHT
+       LEGACY FUNCTIONS
        ===================================================== */
 
-    function applyBodyLight(
-        ctx,
-        width,
-        height
-    ) {
-
-        if (
-            !state.enabled ||
-            !bodyMaskCanvas
-        ) {
-
-            return;
-
-        }
-
-
-        const amount =
-            Math.min(
-                0.20,
-                state.brightness / 450
-            );
-
-
-        if (amount <= 0) {
-
-            return;
-
-        }
-
-
-        glowLayerCtx.clearRect(
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        glowLayerCtx.fillStyle =
-            `rgba(
-                255,
-                244,
-                232,
-                ${amount}
-            )`;
-
-
-        glowLayerCtx.fillRect(
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        glowLayerCtx.globalCompositeOperation =
-            "destination-in";
-
-
-        glowLayerCtx.drawImage(
-            bodyMaskCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        glowLayerCtx.globalCompositeOperation =
-            "source-over";
-
-
-        ctx.save();
-
-
-        ctx.globalCompositeOperation =
-            "screen";
-
-
-        ctx.globalAlpha =
-            0.85;
-
-
-        ctx.drawImage(
-            glowLayerCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        ctx.restore();
-
+    function applyBodyBeauty() {
+        return false;
     }
 
-
-    /* =====================================================
-       BODY GLOW
-       ===================================================== */
-
-    function applyBodyGlow(
-        ctx,
-        sourceCanvas,
-        width,
-        height
-    ) {
-
-        if (
-            !state.enabled ||
-            !bodyMaskCanvas ||
-            state.glow <= 0
-        ) {
-
-            return;
-
-        }
-
-
-        glowLayerCtx.clearRect(
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        /*
-         * Create soft glow from person.
-         */
-
-        glowLayerCtx.save();
-
-
-        glowLayerCtx.filter =
-            `blur(${2 +
-                state.glow * 0.025
-            }px)`;
-
-
-        glowLayerCtx.globalAlpha =
-            Math.min(
-                0.16,
-                state.glow / 600
-            );
-
-
-        glowLayerCtx.drawImage(
-            sourceCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        glowLayerCtx.restore();
-
-
-        /*
-         * Mask glow to body.
-         */
-
-        glowLayerCtx.globalCompositeOperation =
-            "destination-in";
-
-
-        glowLayerCtx.drawImage(
-            bodyMaskCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        glowLayerCtx.globalCompositeOperation =
-            "source-over";
-
-
-        ctx.save();
-
-
-        ctx.globalCompositeOperation =
-            "screen";
-
-
-        ctx.drawImage(
-            glowLayerCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        ctx.restore();
-
+    function applyBodyLight() {
+        return false;
     }
 
-
-    /* =====================================================
-       FACE MASK
-       ===================================================== */
-
-    function createFaceMask(
-        ctx,
-        landmarks,
-        width,
-        height
-    ) {
-
-        if (
-            !landmarks ||
-            !landmarks.length
-        ) {
-
-            return null;
-
-        }
-
-
-        let minX = 1;
-
-        let minY = 1;
-
-        let maxX = 0;
-
-        let maxY = 0;
-
-
-        for (const point of landmarks) {
-
-            if (!point) continue;
-
-
-            minX =
-                Math.min(
-                    minX,
-                    point.x
-                );
-
-
-            minY =
-                Math.min(
-                    minY,
-                    point.y
-                );
-
-
-            maxX =
-                Math.max(
-                    maxX,
-                    point.x
-                );
-
-
-            maxY =
-                Math.max(
-                    maxY,
-                    point.y
-                );
-
-        }
-
-
-        if (
-            maxX <= minX ||
-            maxY <= minY
-        ) {
-
-            return null;
-
-        }
-
-
-        const centerX =
-            ((minX + maxX) / 2) *
-            width;
-
-
-        const centerY =
-            ((minY + maxY) / 2) *
-            height;
-
-
-        const radiusX =
-            (maxX - minX) *
-            width *
-            0.54;
-
-
-        const radiusY =
-            (maxY - minY) *
-            height *
-            0.57;
-
-
-        ctx.beginPath();
-
-
-        ctx.ellipse(
-            centerX,
-            centerY,
-            radiusX,
-            radiusY,
-            0,
-            0,
-            Math.PI * 2
-        );
-
-
-        return ctx;
-
+    function applyBodyGlow() {
+        return false;
     }
 
-
-    /* =====================================================
-       FACE SMOOTH
-       ===================================================== */
-
-    function applyFaceSmooth(
-        ctx,
-        sourceCanvas,
-        landmarks,
-        width,
-        height
-    ) {
-
-        if (
-            !state.enabled ||
-            !landmarks ||
-            !landmarks.length
-        ) {
-
-            return;
-
-        }
-
-
-        const maskCanvas =
-            document.createElement(
-                "canvas"
-            );
-
-
-        maskCanvas.width =
-            width;
-
-        maskCanvas.height =
-            height;
-
-
-        const maskCtx =
-            maskCanvas.getContext(
-                "2d"
-            );
-
-
-        const face =
-            createFaceMask(
-                maskCtx,
-                landmarks,
-                width,
-                height
-            );
-
-
-        if (!face) {
-
-            return;
-
-        }
-
-
-        face.fillStyle =
-            "#ffffff";
-
-
-        face.fill();
-
-
-        maskCtx.globalCompositeOperation =
-            "source-in";
-
-
-        maskCtx.filter =
-            `blur(${Math.max(
-                1,
-                state.smooth * 0.05
-            )}px)`;
-
-
-        maskCtx.drawImage(
-            sourceCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        ctx.save();
-
-
-        ctx.globalAlpha =
-            Math.min(
-                0.78,
-                state.smooth / 100
-            );
-
-
-        ctx.drawImage(
-            maskCanvas,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        ctx.restore();
-
+    function createFaceMask() {
+        return null;
     }
 
-
-    /* =====================================================
-       FACE GLOW
-       ===================================================== */
-
-    function applyFaceGlow(
-        ctx,
-        landmarks,
-        width,
-        height
-    ) {
-
-        if (
-            !state.enabled ||
-            !landmarks ||
-            !landmarks.length ||
-            state.glow <= 0
-        ) {
-
-            return;
-
-        }
-
-
-        const glowCanvas =
-            document.createElement(
-                "canvas"
-            );
-
-
-        glowCanvas.width =
-            width;
-
-        glowCanvas.height =
-            height;
-
-
-        const glowCtx =
-            glowCanvas.getContext(
-                "2d"
-            );
-
-
-        const face =
-            createFaceMask(
-                glowCtx,
-                landmarks,
-                width,
-                height
-            );
-
-
-        if (!face) {
-
-            return;
-
-        }
-
-
-        face.fillStyle =
-            `rgba(
-                255,
-                240,
-                225,
-                ${Math.min(
-                    0.20,
-                    state.glow / 500
-                )}
-            )`;
-
-
-        face.shadowColor =
-            "rgba(255,240,225,0.35)";
-
-
-        face.shadowBlur =
-            12 +
-            state.glow * 0.20;
-
-
-        face.fill();
-
-
-        ctx.save();
-
-
-        ctx.globalCompositeOperation =
-            "screen";
-
-
-        ctx.globalAlpha =
-            0.75;
-
-
-        ctx.drawImage(
-            glowCanvas,
-            0,
-            0
-        );
-
-
-        ctx.restore();
-
+    function applyFaceSmooth() {
+        return false;
     }
 
+    function applyFaceGlow() {
+        return false;
+    }
 
     /* =====================================================
-       MAIN V4
+       MAIN APPLY
        ===================================================== */
 
     function apply(
@@ -1196,179 +279,93 @@ window.ChukBeauty = (() => {
         height
     ) {
 
-        if (!state.enabled) {
-
-            return;
-
-        }
-
-
         /*
-         * V4 menerima body mask yang dibuat
-         * oleh segmenter.
+         * Beauty utama sekarang dilakukan melalui
+         * ctx.filter = getCSSFilter()
          *
-         * Jika segmenter belum siap,
-         * wajah tetap bisa diproses.
+         * Jadi fungsi ini sengaja ringan.
+         *
+         * Jangan melakukan blur/mask setiap frame di sini.
          */
 
-        if (
-            state.bodyDetected &&
-            bodyMaskCanvas
-        ) {
-
-            /*
-             * 1. Full body smoothing
-             */
-
-            applyBodyBeauty(
-                ctx,
-                sourceCanvas,
-                width,
-                height
-            );
-
-
-            /*
-             * 2. Body brightness
-             */
-
-            applyBodyLight(
-                ctx,
-                width,
-                height
-            );
-
-
-            /*
-             * 3. Body glow
-             */
-
-            applyBodyGlow(
-                ctx,
-                sourceCanvas,
-                width,
-                height
-            );
-
+        if (!state.enabled) {
+            return;
         }
-
 
         /*
-         * 4. Face enhancement
+         * Sedikit warm glow menggunakan overlay sederhana.
+         * Sangat ringan dibanding Gaussian blur.
          */
 
         if (
-            landmarks &&
-            landmarks.length
+            ctx &&
+            width &&
+            height &&
+            state.glow > 0
         ) {
 
-            applyFaceSmooth(
-                ctx,
-                sourceCanvas,
-                landmarks,
+            ctx.save();
+
+            const alpha =
+                (state.glow / 100) * 0.035;
+
+            ctx.globalAlpha = alpha;
+
+            ctx.fillStyle =
+                state.warmth > 5
+                    ? "#ffd9a0"
+                    : "#fff4dc";
+
+            ctx.fillRect(
+                0,
+                0,
                 width,
                 height
             );
 
-
-            applyFaceGlow(
-                ctx,
-                landmarks,
-                width,
-                height
-            );
-
+            ctx.restore();
         }
-
     }
-
-
-    /* =====================================================
-       V4 SEGMENTATION UPDATE
-       Dipanggil dari live.js jika tersedia.
-       ===================================================== */
-
-    function updateBodyMask(
-        video,
-        timestamp,
-        width,
-        height
-    ) {
-
-        const categoryMask =
-            getPersonMask(
-                video,
-                timestamp
-            );
-
-
-        if (!categoryMask) {
-
-            state.bodyDetected =
-                false;
-
-            return false;
-
-        }
-
-
-        return buildBodyMask(
-            categoryMask,
-            width,
-            height
-        );
-
-    }
-
 
     /* =====================================================
        PUBLIC API
        ===================================================== */
 
-    return {
+    window.ChukBeauty = {
 
         state,
 
         set,
-
         get,
 
         enable,
-
         disable,
-
         toggle,
 
         reset,
-
         natural,
-
         beauty,
-
         dream,
 
         getCSSFilter,
 
         getPersonMask,
-
         buildBodyMask,
-
         updateBodyMask,
 
         applyBodyBeauty,
-
         applyBodyLight,
-
         applyBodyGlow,
 
         createFaceMask,
-
         applyFaceSmooth,
-
         applyFaceGlow,
 
         apply
-
     };
+
+    console.log(
+        "✅ CHUK BEAUTY FILTER V5 — READY"
+    );
 
 })();
