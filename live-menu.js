@@ -18,10 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     menuButton.addEventListener("click", () => {
 
-        let roomPanel = document.getElementById("roomPanel");
+        /* =================================================
+           CEK PANEL SUDAH ADA
+           ================================================= */
+
+        let roomPanel =
+            document.getElementById("roomPanel");
 
         /* =================================================
-           TUTUP MENU
+           TUTUP PANEL
            ================================================= */
 
         if (roomPanel) {
@@ -30,15 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         /* =================================================
-           PANEL ROOM
+           BUAT PANEL
            ================================================= */
 
         roomPanel = document.createElement("div");
+
         roomPanel.id = "roomPanel";
 
         roomPanel.innerHTML = `
 
-            <!-- NAMA ROOM PALING ATAS -->
+            <!-- =========================================
+                 NAMA ROOM — PALING ATAS
+                 ========================================= -->
 
             <div class="room-name-label">
                 Nama Room
@@ -53,7 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 autocomplete="off"
             >
 
-            <!-- ROOM -->
+            <!-- =========================================
+                 ROOM
+                 ========================================= -->
 
             <div class="room-title">
                 Room
@@ -67,59 +77,78 @@ document.addEventListener("DOMContentLoaded", () => {
                 Pilih jumlah layar berbagi
             </div>
 
-            <!-- PILIHAN ROOM -->
+            <!-- =========================================
+                 PILIHAN ROOM 2 — 9
+                 ========================================= -->
 
             <div class="room-options">
 
                 <button
                     class="room-option"
+                    type="button"
                     data-room="2"
-                    type="button"
-                >2</button>
+                >
+                    2
+                </button>
 
                 <button
                     class="room-option"
+                    type="button"
                     data-room="3"
-                    type="button"
-                >3</button>
+                >
+                    3
+                </button>
 
                 <button
                     class="room-option"
+                    type="button"
                     data-room="4"
-                    type="button"
-                >4</button>
+                >
+                    4
+                </button>
 
                 <button
                     class="room-option"
+                    type="button"
                     data-room="5"
-                    type="button"
-                >5</button>
+                >
+                    5
+                </button>
 
                 <button
                     class="room-option"
+                    type="button"
                     data-room="6"
-                    type="button"
-                >6</button>
+                >
+                    6
+                </button>
 
                 <button
                     class="room-option"
+                    type="button"
                     data-room="7"
-                    type="button"
-                >7</button>
+                >
+                    7
+                </button>
 
                 <button
                     class="room-option"
+                    type="button"
                     data-room="8"
-                    type="button"
-                >8</button>
+                >
+                    8
+                </button>
 
                 <button
                     class="room-option"
-                    data-room="9"
                     type="button"
-                >9</button>
+                    data-room="9"
+                >
+                    9
+                </button>
 
             </div>
+
         `;
 
         liveApp.appendChild(roomPanel);
@@ -129,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
            ================================================= */
 
         const roomNameInput =
-            document.getElementById("roomNameInput");
+            roomPanel.querySelector("#roomNameInput");
 
         if (roomNameInput) {
 
@@ -146,12 +175,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         "🏠 Nama Room:",
                         roomName
                     );
+
                 }
             );
         }
 
         /* =================================================
-           PILIH ROOM
+           TOMBOL ROOM
            ================================================= */
 
         const roomButtons =
@@ -163,14 +193,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 "click",
                 () => {
 
+                    /* Hapus pilihan sebelumnya */
+
                     roomButtons.forEach(btn => {
                         btn.classList.remove("selected");
                     });
 
+                    /* Pilih room */
+
                     button.classList.add("selected");
 
                     const roomNumber =
-                        button.dataset.room;
+                        Number(button.dataset.room);
 
                     const roomName =
                         roomNameInput
@@ -178,16 +212,25 @@ document.addEventListener("DOMContentLoaded", () => {
                             : "";
 
                     console.log(
-                        "🎥 ROOM:",
+                        "🎥 Jumlah layar:",
                         roomNumber
                     );
 
                     console.log(
-                        "🏠 NAMA ROOM:",
+                        "🏠 Nama Room:",
                         roomName || "Tanpa nama"
                     );
+
+                    /* Simpan sementara */
+
+                    window.liveRoom = {
+                        name: roomName,
+                        screens: roomNumber
+                    };
+
                 }
             );
+
         });
 
     });
