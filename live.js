@@ -3,7 +3,7 @@
 /* =========================================================
    CHUK AN CHUKK
    LIVE CAMERA + ROOM MENU
-   FRONT ↔ BACK
+   NAMA ROOM TAMPIL DI ATAS KIRI
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -13,13 +13,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const menuButton = document.getElementById("menuButton");
     const liveApp = document.getElementById("liveApp");
 
-    if (!video) {
-        console.error("❌ #camera tidak ditemukan");
-        return;
-    }
-
-    if (!liveApp) {
-        console.error("❌ #liveApp tidak ditemukan");
+    if (!video || !liveApp) {
+        console.error("❌ Elemen Live tidak ditemukan");
         return;
     }
 
@@ -35,6 +30,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         name: "",
         screens: 2
     };
+
+    /* =====================================================
+       NAMA ROOM DI LAYAR
+       ===================================================== */
+
+    const liveRoomDisplay =
+        document.createElement("div");
+
+    liveRoomDisplay.id = "liveRoomDisplay";
+
+    liveRoomDisplay.textContent = "";
+
+    liveApp.appendChild(liveRoomDisplay);
 
     /* =====================================================
        VIDEO
@@ -86,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /* =====================================================
-       STOP KAMERA
+       STOP CAMERA
        ===================================================== */
 
     function stopCamera() {
@@ -104,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /* =====================================================
-       BUKA KAMERA
+       START CAMERA
        ===================================================== */
 
     async function startCamera() {
@@ -115,7 +123,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
 
-            console.log("📷 Membuka:", facingMode);
+            console.log(
+                "📷 Membuka:",
+                facingMode
+            );
 
             stopCamera();
 
@@ -225,7 +236,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /* =====================================================
-       MENU ROOM
+       MENU
        ===================================================== */
 
     if (menuButton) {
@@ -239,9 +250,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 let roomPanel =
                     document.getElementById("roomPanel");
 
-                /* -----------------------------------------
+                /* =========================================
                    TUTUP MENU
-                   ----------------------------------------- */
+                   ========================================= */
 
                 if (roomPanel) {
 
@@ -250,9 +261,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     return;
                 }
 
-                /* -----------------------------------------
-                   BUAT MENU
-                   ----------------------------------------- */
+                /* =========================================
+                   BUAT PANEL
+                   ========================================= */
 
                 roomPanel =
                     document.createElement("div");
@@ -260,8 +271,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 roomPanel.id = "roomPanel";
 
                 roomPanel.innerHTML = `
-
-                    <!-- NAMA ROOM PALING ATAS -->
 
                     <div class="room-name-label">
                         Nama Room
@@ -276,8 +285,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                         autocomplete="off"
                     >
 
-                    <!-- ROOM -->
-
                     <div class="room-title">
                         Room
                     </div>
@@ -289,8 +296,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="room-subtitle">
                         Pilih jumlah layar berbagi
                     </div>
-
-                    <!-- ROOM 2 - 9 -->
 
                     <div class="room-options">
 
@@ -343,14 +348,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                         >9</button>
 
                     </div>
-
                 `;
 
                 liveApp.appendChild(roomPanel);
 
-                /* -----------------------------------------
+                /* =========================================
                    INPUT NAMA ROOM
-                   ----------------------------------------- */
+                   ========================================= */
 
                 const roomNameInput =
                     roomPanel.querySelector(
@@ -362,27 +366,32 @@ document.addEventListener("DOMContentLoaded", async () => {
                     roomNameInput.value =
                         window.liveRoom.name || "";
 
-                    roomNameInput.focus();
-
                     roomNameInput.addEventListener(
                         "input",
                         () => {
 
-                            window.liveRoom.name =
+                            const name =
                                 roomNameInput.value.trim();
+
+                            window.liveRoom.name =
+                                name;
+
+                            /* Tampilkan di layar */
+
+                            liveRoomDisplay.textContent =
+                                name;
 
                             console.log(
                                 "🏠 Nama Room:",
-                                window.liveRoom.name
+                                name
                             );
-
                         }
                     );
                 }
 
-                /* -----------------------------------------
-                   TOMBOL ROOM
-                   ----------------------------------------- */
+                /* =========================================
+                   TOMBOL ROOM 2–9
+                   ========================================= */
 
                 const roomButtons =
                     roomPanel.querySelectorAll(
@@ -412,20 +421,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                                     button.dataset.room
                                 );
 
-                            const roomName =
-                                roomNameInput
-                                    ? roomNameInput.value.trim()
-                                    : "";
-
-                            window.liveRoom = {
-                                name: roomName,
-                                screens: screens
-                            };
-
-                            console.log(
-                                "🏠 Nama Room:",
-                                roomName || "Tanpa nama"
-                            );
+                            window.liveRoom.screens =
+                                screens;
 
                             console.log(
                                 "🎥 Jumlah layar:",
@@ -433,18 +430,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                             );
 
                             console.log(
-                                "🏠 DATA ROOM:",
-                                window.liveRoom
+                                "🏠 Nama Room:",
+                                window.liveRoom.name ||
+                                "Tanpa nama"
                             );
-
                         }
                     );
 
                 });
 
-                /* -----------------------------------------
-                   DEFAULT ROOM 2
-                   ----------------------------------------- */
+                /* =========================================
+                   ROOM DEFAULT 2
+                   ========================================= */
 
                 const defaultRoom =
                     roomPanel.querySelector(
@@ -452,19 +449,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                     );
 
                 if (defaultRoom) {
-                    defaultRoom.classList.add("selected");
+                    defaultRoom.classList.add(
+                        "selected"
+                    );
                 }
-
-                console.log(
-                    "✅ Room Menu dibuka"
-                );
 
             }
         );
     }
 
     /* =====================================================
-       CEK SUPPORT
+       CAMERA SUPPORT
        ===================================================== */
 
     if (
@@ -480,7 +475,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /* =====================================================
-       MULAI KAMERA
+       START
        ===================================================== */
 
     await startCamera();
