@@ -3,6 +3,7 @@
 /* =========================================================
    CHUK AN CHUKK
    LIVE MENU
+   NAMA ROOM PALING ATAS
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -15,15 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    /* =====================================================
-       BUKA / TUTUP MENU
-       ===================================================== */
-
     menuButton.addEventListener("click", () => {
 
         let roomPanel = document.getElementById("roomPanel");
 
-        /* Jika sudah ada → tutup */
+        /* =================================================
+           TUTUP MENU
+           ================================================= */
+
         if (roomPanel) {
             roomPanel.remove();
             return;
@@ -34,10 +34,27 @@ document.addEventListener("DOMContentLoaded", () => {
            ================================================= */
 
         roomPanel = document.createElement("div");
-
         roomPanel.id = "roomPanel";
 
         roomPanel.innerHTML = `
+
+            <!-- NAMA ROOM PALING ATAS -->
+
+            <div class="room-name-label">
+                Nama Room
+            </div>
+
+            <input
+                id="roomNameInput"
+                class="room-name-input"
+                type="text"
+                maxlength="40"
+                placeholder="Masukkan nama room"
+                autocomplete="off"
+            >
+
+            <!-- ROOM -->
+
             <div class="room-title">
                 Room
             </div>
@@ -50,44 +67,88 @@ document.addEventListener("DOMContentLoaded", () => {
                 Pilih jumlah layar berbagi
             </div>
 
+            <!-- PILIHAN ROOM -->
+
             <div class="room-options">
 
-                <button class="room-option" data-room="2">
-                    2
-                </button>
+                <button
+                    class="room-option"
+                    data-room="2"
+                    type="button"
+                >2</button>
 
-                <button class="room-option" data-room="3">
-                    3
-                </button>
+                <button
+                    class="room-option"
+                    data-room="3"
+                    type="button"
+                >3</button>
 
-                <button class="room-option" data-room="4">
-                    4
-                </button>
+                <button
+                    class="room-option"
+                    data-room="4"
+                    type="button"
+                >4</button>
 
-                <button class="room-option" data-room="5">
-                    5
-                </button>
+                <button
+                    class="room-option"
+                    data-room="5"
+                    type="button"
+                >5</button>
 
-                <button class="room-option" data-room="6">
-                    6
-                </button>
+                <button
+                    class="room-option"
+                    data-room="6"
+                    type="button"
+                >6</button>
 
-                <button class="room-option" data-room="7">
-                    7
-                </button>
+                <button
+                    class="room-option"
+                    data-room="7"
+                    type="button"
+                >7</button>
 
-                <button class="room-option" data-room="8">
-                    8
-                </button>
+                <button
+                    class="room-option"
+                    data-room="8"
+                    type="button"
+                >8</button>
 
-                <button class="room-option" data-room="9">
-                    9
-                </button>
+                <button
+                    class="room-option"
+                    data-room="9"
+                    type="button"
+                >9</button>
 
             </div>
         `;
 
         liveApp.appendChild(roomPanel);
+
+        /* =================================================
+           INPUT NAMA ROOM
+           ================================================= */
+
+        const roomNameInput =
+            document.getElementById("roomNameInput");
+
+        if (roomNameInput) {
+
+            roomNameInput.focus();
+
+            roomNameInput.addEventListener(
+                "input",
+                () => {
+
+                    const roomName =
+                        roomNameInput.value.trim();
+
+                    console.log(
+                        "🏠 Nama Room:",
+                        roomName
+                    );
+                }
+            );
+        }
 
         /* =================================================
            PILIH ROOM
@@ -98,33 +159,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
         roomButtons.forEach(button => {
 
-            button.addEventListener("click", () => {
+            button.addEventListener(
+                "click",
+                () => {
 
-                /* Hapus pilihan sebelumnya */
-                roomButtons.forEach(btn => {
-                    btn.classList.remove("selected");
-                });
+                    roomButtons.forEach(btn => {
+                        btn.classList.remove("selected");
+                    });
 
-                /* Pilih room */
-                button.classList.add("selected");
+                    button.classList.add("selected");
 
-                const roomNumber =
-                    button.dataset.room;
+                    const roomNumber =
+                        button.dataset.room;
 
-                console.log(
-                    "🎥 Room dipilih:",
-                    roomNumber
-                );
+                    const roomName =
+                        roomNameInput
+                            ? roomNameInput.value.trim()
+                            : "";
 
-                /*
-                 * Untuk sekarang hanya memilih jumlah layar.
-                 *
-                 * WebRTC / multi-host akan kita pasang
-                 * setelah kamera dasar sudah stabil.
-                 */
+                    console.log(
+                        "🎥 ROOM:",
+                        roomNumber
+                    );
 
-            });
-
+                    console.log(
+                        "🏠 NAMA ROOM:",
+                        roomName || "Tanpa nama"
+                    );
+                }
+            );
         });
 
     });
