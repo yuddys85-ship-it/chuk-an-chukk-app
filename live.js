@@ -2,103 +2,177 @@
 
 /* =========================================================
    CHUK AN CHUKK
-   LIVE CAMERA — FRONT / BACK SWITCH
+   LIVE CAMERA
+   FRONT ↔ BACK CAMERA
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
 
     const video = document.getElementById("camera");
     const flipButton = document.getElementById("flipCameraButton");
+    const menuButton = document.getElementById("menuButton");
 
     if (!video) {
-        console.error("❌ #camera tidak ditemukan");
+        console.error("❌ Kamera #camera tidak ditemukan");
         return;
     }
 
     let currentStream = null;
     let facingMode = "user";
+    let switching = false;
 
     video.autoplay = true;
     video.muted = true;
     video.playsInline = true;
 
+    /* =====================================================
+       ATUR MIRROR
+       ===================================================== */
+
+    function updateMirror() {
+
+        if (facingMode === "user") {
+            video.style.setProperty(
+                "transform",
+                "scaleX(-1)",
+                "important"
+            );
+
+            video.style.setProperty(
+                "-webkit-transform",
+                "scaleX(-1)",
+                "important"
+            );
+
+        } else {
+
+            video.style.setProperty(
+                "transform",
+                "none",
+                "important"
+            );
+
+            video.style.setProperty(
+                "-webkit-transform",
+                "none",
+                "important"
+            );
+        }
+    }
+
+    /* =====================================================
+       BUKA KAMERA
+       ===================================================== */
+
     async function startCamera() {
 
+        if (switching) return;
+
+        switching = true;
+
         try {
+
             console.log("📷 Membuka kamera:", facingMode);
 
             /* Matikan kamera sebelumnya */
             if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
+
+                currentStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+
                 currentStream = null;
             }
 
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: {
-                        ideal: facingMode
+            /* Buka kamera sesuai mode */
+            const stream =
+                await navigator.mediaDevices.getUserMedia({
+
+                    video: {
+                        facingMode: {
+                            exact: facingMode
+                        },
+
+                        width: {
+                            ideal: 1280
+                        },
+
+                        height: {
+                            ideal: 720
+                        },
+
+                        frameRate: {
+                            ideal: 30,
+                            max: 30
+                        }
                     },
-                    width: {
-                        ideal: 1280
-                    },
-                    height: {
-                        ideal: 720
-                    },
-                    frameRate: {
-                        ideal: 30,
-                        max: 30
-                    }
-                },
-                audio: false
-            });
+
+                    audio: false
+                });
 
             currentStream = stream;
 
             video.srcObject = stream;
 
-            /* Kamera depan tidak mirror.
-               Kamera belakang normal. */
-            if (facingMode === "user") {
-                video.style.transform = "scaleX(-1)";
-                video.style.webkitTransform = "scaleX(-1)";
-            } else {
-                video.style.transform = "none";
-                video.style.webkitTransform = "none";
-            }
+            updateMirror();
 
             await video.play();
 
-            console.log("✅ Kamera aktif:", facingMode);
+            console.log(
+                "✅ Kamera aktif:",
+                facingMode
+            );
+
+            console.log(
+                "📐 Resolusi:",
+                video.videoWidth,
+                "x",
+                video.videoHeight
+            );
 
         } catch (error) {
 
-            console.error("❌ Kamera gagal:", error);
+            console.error(
+                "❌ Kamera gagal:",
+                error
+            );
 
-            /* Coba kamera biasa sebagai fallback */
+            /*
+             Jika kamera exact tidak tersedia,
+             coba kamera biasa.
+            */
+
             try {
 
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: false
-                });
+                const stream =
+                    await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    });
 
                 currentStream = stream;
+
                 video.srcObject = stream;
 
-                video.style.transform = "none";
-                video.style.webkitTransform = "none";
+                updateMirror();
 
                 await video.play();
 
-                console.log("✅ Kamera fallback aktif");
+                console.log(
+                    "✅ Kamera fallback aktif"
+                );
 
             } catch (fallbackError) {
 
                 console.error(
-                    "❌ Kamera fallback juga gagal:",
+                    "❌ Fallback kamera gagal:",
                     fallbackError
                 );
             }
+
+        } finally {
+
+            switching = false;
         }
     }
 
@@ -108,23 +182,56 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (flipButton) {
 
-        flipButton.addEventListener("click", async () => {
+        flipButton.addEventListener(
+            "click",
+            async () => {
 
-            if (facingMode === "user") {
-                facingMode = "environment";
-            } else {
-                facingMode = "user";
+                if (switching) return;
+
+                if (facingMode === "user") {
+
+                    facingMode = "environment";
+
+                } else {
+
+                    facingMode = "user";
+                }
+
+                console.log(
+                    "🔄 Pindah kamera:",
+                    facingMode
+                );
+
+                await startCamera();
             }
-
-            console.log("🔄 Pindah kamera ke:", facingMode);
-
-            await startCamera();
-        });
+        );
 
     } else {
 
-        console.warn("⚠️ Tombol #flipCameraButton tidak ditemukan");
+        console.warn(
+            "⚠️ #flipCameraButton tidak ditemukan"
+        );
+    }
 
+    /* =====================================================
+       TOMBOL MENU
+       ===================================================== */
+
+    if (menuButton) {
+
+        menuButton.addEventListener(
+            "click",
+            () => {
+
+                console.log("☰ Menu ditekan");
+
+                /*
+                 Menu akan kita aktifkan
+                 pada tahap berikutnya.
+                */
+
+            }
+        );
     }
 
     /* =====================================================
@@ -135,57 +242,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         !navigator.mediaDevices ||
         !navigator.mediaDevices.getUserMedia
     ) {
-        console.error("❌ Browser tidak mendukung kamera");
+
+        console.error(
+            "❌ Browser tidak mendukung kamera"
+        );
+
         return;
     }
 
-    /* Mulai kamera depan */
+    /* =====================================================
+       MULAI KAMERA DEPAN
+       ===================================================== */
+
     await startCamera();
 
-    /* Matikan kamera saat keluar */
-    window.addEventListener("beforeunload", () => {
+    /* =====================================================
+       MATIKAN KAMERA SAAT KELUAR
+       ===================================================== */
 
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            if (currentStream) {
+
+                currentStream
+                    .getTracks()
+                    .forEach(track => track.stop());
+            }
         }
-
-    });
+    );
 
 });
-/* =========================================================
-   TOMBOL MENU — KIRI ATAS
-   ========================================================= */
-
-.menu-button {
-    position: fixed;
-    top: 20px;
-    left: 18px;
-
-    width: 48px;
-    height: 48px;
-
-    border: none;
-    border-radius: 50%;
-
-    background: transparent !important;
-    color: #ffffff;
-
-    font-size: 30px;
-    font-weight: 700;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    z-index: 9999;
-
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-
-    box-shadow: none !important;
-}
-
-.menu-button:active {
-    transform: scale(0.88);
-    opacity: 0.7;
-}
