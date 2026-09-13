@@ -74,14 +74,13 @@ body {
 }
 
 /* =========================================================
-   PINDAH KAMERA — SEBELAH KIRI MENU
+   PINDAH KAMERA — KIRI DARI MENU
    ========================================================= */
 
 .flip-camera-button {
     position: fixed !important;
 
     top: 20px;
-
     right: 76px;
     left: auto;
 
@@ -97,7 +96,7 @@ body {
 
     color: #fff;
 
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
 
     line-height: 1;
@@ -116,14 +115,13 @@ body {
 }
 
 /* =========================================================
-   MENU — POJOK KANAN ATAS
+   MENU — POJOK KANAN
    ========================================================= */
 
 .menu-button {
     position: fixed !important;
 
     top: 20px;
-
     right: 18px;
     left: auto;
 
