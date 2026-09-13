@@ -1,75 +1,223 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+>
+
 <title>Profile - CHUK AN CHUKK</title>
-<link rel="stylesheet" href="profile.css">
+
+<link
+    rel="stylesheet"
+    href="profile.css"
+>
+
 </head>
 
 <body>
 
 <header>
-    <button onclick="history.back()">←</button>
+
+    <button
+        onclick="history.back()"
+        type="button"
+    >
+        ←
+    </button>
+
     <b>Profile</b>
-    <button onclick="editProfile()">⚙️</button>
+
+    <button
+        onclick="editProfile()"
+        type="button"
+    >
+        ⚙️
+    </button>
+
 </header>
+
 
 <main>
 
 <section class="profile">
-    <img id="avatar" src="assets/logo.png">
-    
-    <h2 id="username">CHUK USER</h2>
-    <p id="bio">Selamat datang di CHUK AN CHUKK</p>
 
-    <div class="stats">
-        <div>
-            <b id="postCount">0</b>
-            <small>Postingan</small>
+    <!-- FOTO PROFIL -->
+
+    <div
+        class="avatar-wrapper"
+        onclick="changeAvatar()"
+    >
+
+        <img
+            id="avatar"
+            src="assets/logo.png"
+            alt="Foto Profil"
+        >
+
+        <div class="avatar-edit">
+            📷
         </div>
 
-        <div>
-            <b id="followers">0</b>
-            <small>Followers</small>
-        </div>
-
-        <div>
-            <b id="following">0</b>
-            <small>Following</small>
-        </div>
     </div>
 
-    <button class="edit" onclick="editProfile()">
+    <small
+        style="
+            display:block;
+            margin-top:8px;
+            opacity:.65;
+            cursor:pointer;
+        "
+        onclick="changeAvatar()"
+    >
+        Ubah foto
+    </small>
+
+
+    <!-- INPUT FOTO TERSEMBUNYI -->
+
+    <input
+        id="avatarInput"
+        type="file"
+        accept="image/*"
+        style="display:none"
+    >
+
+
+    <!-- NAMA USER -->
+
+    <h2 id="username">
+        CHUK USER
+    </h2>
+
+    <p id="bio">
+        Selamat datang di CHUK AN CHUKK
+    </p>
+
+
+    <!-- STATISTIK -->
+
+    <div class="stats">
+
+        <div>
+
+            <b id="postCount">
+                0
+            </b>
+
+            <small>
+                Postingan
+            </small>
+
+        </div>
+
+
+        <div>
+
+            <b id="followers">
+                0
+            </b>
+
+            <small>
+                Followers
+            </small>
+
+        </div>
+
+
+        <div>
+
+            <b id="following">
+                0
+            </b>
+
+            <small>
+                Following
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- EDIT PROFIL -->
+
+    <button
+        class="edit"
+        onclick="editProfile()"
+        type="button"
+    >
         Edit Profil
     </button>
+
 </section>
 
-<h3>Postingan</h3>
 
-<section id="myPosts" class="posts">
-    <p>⏳ Memuat postingan...</p>
+<h3>
+    Postingan
+</h3>
+
+
+<section
+    id="myPosts"
+    class="posts"
+>
+
+    <p>
+        ⏳ Memuat postingan...
+    </p>
+
 </section>
 
 </main>
 
+
 <nav>
-    <button onclick="location.href='index.html'">
-        🏠<small>Home</small>
+
+    <button
+        onclick="location.href='index.html'"
+        type="button"
+    >
+        🏠
+        <small>
+            Home
+        </small>
     </button>
 
-    <button onclick="location.href='post.html'">
-        ＋<small>Post</small>
+
+    <button
+        onclick="location.href='post.html'"
+        type="button"
+    >
+        ＋
+        <small>
+            Post
+        </small>
     </button>
 
-    <button>
-        👤<small>Profile</small>
+
+    <button
+        type="button"
+    >
+        👤
+        <small>
+            Profile
+        </small>
     </button>
+
 </nav>
 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
+
 <script src="profile.js"></script>
 
 </body>
+
 </html>
