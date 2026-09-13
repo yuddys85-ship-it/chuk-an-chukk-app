@@ -2,9 +2,8 @@
 
 /* =========================================================
    CHUK AN CHUKK
-   LIVE CAMERA
-   FRONT ↔ BACK CAMERA
-   ROOM — LIVE HOST 2 ↔ 9
+   LIVE CAMERA — STABLE ANDROID
+   FRONT ↔ BACK
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -14,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const menuButton = document.getElementById("menuButton");
 
     if (!video) {
-        console.error("❌ Kamera #camera tidak ditemukan");
+        console.error("❌ #camera tidak ditemukan");
         return;
     }
 
@@ -26,8 +25,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     video.muted = true;
     video.playsInline = true;
 
+    video.setAttribute("autoplay", "");
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+
     /* =====================================================
-       ATUR MIRROR
+       MIRROR
        ===================================================== */
 
     function updateMirror() {
@@ -63,6 +67,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     /* =====================================================
+       STOP KAMERA
+       ===================================================== */
+
+    function stopCamera() {
+
+        if (currentStream) {
+
+            currentStream.getTracks().forEach(track => {
+                track.stop();
+            });
+
+            currentStream = null;
+        }
+
+        video.srcObject = null;
+    }
+
+    /* =====================================================
        BUKA KAMERA
        ===================================================== */
 
@@ -74,41 +96,51 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
 
-            console.log("📷 Membuka kamera:", facingMode);
+            console.log("📷 Membuka:", facingMode);
 
-            if (currentStream) {
+            stopCamera();
 
-                currentStream
-                    .getTracks()
-                    .forEach(track => track.stop());
+            let stream = null;
 
-                currentStream = null;
+            /* ---------------------------------------------
+               COBA KAMERA SESUAI ARAH
+               --------------------------------------------- */
+
+            try {
+
+                stream =
+                    await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: facingMode,
+                            width: {
+                                ideal: 1280
+                            },
+                            height: {
+                                ideal: 720
+                            },
+                            frameRate: {
+                                ideal: 30
+                            }
+                        },
+                        audio: false
+                    });
+
+            } catch (error) {
+
+                console.warn(
+                    "⚠️ Mode kamera gagal, mencoba kamera default"
+                );
+
+                /* -----------------------------------------
+                   FALLBACK
+                   ----------------------------------------- */
+
+                stream =
+                    await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    });
             }
-
-            const stream =
-                await navigator.mediaDevices.getUserMedia({
-
-                    video: {
-                        facingMode: {
-                            exact: facingMode
-                        },
-
-                        width: {
-                            ideal: 1280
-                        },
-
-                        height: {
-                            ideal: 720
-                        },
-
-                        frameRate: {
-                            ideal: 30,
-                            max: 30
-                        }
-                    },
-
-                    audio: false
-                });
 
             currentStream = stream;
 
@@ -116,12 +148,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             updateMirror();
 
+            /* Tunggu video siap */
+            await new Promise(resolve => {
+
+                if (video.readyState >= 2) {
+                    resolve();
+                    return;
+                }
+
+                video.onloadedmetadata = () => {
+                    resolve();
+                };
+
+            });
+
             await video.play();
 
-            console.log(
-                "✅ Kamera aktif:",
-                facingMode
-            );
+            console.log("✅ KAMERA AKTIF");
 
             console.log(
                 "📐 Resolusi:",
@@ -133,31 +176,166 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
 
             console.error(
-                "❌ Kamera gagal:",
-                error
+                "❌ KAMERA TIDAK BISA DIBUKA:",
+                error.name,
+                error.message
             );
 
-            try {
+        } finally {
 
-                const stream =
-                    await navigator.mediaDevices.getUserMedia({
-                        video: true,
-                        audio: false
-                    });
+            switching = false;
+        }
+    }
 
-                currentStream = stream;
+    /* =====================================================
+       PINDAH KAMERA
+       ===================================================== */
 
-                video.srcObject = stream;
+    if (flipButton) {
 
-                updateMirror();
+        flipButton.addEventListener(
+            "click",
+            async () => {
 
-                await video.play();
+                if (switching) return;
+
+                facingMode =
+                    facingMode === "user"
+                        ? "environment"
+                        : "user";
 
                 console.log(
-                    "✅ Kamera fallback aktif"
+                    "🔄 Pindah:",
+                    facingMode
                 );
 
-            } catch (fallbackError) {
+                await startCamera();
+            }
+        );
 
-                console.error(
-                    "❌ Fallback kamera
+    }
+
+    /* =====================================================
+       MENU
+       ===================================================== */
+
+    if (menuButton) {
+
+        menuButton.addEventListener(
+            "click",
+            () => {
+
+                let roomPanel =
+                    document.getElementById("roomPanel");
+
+                if (roomPanel) {
+
+                    roomPanel.remove();
+                    return;
+                }
+
+                roomPanel =
+                    document.createElement("div");
+
+                roomPanel.id = "roomPanel";
+
+                roomPanel.innerHTML = `
+                    <div class="room-title">
+                        Room
+                    </div>
+
+                    <div class="room-live">
+                        Live Host
+                    </div>
+
+                    <div class="room-subtitle">
+                        Pilih jumlah layar berbagi
+                    </div>
+
+                    <div class="room-options">
+
+                        <button class="room-option" data-room="2">2</button>
+                        <button class="room-option" data-room="3">3</button>
+                        <button class="room-option" data-room="4">4</button>
+                        <button class="room-option" data-room="5">5</button>
+                        <button class="room-option" data-room="6">6</button>
+                        <button class="room-option" data-room="7">7</button>
+                        <button class="room-option" data-room="8">8</button>
+                        <button class="room-option" data-room="9">9</button>
+
+                    </div>
+                `;
+
+                document
+                    .getElementById("liveApp")
+                    .appendChild(roomPanel);
+
+                roomPanel
+                    .querySelectorAll(".room-option")
+                    .forEach(button => {
+
+                        button.addEventListener(
+                            "click",
+                            () => {
+
+                                roomPanel
+                                    .querySelectorAll(
+                                        ".room-option"
+                                    )
+                                    .forEach(btn => {
+                                        btn.classList.remove(
+                                            "selected"
+                                        );
+                                    });
+
+                                button.classList.add(
+                                    "selected"
+                                );
+
+                                console.log(
+                                    "🎥 Room:",
+                                    button.dataset.room
+                                );
+                            }
+                        );
+
+                    });
+
+            }
+        );
+    }
+
+    /* =====================================================
+       CEK SUPPORT
+       ===================================================== */
+
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ) {
+
+        console.error(
+            "❌ getUserMedia tidak didukung browser"
+        );
+
+        return;
+    }
+
+    /* =====================================================
+       MULAI KAMERA
+       ===================================================== */
+
+    await startCamera();
+
+    /* =====================================================
+       CLEANUP
+       ===================================================== */
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+            stopCamera();
+        }
+    );
+
+});
