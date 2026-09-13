@@ -2,237 +2,244 @@
 
 /* =========================================================
    CHUK AN CHUKK
-   LIVE MENU
-   NAMA ROOM PALING ATAS
+   LIVE MENU — FIX BUTTON
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+(function () {
 
-    const liveApp = document.getElementById("liveApp");
-    const menuButton = document.getElementById("menuButton");
+    function initLiveMenu() {
 
-    if (!liveApp || !menuButton) {
-        console.error("❌ Live Menu: elemen tidak ditemukan");
-        return;
-    }
+        const liveApp = document.getElementById("liveApp");
+        const menuButton = document.getElementById("menuButton");
 
-    menuButton.addEventListener("click", () => {
-
-        /* =================================================
-           CEK PANEL SUDAH ADA
-           ================================================= */
-
-        let roomPanel =
-            document.getElementById("roomPanel");
-
-        /* =================================================
-           TUTUP PANEL
-           ================================================= */
-
-        if (roomPanel) {
-            roomPanel.remove();
+        if (!liveApp || !menuButton) {
+            console.error("❌ Live Menu: elemen tidak ditemukan");
             return;
         }
 
-        /* =================================================
-           BUAT PANEL
-           ================================================= */
+        console.log("✅ Live Menu aktif");
 
-        roomPanel = document.createElement("div");
+        /* Pastikan tombol bisa ditekan */
+        menuButton.type = "button";
+        menuButton.style.pointerEvents = "auto";
 
-        roomPanel.id = "roomPanel";
+        menuButton.onclick = function (event) {
 
-        roomPanel.innerHTML = `
+            event.preventDefault();
+            event.stopPropagation();
 
-            <!-- =========================================
-                 NAMA ROOM — PALING ATAS
-                 ========================================= -->
+            console.log("☰ MENU DITEKAN");
 
-            <div class="room-name-label">
-                Nama Room
-            </div>
+            /* =============================================
+               JIKA PANEL SUDAH ADA → TUTUP
+               ============================================= */
 
-            <input
-                id="roomNameInput"
-                class="room-name-input"
-                type="text"
-                maxlength="40"
-                placeholder="Masukkan nama room"
-                autocomplete="off"
-            >
+            const oldPanel =
+                document.getElementById("roomPanel");
 
-            <!-- =========================================
-                 ROOM
-                 ========================================= -->
+            if (oldPanel) {
+                oldPanel.remove();
 
-            <div class="room-title">
-                Room
-            </div>
+                console.log("❌ Room Menu ditutup");
 
-            <div class="room-live">
-                Live Host
-            </div>
+                return;
+            }
 
-            <div class="room-subtitle">
-                Pilih jumlah layar berbagi
-            </div>
+            /* =============================================
+               BUAT PANEL
+               ============================================= */
 
-            <!-- =========================================
-                 PILIHAN ROOM 2 — 9
-                 ========================================= -->
+            const roomPanel =
+                document.createElement("div");
 
-            <div class="room-options">
+            roomPanel.id = "roomPanel";
 
-                <button
-                    class="room-option"
-                    type="button"
-                    data-room="2"
+            roomPanel.innerHTML = `
+
+                <!-- NAMA ROOM PALING ATAS -->
+
+                <div class="room-name-label">
+                    Nama Room
+                </div>
+
+                <input
+                    id="roomNameInput"
+                    class="room-name-input"
+                    type="text"
+                    maxlength="40"
+                    placeholder="Masukkan nama room"
+                    autocomplete="off"
                 >
-                    2
-                </button>
 
-                <button
-                    class="room-option"
-                    type="button"
-                    data-room="3"
-                >
-                    3
-                </button>
+                <!-- ROOM -->
 
-                <button
-                    class="room-option"
-                    type="button"
-                    data-room="4"
-                >
-                    4
-                </button>
+                <div class="room-title">
+                    Room
+                </div>
 
-                <button
-                    class="room-option"
-                    type="button"
-                    data-room="5"
-                >
-                    5
-                </button>
+                <div class="room-live">
+                    Live Host
+                </div>
 
-                <button
-                    class="room-option"
-                    type="button"
-                    data-room="6"
-                >
-                    6
-                </button>
+                <div class="room-subtitle">
+                    Pilih jumlah layar berbagi
+                </div>
 
-                <button
-                    class="room-option"
-                    type="button"
-                    data-room="7"
-                >
-                    7
-                </button>
+                <!-- ROOM 2 - 9 -->
 
-                <button
-                    class="room-option"
-                    type="button"
-                    data-room="8"
-                >
-                    8
-                </button>
+                <div class="room-options">
 
-                <button
-                    class="room-option"
-                    type="button"
-                    data-room="9"
-                >
-                    9
-                </button>
+                    <button
+                        type="button"
+                        class="room-option"
+                        data-room="2"
+                    >2</button>
 
-            </div>
+                    <button
+                        type="button"
+                        class="room-option"
+                        data-room="3"
+                    >3</button>
 
-        `;
+                    <button
+                        type="button"
+                        class="room-option"
+                        data-room="4"
+                    >4</button>
 
-        liveApp.appendChild(roomPanel);
+                    <button
+                        type="button"
+                        class="room-option"
+                        data-room="5"
+                    >5</button>
 
-        /* =================================================
-           INPUT NAMA ROOM
-           ================================================= */
+                    <button
+                        type="button"
+                        class="room-option"
+                        data-room="6"
+                    >6</button>
 
-        const roomNameInput =
-            roomPanel.querySelector("#roomNameInput");
+                    <button
+                        type="button"
+                        class="room-option"
+                        data-room="7"
+                    >7</button>
 
-        if (roomNameInput) {
+                    <button
+                        type="button"
+                        class="room-option"
+                        data-room="8"
+                    >8</button>
 
-            roomNameInput.focus();
+                    <button
+                        type="button"
+                        class="room-option"
+                        data-room="9"
+                    >9</button>
 
-            roomNameInput.addEventListener(
-                "input",
-                () => {
+                </div>
 
-                    const roomName =
-                        roomNameInput.value.trim();
+            `;
 
-                    console.log(
-                        "🏠 Nama Room:",
-                        roomName
-                    );
+            liveApp.appendChild(roomPanel);
 
-                }
-            );
-        }
+            console.log("✅ Room Menu dibuka");
 
-        /* =================================================
-           TOMBOL ROOM
-           ================================================= */
+            /* =============================================
+               INPUT NAMA ROOM
+               ============================================= */
 
-        const roomButtons =
-            roomPanel.querySelectorAll(".room-option");
+            const nameInput =
+                document.getElementById("roomNameInput");
 
-        roomButtons.forEach(button => {
+            if (nameInput) {
 
-            button.addEventListener(
-                "click",
-                () => {
+                nameInput.addEventListener(
+                    "input",
+                    function () {
 
-                    /* Hapus pilihan sebelumnya */
+                        const name =
+                            this.value.trim();
 
-                    roomButtons.forEach(btn => {
-                        btn.classList.remove("selected");
-                    });
+                        window.liveRoomName = name;
 
-                    /* Pilih room */
+                        console.log(
+                            "🏠 Nama Room:",
+                            name
+                        );
+                    }
+                );
+            }
 
-                    button.classList.add("selected");
+            /* =============================================
+               PILIH JUMLAH ROOM
+               ============================================= */
 
-                    const roomNumber =
-                        Number(button.dataset.room);
+            const roomButtons =
+                roomPanel.querySelectorAll(".room-option");
 
-                    const roomName =
-                        roomNameInput
-                            ? roomNameInput.value.trim()
-                            : "";
+            roomButtons.forEach(function (button) {
 
-                    console.log(
-                        "🎥 Jumlah layar:",
-                        roomNumber
-                    );
+                button.addEventListener(
+                    "click",
+                    function (event) {
 
-                    console.log(
-                        "🏠 Nama Room:",
-                        roomName || "Tanpa nama"
-                    );
+                        event.preventDefault();
+                        event.stopPropagation();
 
-                    /* Simpan sementara */
+                        roomButtons.forEach(function (btn) {
+                            btn.classList.remove("selected");
+                        });
 
-                    window.liveRoom = {
-                        name: roomName,
-                        screens: roomNumber
-                    };
+                        this.classList.add("selected");
 
-                }
-            );
+                        const screens =
+                            Number(this.dataset.room);
 
-        });
+                        const name =
+                            nameInput
+                                ? nameInput.value.trim()
+                                : "";
 
-    });
+                        window.liveRoom = {
+                            name: name,
+                            screens: screens
+                        };
 
-});
+                        console.log(
+                            "🎥 Room:",
+                            screens
+                        );
+
+                        console.log(
+                            "🏠 Nama:",
+                            name || "Tanpa nama"
+                        );
+
+                    }
+                );
+
+            });
+
+        };
+
+    }
+
+    /* =====================================================
+       JALANKAN
+       ===================================================== */
+
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initLiveMenu
+        );
+
+    } else {
+
+        initLiveMenu();
+
+    }
+
+})();
