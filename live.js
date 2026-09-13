@@ -1,33 +1,34 @@
 /* =========================================================
-   CHUK AN CHUKK — LIVE.JS V5
-   SMOOTH CAMERA + FULL FRAME BEAUTY
-   FACE + BODY DETECTION OPTIMIZED
+   CHUK AN CHUKK — LIVE.JS FINAL
+   CAMERA + BEAUTY FILTER
+   FACE + BODY SUPPORT
+   SMOOTH RENDER
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
-       ELEMENTS
+       ELEMENT
        ===================================================== */
 
     const video = document.getElementById("camera");
     const canvas = document.getElementById("filterCanvas");
 
-    const ctx = canvas
-        ? canvas.getContext("2d", {
-            alpha: false,
-            desynchronized: true
-        })
-        : null;
+    if (!video || !canvas) {
+        console.error("❌ Camera atau filterCanvas tidak ditemukan");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d", {
+        alpha: false,
+        desynchronized: true
+    });
 
     const cameraStatus =
         document.getElementById("cameraStatus");
 
     const cameraButton =
         document.getElementById("cameraButton");
-
-    const cameraIcon =
-        document.getElementById("cameraIcon");
 
     const cameraText =
         document.getElementById("cameraText");
@@ -108,27 +109,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let filterEnabled = true;
 
-    /*
-     * Detection timers.
-     *
-     * Camera rendering tetap setiap frame.
-     * AI detection hanya sesekali.
-     */
-
     let lastFaceDetection = 0;
     let lastBodyDetection = 0;
 
-    const FACE_INTERVAL = 100;
-    const BODY_INTERVAL = 180;
+    /*
+     * AI tidak boleh menghambat render kamera.
+     */
+
+    const FACE_INTERVAL = 160;
+    const BODY_INTERVAL = 300;
 
 
     /* =====================================================
-       CANVAS SIZE
+       CANVAS
        ===================================================== */
 
     function resizeCanvas() {
-
-        if (!canvas) return;
 
         const rect =
             canvas.getBoundingClientRect();
@@ -152,39 +148,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             canvas.width = width;
             canvas.height = height;
-
-            if (window.ChukBeauty) {
-
-                /*
-                 * Reset internal beauty canvases
-                 * setelah ukuran berubah.
-                 */
-
-                try {
-
-                    if (
-                        typeof window.ChukBeauty.ensureCanvases ===
-                        "function"
-                    ) {
-                        window.ChukBeauty.ensureCanvases(
-                            width,
-                            height
-                        );
-                    }
-
-                } catch (error) {
-                    console.warn(
-                        "Beauty canvas resize:",
-                        error
-                    );
-                }
-            }
         }
     }
 
 
     /* =====================================================
-       CAMERA START
+       CAMERA
        ===================================================== */
 
     async function startCamera() {
@@ -193,59 +162,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
             stopCamera();
 
+            if (
+                !navigator.mediaDevices ||
+                !navigator.mediaDevices.getUserMedia
+            ) {
+
+                throw new Error(
+                    "getUserMedia tidak tersedia"
+                );
+            }
+
+
             if (cameraStatus) {
                 cameraStatus.textContent =
                     "Starting camera...";
             }
 
 
-            /*
-             * 720p + 30fps.
-             *
-             * Jangan paksa 60fps karena AI filter
-             * akan jauh lebih berat di HP.
-             */
-
-            const constraints = {
-
-                audio: true,
-
-                video: {
-
-                    facingMode: {
-                        ideal: facing
-                    },
-
-                    width: {
-                        ideal: 1280,
-                        max: 1280
-                    },
-
-                    height: {
-                        ideal: 720,
-                        max: 720
-                    },
-
-                    frameRate: {
-                        ideal: 30,
-                        max: 30
-                    }
-                }
-            };
-
-
             stream =
-                await navigator.mediaDevices
-                    .getUserMedia(
-                        constraints
-                    );
+                await navigator.mediaDevices.getUserMedia({
+
+                    audio: true,
+
+                    video: {
+
+                        facingMode: {
+                            ideal: facing
+                        },
+
+                        width: {
+                            ideal: 1280,
+                            max: 1280
+                        },
+
+                        height: {
+                            ideal: 720,
+                            max: 720
+                        },
+
+                        frameRate: {
+                            ideal: 30,
+                            max: 30
+                        }
+                    }
+                });
 
 
             video.srcObject =
                 stream;
 
             video.muted = true;
-
+            video.autoplay = true;
             video.playsInline = true;
 
 
@@ -253,6 +220,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             cameraRunning = true;
+
+            faceResult = null;
+
+            lastFaceDetection = 0;
+            lastBodyDetection = 0;
+
+
+            resizeCanvas();
+
+            updateMicState();
+
+            startRenderLoop();
 
 
             if (cameraStatus) {
@@ -262,19 +241,25 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            updateMicState();
+            if (cameraText) {
 
-            resizeCanvas();
+                cameraText.textContent =
+                    "Camera";
+            }
 
-            startRenderLoop();
+
+            console.log(
+                "✅ CHUK CAMERA READY"
+            );
 
 
         } catch (error) {
 
             console.error(
-                "Camera error:",
+                "❌ Camera:",
                 error
             );
+
 
             cameraRunning = false;
 
@@ -284,19 +269,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 cameraStatus.textContent =
                     "Camera permission required";
             }
-
-
-            alert(
-                "Camera tidak bisa digunakan. " +
-                "Pastikan izin kamera sudah diberikan."
-            );
         }
     }
 
-
-    /* =====================================================
-       CAMERA STOP
-       ===================================================== */
 
     function stopCamera() {
 
@@ -314,19 +289,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             stream
                 .getTracks()
-                .forEach(
-                    track => track.stop()
-                );
+                .forEach(track => {
+                    track.stop();
+                });
 
             stream = null;
         }
 
 
-        if (video) {
-
-            video.srcObject = null;
-        }
-
+        video.srcObject = null;
 
         cameraRunning = false;
     }
@@ -344,20 +315,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "user";
 
 
-        /*
-         * Reset detection supaya hasil kamera
-         * sebelumnya tidak terbawa.
-         */
-
         faceResult = null;
-
 
         await startCamera();
     }
 
 
     /* =====================================================
-       DETECT FACE
+       FACE DETECTION
        ===================================================== */
 
     function detectFace(now) {
@@ -368,20 +333,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (
             !landmarker ||
-            !video ||
-            video.readyState < 2 ||
-            !video.videoWidth ||
-            !video.videoHeight
+            video.readyState < 2
         ) {
             return;
         }
 
-
-        /*
-         * Face detection hanya sekitar 10 FPS.
-         *
-         * Render kamera tetap 30 FPS.
-         */
 
         if (
             now - lastFaceDetection <
@@ -397,15 +353,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            const result =
+            faceResult =
                 landmarker.detectForVideo(
                     video,
                     now
                 );
-
-
-            faceResult =
-                result;
 
 
             if (window.ChukBeauty) {
@@ -413,9 +365,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.ChukBeauty.set(
                     "faceDetected",
                     Boolean(
-                        result &&
-                        result.faceLandmarks &&
-                        result.faceLandmarks.length
+                        faceResult &&
+                        faceResult.faceLandmarks &&
+                        faceResult.faceLandmarks.length
                     )
                 );
             }
@@ -424,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
 
             console.warn(
-                "Face detection:",
+                "Face detector:",
                 error
             );
         }
@@ -432,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       BODY SEGMENTATION
+       BODY DETECTION
        ===================================================== */
 
     function detectBody(
@@ -442,9 +394,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ) {
 
         if (
-            !window.ChukBeauty ||
             !window.ChukPersonSegmenter ||
-            !video
+            !window.ChukBeauty
         ) {
             return;
         }
@@ -456,13 +407,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-
-        /*
-         * Body segmentation hanya sekitar
-         * 5-6 FPS.
-         *
-         * Ini sengaja agar kamera tetap smooth.
-         */
 
         if (
             now - lastBodyDetection <
@@ -485,11 +429,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 height
             );
 
-
         } catch (error) {
 
             console.warn(
-                "Body segmentation:",
+                "Body detector:",
                 error
             );
         }
@@ -497,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       FACE LANDMARK → CANVAS
+       FACE LANDMARK
        ===================================================== */
 
     function getCanvasFaceLandmarks(
@@ -516,46 +459,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        const source =
+        const points =
             faceResult.faceLandmarks[0];
 
 
-        return source.map(
-            point => {
+        return points.map(point => {
 
-                /*
-                 * Karena kamera depan dibalik
-                 * saat digambar ke Canvas,
-                 * koordinat wajah juga dibalik.
-                 */
+            /*
+             * FRONT CAMERA:
+             * Canvas sudah dibalik.
+             * Landmark ikut dibalik.
+             */
 
-                const px =
-                    facing === "user"
-                        ? 1 - point.x
-                        : point.x;
+            const px =
+                facing === "user"
+                    ? 1 - point.x
+                    : point.x;
 
 
-                return {
+            return {
 
-                    x:
-                        (
-                            x +
-                            px * w
-                        ) /
-                        canvas.width,
+                x:
+                    (
+                        x +
+                        px * w
+                    ) /
+                    canvas.width,
 
-                    y:
-                        (
-                            y +
-                            point.y * h
-                        ) /
-                        canvas.height,
+                y:
+                    (
+                        y +
+                        point.y * h
+                    ) /
+                    canvas.height,
 
-                    z:
-                        point.z || 0
-                };
-            }
-        );
+                z:
+                    point.z || 0
+            };
+        });
     }
 
 
@@ -563,25 +504,19 @@ document.addEventListener("DOMContentLoaded", () => {
        DRAW CAMERA
        ===================================================== */
 
-    function drawCameraFrame(now) {
+    function drawFrame(now) {
 
         if (
-            !ctx ||
-            !canvas ||
-            !video ||
-            !cameraRunning
-        ) {
-            return;
-        }
-
-
-        if (
+            !cameraRunning ||
             video.readyState < 2 ||
             !video.videoWidth ||
             !video.videoHeight
         ) {
             return;
         }
+
+
+        resizeCanvas();
 
 
         const cw =
@@ -599,8 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /*
          * CONTAIN
-         *
-         * Jangan zoom kamera.
+         * Tidak melakukan zoom.
          */
 
         const scale =
@@ -639,7 +573,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         ctx.filter = "none";
 
-
         ctx.clearRect(
             0,
             0,
@@ -651,7 +584,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.fillStyle =
             "#000";
 
-
         ctx.fillRect(
             0,
             0,
@@ -661,10 +593,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* =================================================
-           FULL FRAME BEAUTY BASE
+           FULL FRAME BEAUTY
            ================================================= */
 
-        let cssFilter =
+        let filter =
             "none";
 
 
@@ -675,7 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "function"
         ) {
 
-            cssFilter =
+            filter =
                 window.ChukBeauty.getCSSFilter() ||
                 "none";
         }
@@ -684,7 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.save();
 
         ctx.filter =
-            cssFilter;
+            filter;
 
 
         /* =================================================
@@ -696,9 +628,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
 
             /*
-             * IMPORTANT:
-             * Kamera depan tetap menggunakan
-             * Canvas flip yang sudah diperbaiki.
+             * JANGAN HAPUS BAGIAN INI.
+             *
+             * Ini yang membuat kamera depan
+             * tidak mirror seperti versi sebelumnya.
              */
 
             ctx.save();
@@ -728,10 +661,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } else {
 
-            /*
-             * BACK CAMERA
-             */
-
             ctx.drawImage(
                 video,
                 x,
@@ -746,7 +675,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* =================================================
-           AI DETECTION
+           AI UPDATE
            ================================================= */
 
         detectFace(now);
@@ -778,20 +707,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-            /*
-             * Body + face beauty.
-             *
-             * apply() V4 akan menggunakan
-             * body mask jika tersedia.
-             */
+            try {
 
-            window.ChukBeauty.apply(
-                ctx,
-                canvas,
-                landmarks,
-                cw,
-                ch
-            );
+                window.ChukBeauty.apply(
+                    ctx,
+                    canvas,
+                    landmarks,
+                    cw,
+                    ch
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "Beauty render:",
+                    error
+                );
+            }
         }
     }
 
@@ -812,9 +744,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function render(now) {
 
-            drawCameraFrame(
-                now
-            );
+            drawFrame(now);
 
 
             if (
@@ -845,17 +775,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!stream) return;
 
 
-        const audioTracks =
+        const tracks =
             stream.getAudioTracks();
 
 
-        audioTracks.forEach(
-            track => {
+        tracks.forEach(track => {
 
-                track.enabled =
-                    micEnabled;
-            }
-        );
+            track.enabled =
+                micEnabled;
+        });
 
 
         if (micIcon) {
@@ -887,15 +815,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       FILTER PANEL
+       BEAUTY PANEL
        ===================================================== */
 
     function openFilterPanel() {
 
-        if (!filterPanel) return;
+        if (!filterPanel) {
+
+            console.warn(
+                "⚠️ filterPanel tidak ditemukan"
+            );
+
+            return;
+        }
+
 
         filterPanel.classList.add(
             "active"
+        );
+
+
+        filterPanel.style.display =
+            "block";
+
+
+        filterPanel.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        console.log(
+            "✨ Beauty Filter OPEN"
         );
     }
 
@@ -904,49 +855,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!filterPanel) return;
 
+
         filterPanel.classList.remove(
             "active"
+        );
+
+
+        filterPanel.style.display =
+            "";
+
+
+        filterPanel.setAttribute(
+            "aria-hidden",
+            "true"
         );
     }
 
 
     /* =====================================================
-       FILTER TOGGLE
+       BEAUTY BUTTON
        ===================================================== */
 
-    function toggleFilter() {
+    if (filterButton) {
 
-        filterEnabled =
-            !filterEnabled;
+        filterButton.addEventListener(
+            "click",
+            event => {
 
+                event.preventDefault();
 
-        if (window.ChukBeauty) {
+                event.stopPropagation();
 
-            if (
-                filterEnabled
-            ) {
-
-                window.ChukBeauty.enable();
-
-            } else {
-
-                window.ChukBeauty.disable();
+                openFilterPanel();
             }
-        }
+        );
+    }
 
 
-        if (filterButton) {
+    if (closeFilterButton) {
 
-            filterButton.classList.toggle(
-                "active",
-                filterEnabled
-            );
-        }
+        closeFilterButton.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                closeFilterPanel();
+            }
+        );
     }
 
 
     /* =====================================================
-       SLIDER
+       SLIDERS
        ===================================================== */
 
     function bindSlider(
@@ -961,13 +924,13 @@ document.addEventListener("DOMContentLoaded", () => {
         function update() {
 
             const value =
-                Number(
-                    slider.value
-                );
+                Number(slider.value);
 
 
             if (
-                window.ChukBeauty
+                window.ChukBeauty &&
+                typeof window.ChukBeauty.set ===
+                    "function"
             ) {
 
                 window.ChukBeauty.set(
@@ -977,9 +940,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            if (
-                valueElement
-            ) {
+            if (valueElement) {
 
                 valueElement.textContent =
                     `${value}%`;
@@ -993,13 +954,15 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
+        slider.addEventListener(
+            "change",
+            update
+        );
+
+
         update();
     }
 
-
-    /* =====================================================
-       BEAUTY CONTROLS
-       ===================================================== */
 
     bindSlider(
         plasticSlider,
@@ -1040,54 +1003,7 @@ document.addEventListener("DOMContentLoaded", () => {
        DREAM PRESET
        ===================================================== */
 
-    if (
-        dreamLikeButton
-    ) {
-
-        dreamLikeButton.addEventListener(
-            "click",
-            () => {
-
-                if (
-                    window.ChukBeauty &&
-                    typeof window.ChukBeauty.dream ===
-                        "function"
-                ) {
-
-                    window.ChukBeauty.dream();
-                }
-
-
-                setSliderValue(
-                    plasticSlider,
-                    65
-                );
-
-                setSliderValue(
-                    glowSlider,
-                    35
-                );
-
-                setSliderValue(
-                    brightnessSlider,
-                    20
-                );
-
-                setSliderValue(
-                    softFocusSlider,
-                    30
-                );
-
-                setSliderValue(
-                    detailSlider,
-                    18
-                );
-            }
-        );
-    }
-
-
-    function setSliderValue(
+    function setSlider(
         slider,
         value
     ) {
@@ -1103,17 +1019,70 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    if (dreamLikeButton) {
+
+        dreamLikeButton.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+                if (
+                    window.ChukBeauty &&
+                    typeof window.ChukBeauty.dream ===
+                        "function"
+                ) {
+
+                    window.ChukBeauty.dream();
+                }
+
+
+                setSlider(
+                    plasticSlider,
+                    65
+                );
+
+                setSlider(
+                    glowSlider,
+                    35
+                );
+
+                setSlider(
+                    brightnessSlider,
+                    20
+                );
+
+                setSlider(
+                    softFocusSlider,
+                    30
+                );
+
+                setSlider(
+                    detailSlider,
+                    18
+                );
+
+
+                console.log(
+                    "✨ Dream Beauty preset"
+                );
+            }
+        );
+    }
+
+
     /* =====================================================
        AUTO LIGHT
        ===================================================== */
 
-    if (
-        autoLightButton
-    ) {
+    if (autoLightButton) {
 
         autoLightButton.addEventListener(
             "click",
-            () => {
+            event => {
+
+                event.preventDefault();
+
 
                 if (
                     window.ChukBeauty &&
@@ -1125,9 +1094,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                setSliderValue(
+                setSlider(
                     brightnessSlider,
                     15
+                );
+
+
+                console.log(
+                    "💡 Auto Light"
                 );
             }
         );
@@ -1135,73 +1109,118 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       BUTTONS
+       CAMERA BUTTON
        ===================================================== */
 
-    cameraButton?.addEventListener(
-        "click",
-        () => {
+    if (cameraButton) {
 
-            if (
-                cameraRunning
-            ) {
+        cameraButton.addEventListener(
+            "click",
+            event => {
 
-                stopCamera();
+                event.preventDefault();
 
-                if (
-                    cameraText
-                ) {
 
-                    cameraText.textContent =
-                        "Start Camera";
-                }
+                if (cameraRunning) {
 
-            } else {
+                    stopCamera();
 
-                startCamera();
 
-                if (
-                    cameraText
-                ) {
+                    if (cameraText) {
 
-                    cameraText.textContent =
-                        "Camera";
+                        cameraText.textContent =
+                            "Start Camera";
+                    }
+
+                } else {
+
+                    startCamera();
                 }
             }
+        );
+    }
+
+
+    /* =====================================================
+       FLIP BUTTON
+       ===================================================== */
+
+    if (flipButton) {
+
+        flipButton.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+                flipCamera();
+            }
+        );
+    }
+
+
+    /* =====================================================
+       MIC BUTTON
+       ===================================================== */
+
+    if (micButton) {
+
+        micButton.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+                toggleMic();
+            }
+        );
+    }
+
+
+    /* =====================================================
+       FILTER ENABLE
+       ===================================================== */
+
+    function setFilterEnabled(enabled) {
+
+        filterEnabled =
+            Boolean(enabled);
+
+
+        if (
+            window.ChukBeauty
+        ) {
+
+            if (
+                filterEnabled &&
+                typeof window.ChukBeauty.enable ===
+                    "function"
+            ) {
+
+                window.ChukBeauty.enable();
+
+            } else if (
+                !filterEnabled &&
+                typeof window.ChukBeauty.disable ===
+                    "function"
+            ) {
+
+                window.ChukBeauty.disable();
+            }
         }
-    );
 
 
-    flipButton?.addEventListener(
-        "click",
-        flipCamera
-    );
+        if (filterButton) {
+
+            filterButton.classList.toggle(
+                "active",
+                filterEnabled
+            );
+        }
+    }
 
 
-    micButton?.addEventListener(
-        "click",
-        toggleMic
-    );
-
-
-    /*
-     * Filter button:
-     * buka panel.
-     *
-     * Jika ingin toggle filter,
-     * gunakan class active dari panel.
-     */
-
-    filterButton?.addEventListener(
-        "click",
-        openFilterPanel
-    );
-
-
-    closeFilterButton?.addEventListener(
-        "click",
-        closeFilterPanel
-    );
+    setFilterEnabled(true);
 
 
     /* =====================================================
@@ -1215,7 +1234,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       VISIBILITY
+       PAGE VISIBILITY
        ===================================================== */
 
     document.addEventListener(
@@ -1226,16 +1245,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.hidden
             ) {
 
-                if (
-                    animationFrame
-                ) {
+                if (animationFrame) {
 
                     cancelAnimationFrame(
                         animationFrame
                     );
 
-                    animationFrame =
-                        null;
+                    animationFrame = null;
                 }
 
             } else if (
@@ -1249,39 +1265,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       INITIAL FILTER
-       ===================================================== */
-
-    if (
-        window.ChukBeauty
-    ) {
-
-        window.ChukBeauty.enable();
-    }
-
-
-    if (
-        filterButton
-    ) {
-
-        filterButton.classList.add(
-            "active"
-        );
-    }
-
-
-    /* =====================================================
        READY
        ===================================================== */
 
     console.log(
-        "✅ CHUK AN CHUKK LIVE V5 — SMOOTH FULL FRAME BEAUTY READY"
+        "✅ CHUK AN CHUKK LIVE.JS FINAL READY"
     );
 
 
-    /* =====================================================
-       START
-       ===================================================== */
+    /*
+     * Mulai kamera.
+     */
 
     startCamera();
 
