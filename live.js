@@ -152,3 +152,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
 });
+/* =========================================================
+   TOMBOL MENU — KIRI ATAS
+   ========================================================= */
+
+.menu-button {
+    position: fixed;
+    top: 20px;
+    left: 18px;
+
+    width: 48px;
+    height: 48px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: transparent !important;
+    color: #ffffff;
+
+    font-size: 30px;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    box-shadow: none !important;
+}
+
+.menu-button:active {
+    transform: scale(0.88);
+    opacity: 0.7;
+}
