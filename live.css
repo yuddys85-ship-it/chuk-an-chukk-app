@@ -1,15 +1,19 @@
 /* =========================================================
    CHUK AN CHUKK
-   LIVE CAMERA + ROOM MENU
+   LIVE CAMERA + MENU
+   FIX TOUCH BUTTON
    ========================================================= */
 
 html,
 body {
     margin: 0 !important;
     padding: 0 !important;
+
     width: 100% !important;
     height: 100% !important;
+
     overflow: hidden !important;
+
     background: #000 !important;
 }
 
@@ -19,33 +23,37 @@ body {
 
 #liveApp {
     position: fixed !important;
+
     inset: 0 !important;
 
     width: 100vw !important;
     height: 100vh !important;
 
-    background: #000 !important;
     overflow: hidden !important;
+
+    background: #000 !important;
+
+    z-index: 1 !important;
 }
 
 /* =========================================================
    KAMERA
+   PENTING:
+   VIDEO TIDAK BOLEH MENANGKAP SENTUHAN
    ========================================================= */
 
 #camera {
-    display: block !important;
-
     position: absolute !important;
+
     inset: 0 !important;
 
     width: 100% !important;
     height: 100% !important;
 
-    max-width: none !important;
-    max-height: none !important;
-
     object-fit: contain !important;
     object-position: center center !important;
+
+    display: block !important;
 
     background: #000 !important;
 
@@ -54,58 +62,9 @@ body {
 
     filter: none !important;
 
-    transform: none !important;
-    -webkit-transform: none !important;
+    pointer-events: none !important;
 
-    mix-blend-mode: normal !important;
-}
-
-/* =========================================================
-   MATIKAN CANVAS LAMA
-   ========================================================= */
-
-#filterCanvas {
-    display: none !important;
-}
-
-/* =========================================================
-   PINDAH KAMERA
-   ========================================================= */
-
-.flip-camera-button {
-    position: fixed !important;
-
-    top: 20px !important;
-    right: 76px !important;
-
-    width: 48px !important;
-    height: 48px !important;
-
-    padding: 0 !important;
-
-    border: none !important;
-    border-radius: 50% !important;
-
-    background: transparent !important;
-
-    color: #fff !important;
-
-    font-size: 30px !important;
-    font-weight: 700 !important;
-
-    line-height: 1 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    z-index: 9999 !important;
-
-    cursor: pointer !important;
-
-    -webkit-tap-highlight-color: transparent !important;
-
-    box-shadow: none !important;
+    z-index: 1 !important;
 }
 
 /* =========================================================
@@ -122,6 +81,7 @@ body {
     height: 48px !important;
 
     padding: 0 !important;
+    margin: 0 !important;
 
     border: none !important;
     border-radius: 50% !important;
@@ -133,15 +93,65 @@ body {
     font-size: 30px !important;
     font-weight: 700 !important;
 
-    line-height: 1 !important;
+    line-height: 48px !important;
+    text-align: center !important;
 
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
 
-    z-index: 9999 !important;
+    z-index: 99999 !important;
+
+    pointer-events: auto !important;
 
     cursor: pointer !important;
+
+    touch-action: manipulation !important;
+
+    -webkit-tap-highlight-color: transparent !important;
+
+    box-shadow: none !important;
+}
+
+/* =========================================================
+   PINDAH KAMERA
+   ========================================================= */
+
+.flip-camera-button {
+    position: fixed !important;
+
+    top: 20px !important;
+    right: 76px !important;
+
+    width: 48px !important;
+    height: 48px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: transparent !important;
+
+    color: #fff !important;
+
+    font-size: 30px !important;
+    font-weight: 700 !important;
+
+    line-height: 48px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    z-index: 99999 !important;
+
+    pointer-events: auto !important;
+
+    cursor: pointer !important;
+
+    touch-action: manipulation !important;
 
     -webkit-tap-highlight-color: transparent !important;
 
@@ -162,6 +172,7 @@ body {
     height: 52px !important;
 
     padding: 0 !important;
+    margin: 0 !important;
 
     border: none !important;
     border-radius: 50% !important;
@@ -174,17 +185,21 @@ body {
     align-items: center !important;
     justify-content: center !important;
 
-    z-index: 9999 !important;
+    z-index: 99999 !important;
+
+    pointer-events: auto !important;
 
     cursor: pointer !important;
 
-    box-shadow: none !important;
+    touch-action: manipulation !important;
 
     -webkit-tap-highlight-color: transparent !important;
+
+    box-shadow: none !important;
 }
 
 /* =========================================================
-   ICON SHARE
+   SHARE ICON
    ========================================================= */
 
 .share-live-button svg {
@@ -199,6 +214,8 @@ body {
 
     stroke-linecap: round !important;
     stroke-linejoin: round !important;
+
+    pointer-events: none !important;
 }
 
 /* =========================================================
@@ -209,7 +226,18 @@ body {
 .flip-camera-button:active,
 .share-live-button:active {
     transform: scale(0.88) !important;
+
     opacity: 0.7 !important;
+}
+
+/* =========================================================
+   CANVAS LAMA
+   ========================================================= */
+
+#filterCanvas {
+    display: none !important;
+
+    pointer-events: none !important;
 }
 
 /* =========================================================
@@ -229,31 +257,34 @@ body {
 
     box-sizing: border-box !important;
 
-    background: rgba(0, 0, 0, 0.86) !important;
+    background: rgba(0, 0, 0, 0.88) !important;
 
     color: #fff !important;
 
     border-radius: 16px !important;
 
-    z-index: 10000 !important;
+    z-index: 100000 !important;
 
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.50) !important;
+    pointer-events: auto !important;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.50) !important;
 
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
 }
 
 /* =========================================================
-   NAMA ROOM — PALING ATAS
+   NAMA ROOM
    ========================================================= */
 
 .room-name-label {
     display: block !important;
 
+    margin: 0 0 7px 0 !important;
+
     font-size: 14px !important;
     font-weight: 700 !important;
-
-    margin: 0 0 7px 0 !important;
 
     color: #fff !important;
 }
@@ -270,42 +301,42 @@ body {
 
     padding: 0 12px !important;
 
+    margin: 0 0 18px 0 !important;
+
     box-sizing: border-box !important;
 
-    border: 1px solid rgba(255, 255, 255, 0.30) !important;
+    border: 1px solid rgba(255,255,255,0.30) !important;
 
     border-radius: 10px !important;
 
     outline: none !important;
 
-    background: rgba(255, 255, 255, 0.10) !important;
+    background: rgba(255,255,255,0.10) !important;
 
     color: #fff !important;
 
     font-size: 14px !important;
-
-    margin: 0 0 18px 0 !important;
 }
 
 .room-name-input::placeholder {
-    color: rgba(255, 255, 255, 0.55) !important;
+    color: rgba(255,255,255,0.55) !important;
 }
 
 .room-name-input:focus {
-    border-color: rgba(255, 255, 255, 0.80) !important;
+    border-color: rgba(255,255,255,0.80) !important;
 
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255,255,255,0.15) !important;
 }
 
 /* =========================================================
-   JUDUL ROOM
+   ROOM TITLE
    ========================================================= */
 
 .room-title {
+    margin: 0 0 4px 0 !important;
+
     font-size: 20px !important;
     font-weight: 700 !important;
-
-    margin: 0 0 4px 0 !important;
 
     color: #fff !important;
 }
@@ -315,30 +346,30 @@ body {
    ========================================================= */
 
 .room-live {
+    margin: 0 0 12px 0 !important;
+
     font-size: 16px !important;
     font-weight: 600 !important;
-
-    margin: 0 0 12px 0 !important;
 
     color: #fff !important;
 }
 
 /* =========================================================
-   KETERANGAN
+   SUBTITLE
    ========================================================= */
 
 .room-subtitle {
+    margin: 0 0 12px 0 !important;
+
     font-size: 13px !important;
 
     opacity: 0.75 !important;
 
-    margin: 0 0 12px 0 !important;
-
     color: #fff !important;
 }
 
 /* =========================================================
-   PILIHAN ROOM
+   ROOM OPTIONS
    ========================================================= */
 
 .room-options {
@@ -350,7 +381,7 @@ body {
 }
 
 /* =========================================================
-   TOMBOL ROOM
+   ROOM BUTTON
    ========================================================= */
 
 .room-option {
@@ -359,11 +390,11 @@ body {
 
     padding: 0 !important;
 
-    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    border: 1px solid rgba(255,255,255,0.28) !important;
 
     border-radius: 10px !important;
 
-    background: rgba(255, 255, 255, 0.10) !important;
+    background: rgba(255,255,255,0.10) !important;
 
     color: #fff !important;
 
@@ -371,6 +402,10 @@ body {
     font-weight: 700 !important;
 
     cursor: pointer !important;
+
+    pointer-events: auto !important;
+
+    touch-action: manipulation !important;
 
     -webkit-tap-highlight-color: transparent !important;
 }
@@ -388,7 +423,7 @@ body {
 }
 
 /* =========================================================
-   EFEK TEKAN ROOM
+   TEKAN ROOM
    ========================================================= */
 
 .room-option:active {
@@ -403,6 +438,7 @@ body {
 
     #roomPanel {
         width: 245px !important;
+
         right: 12px !important;
     }
 
