@@ -995,3 +995,10 @@ body {
         font-size: 12px !important;
     }
 }
+
+/* HAPUS LABEL "NAMA ROOM", TAPI ID ROOM TETAP TAMPIL */
+#liveRoomDisplay .room-label,
+#liveRoomDisplay .room-name,
+#liveRoomDisplay .room-title {
+    display: none !important;
+}
