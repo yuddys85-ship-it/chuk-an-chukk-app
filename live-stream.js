@@ -132,6 +132,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
+    TAMPILKAN ROOM DI BAWAH PROFIL
+    =====================================================
+    */
+
+    const roomDisplay =
+        document.getElementById(
+            "liveRoomDisplay"
+        );
+
+    if (roomDisplay && roomId) {
+
+        roomDisplay.textContent =
+            roomId;
+
+        roomDisplay.classList.add(
+            "room-active"
+        );
+
+        console.log(
+            "🏷️ ROOM DITAMPILKAN:",
+            roomId
+        );
+    }
+
+    /*
+    =====================================================
     ROOM CHANNEL
     =====================================================
     */
@@ -669,6 +695,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     roomDisplay.textContent =
                         roomId;
+
+                    roomDisplay.classList.add(
+                        "room-active"
+                    );
 
                 }
 
