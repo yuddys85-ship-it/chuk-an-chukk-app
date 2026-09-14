@@ -1,9 +1,10 @@
-"use strict";
+  "use strict";
 
 /* =========================================================
    CHUK AN CHUKK
    LIVE COMMENTS
-   TIKTOK STYLE + SWIPE
+   TIKTOK STYLE
+   SWIPE KIRI / KANAN
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -52,11 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         panel.hidden = false;
 
-        setTimeout(() => {
-
-            input.focus();
-
-        }, 150);
+        panel.classList.add(
+            "comments-visible"
+        );
 
     }
 
@@ -66,6 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function closeComments() {
+
+        panel.classList.remove(
+            "comments-visible"
+        );
 
         panel.hidden = true;
 
@@ -80,12 +83,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     commentButton.addEventListener(
         "click",
-        openComments
+        () => {
+
+            if (panel.hidden) {
+
+                openComments();
+
+            } else {
+
+                closeComments();
+
+            }
+
+        }
     );
 
 
     /* =====================================================
-       TOMBOL TUTUP
+       TOMBOL X
        ===================================================== */
 
     closeButton.addEventListener(
@@ -103,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         (event) => {
 
             event.preventDefault();
+
 
             const text =
                 input.value.trim();
@@ -173,32 +189,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       SWIPE LAYAR
+       SWIPE
        ===================================================== */
 
-    let touchStartX = 0;
-    let touchStartY = 0;
+    let startX = 0;
+    let startY = 0;
 
-    let touchEndX = 0;
-    let touchEndY = 0;
+    let trackingSwipe = false;
 
 
     document.addEventListener(
         "touchstart",
         (event) => {
 
+            /* Jangan ganggu input */
+
             if (
-                event.touches.length !== 1
+                event.target.closest(
+                    "input, textarea, button"
+                )
             ) {
+
+                trackingSwipe = false;
+
                 return;
             }
 
 
-            touchStartX =
+            if (
+                event.touches.length !== 1
+            ) {
+
+                trackingSwipe = false;
+
+                return;
+            }
+
+
+            startX =
                 event.touches[0].clientX;
 
-            touchStartY =
+            startY =
                 event.touches[0].clientY;
+
+
+            trackingSwipe = true;
 
         },
         {
@@ -211,6 +246,14 @@ document.addEventListener("DOMContentLoaded", () => {
         "touchend",
         (event) => {
 
+            if (!trackingSwipe) {
+                return;
+            }
+
+
+            trackingSwipe = false;
+
+
             if (
                 event.changedTouches.length !== 1
             ) {
@@ -218,61 +261,82 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            touchEndX =
+            const endX =
                 event.changedTouches[0].clientX;
 
-            touchEndY =
+            const endY =
                 event.changedTouches[0].clientY;
 
 
             const deltaX =
-                touchEndX -
-                touchStartX;
-
+                endX - startX;
 
             const deltaY =
-                touchEndY -
-                touchStartY;
+                endY - startY;
 
 
-            /* Abaikan jika gerakan lebih banyak vertikal */
+            /* =================================================
+               HANYA SWIPE HORIZONTAL
+               ================================================= */
 
             if (
-                Math.abs(deltaY) >
-                Math.abs(deltaX)
+                Math.abs(deltaX) <
+                Math.abs(deltaY)
             ) {
+
                 return;
             }
 
 
-            /* Minimal jarak swipe */
+            /* =================================================
+               MINIMAL JARAK SWIPE
+               ================================================= */
 
-            const SWIPE_DISTANCE = 70;
+            const MIN_SWIPE = 80;
 
-
-            /* =============================================
-               GESER KE KIRI
-               ============================================= */
 
             if (
-                deltaX < -SWIPE_DISTANCE
+                Math.abs(deltaX) <
+                MIN_SWIPE
+            ) {
+
+                return;
+            }
+
+
+            /* =================================================
+               SWIPE KIRI
+               BUKA KOMENTAR
+               ================================================= */
+
+            if (
+                deltaX < 0
             ) {
 
                 openComments();
 
+                console.log(
+                    "👈 Swipe kiri → komentar muncul"
+                );
+
                 return;
             }
 
 
-            /* =============================================
-               GESER KE KANAN
-               ============================================= */
+            /* =================================================
+               SWIPE KANAN
+               TUTUP KOMENTAR
+               ================================================= */
 
             if (
-                deltaX > SWIPE_DISTANCE
+                deltaX > 0
             ) {
 
                 closeComments();
+
+                console.log(
+                    "👉 Swipe kanan → komentar hilang"
+                );
 
             }
 
@@ -284,8 +348,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       KOMENTAR CONTOH
-       ===================================================== */
+       KOMENTAR AWAL
+       ================================================= */
 
     addComment(
         "ChukOfficial",
@@ -301,12 +365,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        ESCAPE HTML
-       ===================================================== */
+       ================================================= */
 
     function escapeHTML(text) {
 
         const div =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         div.textContent =
             text;
@@ -315,4 +381,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-});
+});          
