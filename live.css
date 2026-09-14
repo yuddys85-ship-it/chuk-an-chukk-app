@@ -1,6 +1,5 @@
 /* =========================================================
    CHUK AN CHUKK — LIVE CSS
-   CAMERA / PROFILE / ROOM / MENU / SHARE / COMMENTS
    ========================================================= */
 
 * {
@@ -22,9 +21,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* =========================================================
-   LIVE APP
-   ========================================================= */
+/* ================= LIVE APP ================= */
 
 .live-app {
     position: fixed !important;
@@ -36,39 +33,33 @@ body {
     background: #000 !important;
 }
 
-/* =========================================================
-   CAMERA
-   ========================================================= */
+/* ================= CAMERA ================= */
 
 #camera {
     position: absolute !important;
     inset: 0 !important;
-
     width: 100% !important;
     height: 100% !important;
 
     object-fit: contain !important;
-    object-position: center center !important;
+    object-position: center !important;
 
     display: block !important;
     background: #000 !important;
 
     opacity: 1 !important;
     visibility: visible !important;
-
     filter: none !important;
-    pointer-events: none !important;
 
+    pointer-events: none !important;
     z-index: 1 !important;
 }
 
-/* =========================================================
-   MENU BUTTON
-   ========================================================= */
+/* ================= MENU ================= */
 
+#menuButton,
 .menu-button {
     position: fixed !important;
-
     top: 18px !important;
     right: 18px !important;
 
@@ -81,98 +72,42 @@ body {
     border: none !important;
     border-radius: 50% !important;
 
-    background: rgba(0, 0, 0, 0.45) !important;
-    color: #fff !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
 
+    color: #fff !important;
     font-size: 25px !important;
-    line-height: 1 !important;
 
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
 
     z-index: 99999 !important;
-
-    pointer-events: auto !important;
     cursor: pointer !important;
     touch-action: manipulation !important;
-
-    backdrop-filter: blur(6px) !important;
-    -webkit-backdrop-filter: blur(6px) !important;
 }
 
-/* =========================================================
-   FLIP CAMERA
-   ========================================================= */
+/* ================= PROFILE ================= */
 
-.flip-camera-button {
+#liveUserDisplay {
     position: fixed !important;
+    top: 14px !important;
+    left: 14px !important;
 
-    top: 18px !important;
-    right: 76px !important;
-
-    width: 48px !important;
-    height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
 
     padding: 0 !important;
     margin: 0 !important;
 
+    background: transparent !important;
     border: none !important;
-    border-radius: 50% !important;
-
-    background: rgba(0, 0, 0, 0.45) !important;
-    color: #fff !important;
-
-    font-size: 27px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    z-index: 99999 !important;
-
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    touch-action: manipulation !important;
-
-    backdrop-filter: blur(6px) !important;
-    -webkit-backdrop-filter: blur(6px) !important;
-}
-
-/* =========================================================
-   PROFILE — PINDAH KE ATAS TENGAH
-   ========================================================= */
-
-#liveUserDisplay {
-    position: fixed !important;
-
-    top: 14px !important;
-    left: 50% !important;
-
-    transform: translateX(-50%) !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    gap: 8px !important;
-
-    max-width: 70vw !important;
-
-    padding: 4px 12px 4px 4px !important;
-
-    border-radius: 28px !important;
-
-    background: rgba(0, 0, 0, 0.45) !important;
-
-    color: #fff !important;
+    border-radius: 0 !important;
 
     z-index: 99998 !important;
-
     pointer-events: none !important;
-
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
 }
 
 #liveUserAvatar {
@@ -180,20 +115,15 @@ body {
     height: 42px !important;
 
     border-radius: 50% !important;
-
     object-fit: cover !important;
 
-    display: block !important;
-
-    background: #222 !important;
-
-    border: 2px solid rgba(255,255,255,0.9) !important;
-
+    border: 2px solid #fff !important;
+    background: transparent !important;
     flex-shrink: 0 !important;
 }
 
 #liveUserName {
-    max-width: 40vw !important;
+    max-width: 45vw !important;
 
     overflow: hidden !important;
     white-space: nowrap !important;
@@ -201,56 +131,66 @@ body {
 
     font-size: 15px !important;
     font-weight: 700 !important;
-
     color: #fff !important;
+
+    text-shadow: 0 2px 6px rgba(0,0,0,.9) !important;
 }
 
-/* =========================================================
-   ROOM DISPLAY — DI BAWAH PROFIL
-   ========================================================= */
+/* ================= ROOM ID ================= */
 
 #liveRoomDisplay {
     position: fixed !important;
 
-    top: 66px !important;
-    left: 50% !important;
+    top: 38px !important;
+    left: 64px !important;
 
-    transform: translateX(-50%) !important;
+    display: block !important;
 
-    max-width: 65vw !important;
+    padding: 0 !important;
+    margin: 0 !important;
 
-    padding: 7px 13px !important;
-
-    box-sizing: border-box !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 
     color: #fff !important;
 
-    background: rgba(0, 0, 0, 0.45) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 18px !important;
 
-    border-radius: 20px !important;
-
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    line-height: 1.2 !important;
-
+    text-align: left !important;
     white-space: nowrap !important;
 
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    text-shadow: 0 2px 5px rgba(0,0,0,.9) !important;
 
-    text-align: center !important;
-
-    z-index: 99998 !important;
-
-    pointer-events: none !important;
-
-    backdrop-filter: blur(6px) !important;
-    -webkit-backdrop-filter: blur(6px) !important;
+    z-index: 99999 !important;
 }
 
-/* =========================================================
-   ROOM PANEL
-   ========================================================= */
+/* ================= ROOM NAME ================= */
+
+#liveRoomNameDisplay {
+    position: fixed !important;
+
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    color: #fff !important;
+
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 18px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    text-shadow: 0 2px 5px rgba(0,0,0,.9) !important;
+
+    z-index: 99999 !important;
+}
+
+/* ================= ROOM PANEL ================= */
 
 #roomPanel {
     position: fixed !important;
@@ -262,15 +202,14 @@ body {
 
     padding: 18px !important;
 
-    background: rgba(0, 0, 0, 0.90) !important;
-
+    background: rgba(0,0,0,.90) !important;
     color: #fff !important;
 
     border-radius: 20px !important;
 
     z-index: 100000 !important;
 
-    box-shadow: 0 10px 35px rgba(0,0,0,0.45) !important;
+    box-shadow: 0 10px 35px rgba(0,0,0,.45) !important;
 
     backdrop-filter: blur(14px) !important;
     -webkit-backdrop-filter: blur(14px) !important;
@@ -278,7 +217,7 @@ body {
 
 .room-name-label {
     font-size: 13px !important;
-    opacity: 0.7 !important;
+    opacity: .7 !important;
     margin-bottom: 7px !important;
 }
 
@@ -288,42 +227,31 @@ body {
 
     padding: 0 13px !important;
 
-    border: 1px solid rgba(255,255,255,0.18) !important;
+    border: 1px solid rgba(255,255,255,.18) !important;
     border-radius: 12px !important;
 
     outline: none !important;
 
-    background: rgba(255,255,255,0.08) !important;
+    background: rgba(255,255,255,.08) !important;
     color: #fff !important;
 
     font-size: 14px !important;
 }
 
 .room-name-input::placeholder {
-    color: rgba(255,255,255,0.5) !important;
+    color: rgba(255,255,255,.5) !important;
 }
 
-.room-title {
-    margin-top: 18px !important;
-    font-size: 18px !important;
-    font-weight: 800 !important;
-}
-
-.room-live {
-    margin-top: 4px !important;
-    font-size: 14px !important;
-    opacity: 0.75 !important;
-}
-
-.room-subtitle {
-    margin-top: 16px !important;
-    font-size: 13px !important;
-    opacity: 0.65 !important;
+/* Sembunyikan tulisan tambahan */
+#roomPanel .room-title,
+#roomPanel .room-live,
+#roomPanel .room-subtitle {
+    display: none !important;
 }
 
 .room-options {
     display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(4,1fr) !important;
     gap: 8px !important;
     margin-top: 10px !important;
 }
@@ -334,7 +262,7 @@ body {
     border: none !important;
     border-radius: 12px !important;
 
-    background: rgba(255,255,255,0.10) !important;
+    background: rgba(255,255,255,.10) !important;
     color: #fff !important;
 
     font-size: 15px !important;
@@ -349,9 +277,99 @@ body {
     color: #000 !important;
 }
 
-/* =========================================================
-   SHARE
-   ========================================================= */
+/* ================= FLIP CAMERA ================= */
+/* KANAN BAWAH — TEPAT DI ATAS KOMENTAR */
+
+#flipCameraButton,
+.flip-camera-button {
+    position: fixed !important;
+
+    right: 18px !important;
+    bottom: 148px !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: transparent !important;
+    background-color: transparent !important;
+
+    color: #fff !important;
+    font-size: 27px !important;
+
+    box-shadow: none !important;
+    outline: none !important;
+    backdrop-filter: none !important;
+
+    z-index: 99999 !important;
+
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+}
+
+#flipCameraButton:hover,
+#flipCameraButton:focus,
+#flipCameraButton:active,
+.flip-camera-button:hover,
+.flip-camera-button:focus,
+.flip-camera-button:active {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* ================= COMMENT BUTTON ================= */
+
+.live-comment-button {
+    position: fixed !important;
+
+    right: 18px !important;
+    bottom: 88px !important;
+
+    width: 52px !important;
+    height: 52px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: rgba(0,0,0,.35) !important;
+    color: #fff !important;
+
+    font-size: 27px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    z-index: 99999 !important;
+
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+}
+
+.live-comment-button:active {
+    transform: scale(.88) !important;
+    opacity: .7 !important;
+}
+
+/* ================= SHARE ================= */
 
 .share-live-button {
     position: fixed !important;
@@ -363,12 +381,11 @@ body {
     height: 52px !important;
 
     padding: 0 !important;
-    margin: 0 !important;
 
     border: none !important;
     border-radius: 50% !important;
 
-    background: rgba(0, 0, 0, 0.35) !important;
+    background: rgba(0,0,0,.35) !important;
     color: #fff !important;
 
     display: flex !important;
@@ -377,7 +394,6 @@ body {
 
     z-index: 99999 !important;
 
-    pointer-events: auto !important;
     cursor: pointer !important;
     touch-action: manipulation !important;
 
@@ -397,50 +413,7 @@ body {
     stroke-linejoin: round !important;
 }
 
-/* =========================================================
-   COMMENT BUTTON
-   ========================================================= */
-
-.live-comment-button {
-    position: fixed !important;
-
-    right: 18px !important;
-    bottom: 88px !important;
-
-    width: 52px !important;
-    height: 52px !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    border: none !important;
-    border-radius: 50% !important;
-
-    background: rgba(0,0,0,0.35) !important;
-
-    color: #fff !important;
-
-    font-size: 27px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    z-index: 99999 !important;
-
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    touch-action: manipulation !important;
-
-    -webkit-tap-highlight-color: transparent !important;
-
-    backdrop-filter: blur(6px) !important;
-    -webkit-backdrop-filter: blur(6px) !important;
-}
-
-/* =========================================================
-   COMMENT PANEL
-   ========================================================= */
+/* ================= COMMENT PANEL ================= */
 
 .live-comment-panel {
     position: fixed !important;
@@ -455,8 +428,6 @@ body {
     background: transparent !important;
     color: #fff !important;
 
-    border-radius: 0 !important;
-
     z-index: 100000 !important;
 
     display: flex !important;
@@ -464,10 +435,9 @@ body {
 
     overflow: hidden !important;
 
+    box-shadow: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-
-    box-shadow: none !important;
 
     touch-action: pan-y !important;
 }
@@ -476,9 +446,7 @@ body {
     display: none !important;
 }
 
-/* =========================================================
-   COMMENT HEADER
-   ========================================================= */
+/* ================= COMMENT HEADER ================= */
 
 .live-comment-header {
     height: 54px !important;
@@ -491,15 +459,13 @@ body {
     justify-content: space-between !important;
 
     background: transparent !important;
-    border-bottom: none !important;
 }
 
 .live-comment-header strong {
     font-size: 16px !important;
     font-weight: 700 !important;
 
-    text-shadow:
-        0 2px 5px rgba(0,0,0,0.9) !important;
+    text-shadow: 0 2px 5px rgba(0,0,0,.9) !important;
 }
 
 .live-comment-header button {
@@ -507,21 +473,17 @@ body {
     height: 38px !important;
 
     border: none !important;
-
-    background: rgba(0,0,0,0.35) !important;
-
     border-radius: 50% !important;
 
+    background: rgba(0,0,0,.35) !important;
     color: #fff !important;
+
     font-size: 20px !important;
 
     cursor: pointer !important;
-    touch-action: manipulation !important;
 }
 
-/* =========================================================
-   COMMENT LIST
-   ========================================================= */
+/* ================= COMMENT LIST ================= */
 
 .live-comments-list {
     flex: 1 !important;
@@ -529,8 +491,6 @@ body {
     overflow-y: auto !important;
 
     padding: 12px 14px 14px !important;
-
-    box-sizing: border-box !important;
 
     -webkit-overflow-scrolling: touch !important;
 
@@ -545,31 +505,24 @@ body {
 
 .live-comment-item {
     display: flex !important;
-
     align-items: flex-start !important;
 
     gap: 9px !important;
-
     margin-bottom: 14px !important;
 
-    animation:
-        liveCommentIn
-        0.22s
-        ease-out !important;
+    animation: liveCommentIn .22s ease-out !important;
 }
 
 .live-comment-avatar {
     width: 34px !important;
     height: 34px !important;
-
     min-width: 34px !important;
 
     border-radius: 50% !important;
 
-    background: rgba(0,0,0,0.40) !important;
+    background: rgba(0,0,0,.40) !important;
 
     display: flex !important;
-
     align-items: center !important;
     justify-content: center !important;
 
@@ -585,11 +538,10 @@ body {
     font-size: 12px !important;
     font-weight: 700 !important;
 
-    opacity: 0.85 !important;
+    opacity: .85 !important;
     margin-bottom: 2px !important;
 
-    text-shadow:
-        0 2px 5px rgba(0,0,0,0.9) !important;
+    text-shadow: 0 2px 5px rgba(0,0,0,.9) !important;
 }
 
 .live-comment-text {
@@ -597,20 +549,15 @@ body {
     line-height: 1.35 !important;
 
     word-break: break-word !important;
-
     color: #fff !important;
 
-    text-shadow:
-        0 2px 5px rgba(0,0,0,0.95) !important;
+    text-shadow: 0 2px 5px rgba(0,0,0,.95) !important;
 }
 
-/* =========================================================
-   COMMENT INPUT
-   ========================================================= */
+/* ================= COMMENT FORM ================= */
 
 .live-comment-form {
     display: flex !important;
-
     align-items: center !important;
 
     gap: 8px !important;
@@ -622,8 +569,6 @@ body {
         12px !important;
 
     background: transparent !important;
-
-    border-top: none !important;
 }
 
 .live-comment-form input {
@@ -634,16 +579,12 @@ body {
 
     padding: 0 15px !important;
 
-    box-sizing: border-box !important;
-
-    border: 1px solid rgba(255,255,255,0.35) !important;
-
+    border: 1px solid rgba(255,255,255,.35) !important;
     border-radius: 24px !important;
 
     outline: none !important;
 
-    background: rgba(0,0,0,0.38) !important;
-
+    background: rgba(0,0,0,.38) !important;
     color: #fff !important;
 
     font-size: 14px !important;
@@ -653,13 +594,12 @@ body {
 }
 
 .live-comment-form input::placeholder {
-    color: rgba(255,255,255,0.75) !important;
+    color: rgba(255,255,255,.75) !important;
 }
 
 .live-comment-form button {
     width: 44px !important;
     height: 44px !important;
-
     min-width: 44px !important;
 
     border: none !important;
@@ -676,15 +616,11 @@ body {
     justify-content: center !important;
 
     cursor: pointer !important;
-    touch-action: manipulation !important;
 }
 
-/* =========================================================
-   ANIMATION
-   ========================================================= */
+/* ================= ANIMATION ================= */
 
 @keyframes liveCommentIn {
-
     from {
         opacity: 0;
         transform: translateY(10px);
@@ -694,388 +630,20 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
-
 }
 
-/* =========================================================
-   ACTIVE
-   ========================================================= */
-
-.live-comment-button:active {
-    transform: scale(0.88) !important;
-    opacity: 0.7 !important;
-}
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
+/* ================= MOBILE ================= */
 
 @media (max-width: 380px) {
 
-    .menu-button,
-    .flip-camera-button {
+    #menuButton,
+    .menu-button {
+        top: 12px !important;
+        right: 12px !important;
+
         width: 44px !important;
         height: 44px !important;
     }
-
-    .menu-button {
-        right: 12px !important;
-    }
-
-    .flip-camera-button {
-        right: 64px !important;
-    }
-
-    #liveUserDisplay {
-        top: 10px !important;
-    }
-
-    #liveUserAvatar {
-        width: 38px !important;
-        height: 38px !important;
-    }
-
-    #liveUserName {
-        font-size: 14px !important;
-    }
-
-    #liveRoomDisplay {
-        top: 60px !important;
-        font-size: 13px !important;
-    }
-
-    .live-comment-button {
-        right: 12px !important;
-        bottom: 84px !important;
-
-        width: 48px !important;
-        height: 48px !important;
-
-        font-size: 25px !important;
-    }
-
-    .live-comment-panel {
-        height: 60vh !important;
-    }
-
-}
-
-/* =========================================================
-   END
-   ========================================================= */
-
-/* =========================================================
-   PROFILE + ROOM — SISI KIRI ATAS
-   ========================================================= */
-
-#liveUserDisplay {
-    position: fixed !important;
-    top: 14px !important;
-    left: 14px !important;
-
-    transform: none !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 8px !important;
-
-    padding: 0 !important;
-
-    margin: 0 !important;
-
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-
-    z-index: 99998 !important;
-
-    pointer-events: none !important;
-
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
-#liveUserAvatar {
-    width: 42px !important;
-    height: 42px !important;
-
-    border-radius: 50% !important;
-
-    object-fit: cover !important;
-
-    border: 2px solid #fff !important;
-
-    background: transparent !important;
-}
-
-#liveUserName {
-    font-size: 15px !important;
-    font-weight: 700 !important;
-
-    color: #fff !important;
-
-    text-shadow: 0 2px 6px rgba(0,0,0,.9) !important;
-}
-
-
-/* =========================================================
-   ROOM — DI BAWAH PROFIL, SISI KIRI
-   ========================================================= */
-
-#liveRoomDisplay {
-    position: fixed !important;
-
-    top: 61px !important;
-    left: 18px !important;
-
-    transform: none !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    background: transparent !important;
-    border: none !important;
-
-    color: #fff !important;
-
-    font-size: 13px !important;
-    font-weight: 700 !important;
-
-    text-align: left !important;
-
-    text-shadow: 0 2px 6px rgba(0,0,0,.9) !important;
-
-    z-index: 99998 !important;
-
-    display: none !important;
-}
-
-
-/* Room hanya muncul setelah dibuat */
-#liveRoomDisplay.room-active {
-    display: block !important;
-}
-
-
-/* =========================================================
-   HP KECIL
-   ========================================================= */
-
-@media (max-width: 380px) {
-
-    #liveUserDisplay {
-        top: 10px !important;
-        left: 10px !important;
-    }
-
-    #liveUserAvatar {
-        width: 38px !important;
-        height: 38px !important;
-    }
-
-    #liveUserName {
-        font-size: 14px !important;
-    }
-
-    #liveRoomDisplay {
-        top: 54px !important;
-        left: 12px !important;
-        font-size: 12px !important;
-    }
-}
-
- /* =========================================================
-   PROFILE + ROOM — KIRI ATAS
-   ========================================================= */
-
-#liveUserDisplay {
-    position: fixed !important;
-    top: 14px !important;
-    left: 14px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-
-    z-index: 99998 !important;
-    pointer-events: none !important;
-
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
-#liveUserAvatar {
-    width: 42px !important;
-    height: 42px !important;
-
-    border-radius: 50% !important;
-    object-fit: cover !important;
-
-    border: 2px solid #fff !important;
-    background: transparent !important;
-}
-
-#liveUserName {
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    color: #fff !important;
-
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
-}
-
-
-/* =========================================================
-   ROOM — TEPAT DI BAWAH PROFIL
-   HANYA MUNCUL SETELAH ROOM DIBUAT
-   ========================================================= */
-
-#liveRoomDisplay {
-    position: fixed !important;
-
-    top: 61px !important;
-    left: 18px !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    background: transparent !important;
-    border: none !important;
-
-    color: #fff !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
-
-    text-align: left !important;
-
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
-
-    z-index: 99998 !important;
-
-    display: none !important;
-}
-
-
-/* ROOM SUDAH DIBUAT */
-#liveRoomDisplay.room-active {
-    display: block !important;
-}
-
-
-/* =========================================================
-   HP KECIL
-   ========================================================= */
-
-@media (max-width: 380px) {
-
-    #liveUserDisplay {
-        top: 10px !important;
-        left: 10px !important;
-    }
-
-    #liveUserAvatar {
-        width: 38px !important;
-        height: 38px !important;
-    }
-
-    #liveUserName {
-        font-size: 14px !important;
-    }
-
-    #liveRoomDisplay {
-        top: 54px !important;
-        left: 12px !important;
-        font-size: 12px !important;
-    }
-}
-/* =========================================================
-   CHUK AN CHUKK — PROFILE + ROOM
-   ID ROOM DI BAWAH NAMA PROFIL
-   ========================================================= */
-
-#liveUserDisplay {
-    position: fixed !important;
-    top: 14px !important;
-    left: 14px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-
-    z-index: 99998 !important;
-    pointer-events: none !important;
-}
-
-#liveUserAvatar {
-    width: 42px !important;
-    height: 42px !important;
-
-    border-radius: 50% !important;
-    object-fit: cover !important;
-
-    border: 2px solid #fff !important;
-}
-
-#liveUserName {
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    color: #fff !important;
-
-    text-shadow: 0 2px 6px rgba(0,0,0,.9) !important;
-}
-
-
-/* =========================================================
-   ID ROOM — DI BAWAH NAMA PROFIL
-   ========================================================= */
-
-#liveRoomDisplay {
-    position: fixed !important;
-
-    top: 38px !important;
-    left: 64px !important;
-
-    display: block !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    background: transparent !important;
-    border: none !important;
-
-    color: #fff !important;
-
-    font-size: 12px !important;
-    font-weight: 600 !important;
-
-    line-height: 18px !important;
-    text-align: left !important;
-
-    text-shadow: 0 2px 5px rgba(0,0,0,.9) !important;
-
-    z-index: 99999 !important;
-}
-
-
-/* =========================================================
-   HP KECIL
-   ========================================================= */
-
-@media (max-width: 380px) {
 
     #liveUserDisplay {
         top: 10px !important;
@@ -1096,80 +664,33 @@ body {
         left: 58px !important;
         font-size: 11px !important;
     }
-}
 
-/* HAPUS LABEL "NAMA ROOM", TAPI ID ROOM TETAP TAMPIL */
-#liveRoomDisplay .room-label,
-#liveRoomDisplay .room-name,
-#liveRoomDisplay .room-title {
-    display: none !important;
-}
+    #flipCameraButton,
+    .flip-camera-button {
+        right: 12px !important;
+        bottom: 140px !important;
 
-/* HAPUS BACKGROUND TOMBOL MENU */
-#menuButton,
-.menu-button {
-    background: transparent !important;
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
+        width: 44px !important;
+        height: 44px !important;
+    }
 
-/* =========================================================
-   HILANGKAN TULISAN DI PANEL MENU LIVE
-   ========================================================= */
+    .live-comment-button {
+        right: 12px !important;
+        bottom: 80px !important;
 
-/* Judul Room */
-#roomPanel h1,
-#roomPanel h2,
-#roomPanel h3,
-#roomPanel .room-title,
-#roomPanel .room-label {
-    display: none !important;
-}
+        width: 48px !important;
+        height: 48px !important;
+    }
 
-/* Tulisan Live Host */
-#roomPanel .live-host,
-#roomPanel .host-title,
-#roomPanel .host-label {
-    display: none !important;
-}
+    .share-live-button {
+        right: 12px !important;
+        bottom: 18px !important;
 
-/* Tulisan Pilih jumlah layar berbagi */
-#roomPanel .share-title,
-#roomPanel .screen-title,
-#roomPanel .screen-label,
-#roomPanel p {
-    display: none !important;
-}
+        width: 48px !important;
+        height: 48px !important;
+    }
 
-/* FLIP KAMERA - KANAN DI ATAS KOMENTAR */
-#flipCameraButton {
-    position: fixed !important;
-    right: 16px !important;
-    bottom: 86px !important;
-
-    width: 46px !important;
-    height: 46px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-
-    padding: 0 !important;
-    z-index: 99999 !important;
-}
-
-/* Hilangkan background saat ditekan */
-#flipCameraButton:active,
-#flipCameraButton:hover,
-#flipCameraButton:focus {
-    background: transparent !important;
-    box-shadow: none !important;
+    .live-comment-panel {
+        height: 60vh !important;
+    }
 }
