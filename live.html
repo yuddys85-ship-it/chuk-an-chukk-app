@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,28 +10,32 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
-    <meta name="theme-color" content="#000000">
+    <meta
+        name="theme-color"
+        content="#000000"
+    >
 
     <title>CHUK AN CHUKK — Live</title>
 
-    <link rel="stylesheet" href="live.css">
-
-    <!-- TENTUKAN MODE HOST / VIEWER -->
-    <script>
-        window.CHUK_LIVE_IS_VIEWER =
-            new URLSearchParams(window.location.search).has("live");
-
-        window.CHUK_LIVE_IS_HOST =
-            !window.CHUK_LIVE_IS_VIEWER;
-    </script>
+    <link
+        rel="stylesheet"
+        href="live.css"
+    >
 
 </head>
 
+
 <body>
 
-<div id="liveApp" class="live-app">
+<div
+    id="liveApp"
+    class="live-app"
+>
 
-    <!-- KAMERA HOST -->
+    <!-- =================================================
+         KAMERA HOST
+    ================================================== -->
+
     <video
         id="camera"
         class="camera-source"
@@ -40,42 +45,68 @@
         webkit-playsinline
     ></video>
 
-    <!-- VIDEO VIEWER -->
-    <video
-        id="chukRemoteLive"
-        class="chuk-remote-live"
-        autoplay
-        playsinline
-        webkit-playsinline
-    ></video>
 
-    <!-- MENU -->
+    <!-- =================================================
+         MENU
+    ================================================== -->
+
     <button
         id="menuButton"
         class="menu-button"
         type="button"
         aria-label="Menu"
-    >☰</button>
+    >
+        ☰
+    </button>
 
-    <!-- PINDAH KAMERA -->
+
+    <!-- =================================================
+         PINDAH KAMERA
+    ================================================== -->
+
     <button
         id="flipCameraButton"
         class="flip-camera-button"
         type="button"
         aria-label="Pindah kamera"
-    >↻</button>
+    >
+        ↻
+    </button>
 
-    <!-- SHARE -->
+
+    <!-- =================================================
+         SHARE LIVE
+    ================================================== -->
+
     <button
         id="shareLiveButton"
         class="share-live-button"
         type="button"
         aria-label="Bagikan Live"
     >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="18" cy="5" r="2.5"></circle>
-            <circle cx="6" cy="12" r="2.5"></circle>
-            <circle cx="18" cy="19" r="2.5"></circle>
+
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+
+            <circle
+                cx="18"
+                cy="5"
+                r="2.5"
+            ></circle>
+
+            <circle
+                cx="6"
+                cy="12"
+                r="2.5"
+            ></circle>
+
+            <circle
+                cx="18"
+                cy="19"
+                r="2.5"
+            ></circle>
 
             <line
                 x1="8.2"
@@ -90,18 +121,30 @@
                 x2="15.8"
                 y2="17.8"
             ></line>
+
         </svg>
+
     </button>
 
-    <!-- TOMBOL KOMENTAR -->
+
+    <!-- =================================================
+         KOMENTAR
+    ================================================== -->
+
     <button
         id="liveCommentButton"
         class="live-comment-button"
         type="button"
         aria-label="Komentar"
-    >💬</button>
+    >
+        💬
+    </button>
 
-    <!-- PANEL KOMENTAR -->
+
+    <!-- =================================================
+         PANEL KOMENTAR
+    ================================================== -->
+
     <div
         id="liveCommentPanel"
         class="live-comment-panel"
@@ -110,20 +153,26 @@
 
         <div class="live-comment-header">
 
-            <strong>Komentar Live</strong>
+            <strong>
+                Komentar Live
+            </strong>
 
             <button
                 id="closeLiveComments"
                 type="button"
                 aria-label="Tutup komentar"
-            >✕</button>
+            >
+                ✕
+            </button>
 
         </div>
+
 
         <div
             id="liveCommentsList"
             class="live-comments-list"
         ></div>
+
 
         <form
             id="liveCommentForm"
@@ -141,7 +190,9 @@
             <button
                 type="submit"
                 aria-label="Kirim komentar"
-            >➤</button>
+            >
+                ➤
+            </button>
 
         </form>
 
@@ -149,23 +200,61 @@
 
 </div>
 
-<!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- FILE LIVE UTAMA -->
-<script src="live.js"></script>
+<!-- =====================================================
+     SUPABASE
+====================================================== -->
 
-<!-- MENU TETAP -->
-<script src="live-menu.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
 
-<!-- SHARE TETAP -->
-<script src="live-share.js"></script>
 
-<!-- KOMENTAR TETAP -->
-<script src="live-comments.js"></script>
+<!-- =====================================================
+     HOST CAMERA
+====================================================== -->
 
-<!-- WEBRTC LIVE STREAM -->
-<script src="live-stream.js"></script>
+<script
+    src="live.js"
+></script>
+
+
+<!-- =====================================================
+     HOST WEBRTC STREAM
+====================================================== -->
+
+<script
+    src="live-stream.js"
+></script>
+
+
+<!-- =====================================================
+     MENU
+====================================================== -->
+
+<script
+    src="live-menu.js"
+></script>
+
+
+<!-- =====================================================
+     SHARE
+====================================================== -->
+
+<script
+    src="live-share.js"
+></script>
+
+
+<!-- =====================================================
+     COMMENTS
+====================================================== -->
+
+<script
+    src="live-comments.js"
+></script>
+
 
 </body>
+
 </html>
