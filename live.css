@@ -1143,3 +1143,33 @@ body {
 #roomPanel p {
     display: none !important;
 }
+
+/* FLIP KAMERA - KANAN DI ATAS KOMENTAR */
+#flipCameraButton {
+    position: fixed !important;
+    right: 16px !important;
+    bottom: 86px !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    padding: 0 !important;
+    z-index: 99999 !important;
+}
+
+/* Hilangkan background saat ditekan */
+#flipCameraButton:active,
+#flipCameraButton:hover,
+#flipCameraButton:focus {
+    background: transparent !important;
+    box-shadow: none !important;
+}
