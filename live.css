@@ -694,3 +694,12 @@ body {
         height: 60vh !important;
     }
 }
+
+/* NAMA ROOM LEBIH BESAR */
+#liveRoomNameDisplay {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 20px !important;
+    color: #fff !important;
+    text-shadow: 0 2px 6px rgba(0,0,0,.95) !important;
+}
