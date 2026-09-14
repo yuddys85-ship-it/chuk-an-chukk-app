@@ -1,208 +1,612 @@
-<!DOCTYPE html>
-<html lang="id">
+"use strict";
 
-<head>
+/*
+=========================================================
+ CHUK AN CHUKK
+ LIVE WATCH — VIEWER ONLY
+=========================================================
 
-    <meta charset="UTF-8">
+ Fungsi:
+ - Penonton hanya menerima video Host
+ - Tidak membuka kamera
+ - Tidak membuka microphone
+ - Tidak menjalankan live.js
+ - WebRTC untuk video
+ - Supabase Realtime untuk signaling
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+ URL:
+ live-watch.html?room=ROOM_ID
+=========================================================
+*/
 
-    <meta
-        name="theme-color"
-        content="#000000"
-    >
+document.addEventListener("DOMContentLoaded", async () => {
 
-    <title>CHUK AN CHUKK — Live</title>
+    console.log("👀 CHUK AN CHUKK LIVE WATCH START");
 
-    <link
-        rel="stylesheet"
-        href="live.css"
-    >
+    const remoteVideo =
+        document.getElementById("chukRemoteLive");
 
-</head>
+    if (!remoteVideo) {
+        console.error("❌ Video penonton tidak ditemukan");
+        return;
+    }
 
+    /*
+    =====================================================
+    SUPABASE
+    =====================================================
+    */
 
-<body>
+    const SUPABASE_URL =
+        "https://aoaqvbrxgtfuvyiscpic.supabase.co";
 
-<div
-    id="liveApp"
-    class="live-app"
->
+    const SUPABASE_KEY =
+        "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
 
-    <!-- =================================================
-         VIDEO HOST
-         KHUSUS PENONTON
-    ================================================== -->
+    if (
+        typeof window.supabase === "undefined" ||
+        !window.supabase.createClient
+    ) {
+        console.error("❌ Supabase SDK tidak tersedia");
+        showStatus("Supabase belum siap.");
+        return;
+    }
 
-    <video
-        id="chukRemoteLive"
-        class="chuk-remote-live"
-        autoplay
-        playsinline
-        webkit-playsinline
-    ></video>
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
 
+    /*
+    =====================================================
+    AMBIL ROOM ID
+    =====================================================
+    */
 
-    <!-- =================================================
-         SHARE LIVE
-    ================================================== -->
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
-    <button
-        id="shareLiveButton"
-        class="share-live-button"
-        type="button"
-        aria-label="Bagikan Live"
-    >
+    const roomId =
+        params.get("room");
 
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-        >
+    if (!roomId) {
 
-            <circle
-                cx="18"
-                cy="5"
-                r="2.5"
-            ></circle>
+        console.error("❌ ROOM ID tidak ditemukan");
 
-            <circle
-                cx="6"
-                cy="12"
-                r="2.5"
-            ></circle>
+        showStatus(
+            "Room Live tidak ditemukan."
+        );
 
-            <circle
-                cx="18"
-                cy="19"
-                r="2.5"
-            ></circle>
+        return;
+    }
 
-            <line
-                x1="8.2"
-                y1="10.8"
-                x2="15.8"
-                y2="6.2"
-            ></line>
+    console.log(
+        "🏠 ROOM:",
+        roomId
+    );
 
-            <line
-                x1="8.2"
-                y1="13.2"
-                x2="15.8"
-                y2="17.8"
-            ></line>
+    /*
+    =====================================================
+    WEBRTC
+    =====================================================
+    */
 
-        </svg>
+    let peerConnection = null;
 
-    </button>
+    const rtcConfig = {
 
+        iceServers: [
+            {
+                urls: [
+                    "stun:stun.l.google.com:19302",
+                    "stun:stun1.l.google.com:19302"
+                ]
+            }
+        ]
 
-    <!-- =================================================
-         KOMENTAR
-    ================================================== -->
+    };
 
-    <button
-        id="liveCommentButton"
-        class="live-comment-button"
-        type="button"
-        aria-label="Komentar"
-    >
-        💬
-    </button>
+    /*
+    =====================================================
+    STATUS
+    =====================================================
+    */
 
+    function showStatus(message) {
 
-    <!-- =================================================
-         PANEL KOMENTAR
-    ================================================== -->
+        let status =
+            document.getElementById(
+                "liveWatchStatus"
+            );
 
-    <div
-        id="liveCommentPanel"
-        class="live-comment-panel"
-        hidden
-    >
+        if (!status) {
 
-        <div class="live-comment-header">
+            status =
+                document.createElement("div");
 
-            <strong>
-                Komentar Live
-            </strong>
+            status.id =
+                "liveWatchStatus";
 
-            <button
-                id="closeLiveComments"
-                type="button"
-                aria-label="Tutup komentar"
-            >
-                ✕
-            </button>
+            status.style.position =
+                "fixed";
 
-        </div>
+            status.style.left =
+                "50%";
 
+            status.style.top =
+                "50%";
 
-        <div
-            id="liveCommentsList"
-            class="live-comments-list"
-        ></div>
+            status.style.transform =
+                "translate(-50%, -50%)";
 
+            status.style.zIndex =
+                "999999";
 
-        <form
-            id="liveCommentForm"
-            class="live-comment-form"
-        >
+            status.style.color =
+                "#ffffff";
 
-            <input
-                id="liveCommentInput"
-                type="text"
-                maxlength="200"
-                placeholder="Tambahkan komentar..."
-                autocomplete="off"
-            >
+            status.style.background =
+                "rgba(0,0,0,0.65)";
 
-            <button
-                type="submit"
-                aria-label="Kirim komentar"
-            >
-                ➤
-            </button>
+            status.style.padding =
+                "12px 18px";
 
-        </form>
+            status.style.borderRadius =
+                "12px";
 
-    </div>
+            status.style.fontSize =
+                "15px";
 
-</div>
+            status.style.textAlign =
+                "center";
 
+            status.style.pointerEvents =
+                "none";
 
-<!-- =====================================================
-     SUPABASE
-====================================================== -->
+            document.body.appendChild(status);
+        }
 
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
+        status.textContent =
+            message;
+    }
 
+    function hideStatus() {
 
-<!-- =====================================================
-     LIVE WATCH
-====================================================== -->
+        const status =
+            document.getElementById(
+                "liveWatchStatus"
+            );
 
-<script src="live-watch.js"></script>
+        if (status) {
+            status.remove();
+        }
+    }
 
+    /*
+    =====================================================
+    BUAT PEER CONNECTION
+    =====================================================
+    */
 
-<!-- =====================================================
-     SHARE
-====================================================== -->
+    function createPeerConnection() {
 
-<script src="live-share.js"></script>
+        if (peerConnection) {
 
+            try {
+                peerConnection.close();
+            } catch (error) {
+                console.warn(error);
+            }
 
-<!-- =====================================================
-     KOMENTAR
-====================================================== -->
+            peerConnection = null;
+        }
 
-<script src="live-comments.js"></script>
+        peerConnection =
+            new RTCPeerConnection(
+                rtcConfig
+            );
 
+        /*
+        -------------------------------------------------
+        TERIMA VIDEO DARI HOST
+        -------------------------------------------------
+        */
 
-</body>
+        peerConnection.ontrack =
+            event => {
 
-</html>
+                console.log(
+                    "🎥 TRACK HOST DITERIMA"
+                );
+
+                const stream =
+                    event.streams &&
+                    event.streams[0];
+
+                if (!stream) {
+                    console.warn(
+                        "⚠️ Stream Host tidak ditemukan"
+                    );
+                    return;
+                }
+
+                remoteVideo.srcObject =
+                    stream;
+
+                remoteVideo.muted =
+                    false;
+
+                remoteVideo.autoplay =
+                    true;
+
+                remoteVideo.playsInline =
+                    true;
+
+                hideStatus();
+
+                remoteVideo.play()
+                    .then(() => {
+
+                        console.log(
+                            "✅ LIVE HOST TAMPIL"
+                        );
+
+                    })
+                    .catch(error => {
+
+                        console.warn(
+                            "⚠️ Video belum bisa autoplay:",
+                            error
+                        );
+
+                        showStatus(
+                            "Tap layar untuk menonton Live."
+                        );
+
+                    });
+            };
+
+        /*
+        -------------------------------------------------
+        ICE
+        -------------------------------------------------
+        */
+
+        peerConnection.onicecandidate =
+            event => {
+
+                if (!event.candidate) {
+                    return;
+                }
+
+                channel.send({
+
+                    type: "broadcast",
+
+                    event: "viewer-ice",
+
+                    payload: {
+                        roomId: roomId,
+                        candidate:
+                            event.candidate
+                    }
+
+                }).catch(error => {
+
+                    console.error(
+                        "❌ Gagal kirim ICE:",
+                        error
+                    );
+
+                });
+
+            };
+
+        /*
+        -------------------------------------------------
+        CONNECTION STATE
+        -------------------------------------------------
+        */
+
+        peerConnection.onconnectionstatechange =
+            () => {
+
+                console.log(
+                    "🌐 WebRTC:",
+                    peerConnection.connectionState
+                );
+
+                if (
+                    peerConnection.connectionState ===
+                    "connected"
+                ) {
+
+                    hideStatus();
+
+                }
+
+                if (
+                    peerConnection.connectionState ===
+                    "disconnected" ||
+                    peerConnection.connectionState ===
+                    "failed"
+                ) {
+
+                    showStatus(
+                        "Koneksi Live terputus."
+                    );
+
+                }
+
+            };
+
+        return peerConnection;
+    }
+
+    /*
+    =====================================================
+    SUPABASE CHANNEL
+    =====================================================
+    */
+
+    const channel =
+        supabaseClient.channel(
+            `chuk-live-${roomId}`,
+            {
+                config: {
+                    broadcast: {
+                        self: false
+                    }
+                }
+            }
+        );
+
+    /*
+    =====================================================
+    TERIMA SIGNAL DARI HOST
+    =====================================================
+    */
+
+    channel.on(
+        "broadcast",
+        {
+            event: "host-offer"
+        },
+        async payload => {
+
+            console.log(
+                "📡 OFFER HOST DITERIMA"
+            );
+
+            try {
+
+                const offer =
+                    payload.payload &&
+                    payload.payload.offer;
+
+                if (!offer) {
+
+                    console.warn(
+                        "⚠️ Offer kosong"
+                    );
+
+                    return;
+                }
+
+                const pc =
+                    createPeerConnection();
+
+                await pc.setRemoteDescription(
+                    new RTCSessionDescription(
+                        offer
+                    )
+                );
+
+                const answer =
+                    await pc.createAnswer();
+
+                await pc.setLocalDescription(
+                    answer
+                );
+
+                /*
+                -----------------------------------------
+                KIRIM ANSWER KE HOST
+                -----------------------------------------
+                */
+
+                await channel.send({
+
+                    type: "broadcast",
+
+                    event: "viewer-answer",
+
+                    payload: {
+
+                        roomId: roomId,
+
+                        answer:
+                            pc.localDescription
+
+                    }
+
+                });
+
+                console.log(
+                    "📡 ANSWER DIKIRIM KE HOST"
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Gagal memproses offer:",
+                    error
+                );
+
+                showStatus(
+                    "Gagal terhubung ke Live."
+                );
+
+            }
+
+        }
+    );
+
+    /*
+    =====================================================
+    TERIMA ICE DARI HOST
+    =====================================================
+    */
+
+    channel.on(
+        "broadcast",
+        {
+            event: "host-ice"
+        },
+        async payload => {
+
+            try {
+
+                const candidate =
+                    payload.payload &&
+                    payload.payload.candidate;
+
+                if (
+                    !candidate ||
+                    !peerConnection
+                ) {
+                    return;
+                }
+
+                await peerConnection.addIceCandidate(
+                    new RTCIceCandidate(
+                        candidate
+                    )
+                );
+
+                console.log(
+                    "🧊 HOST ICE DITERIMA"
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "⚠️ Gagal tambah Host ICE:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+    /*
+    =====================================================
+    CONNECT SUPABASE
+    =====================================================
+    */
+
+    showStatus(
+        "Menghubungkan ke Live..."
+    );
+
+    channel.subscribe(
+        status => {
+
+            console.log(
+                "📡 CHANNEL:",
+                status
+            );
+
+            if (status === "SUBSCRIBED") {
+
+                console.log(
+                    "✅ Viewer terhubung ke room"
+                );
+
+                showStatus(
+                    "Menunggu Host..."
+                );
+
+            }
+
+            if (
+                status === "CHANNEL_ERROR"
+            ) {
+
+                showStatus(
+                    "Gagal terhubung ke Live."
+                );
+
+            }
+
+            if (
+                status === "TIMED_OUT"
+            ) {
+
+                showStatus(
+                    "Koneksi timeout."
+                );
+
+            }
+
+        }
+    );
+
+    /*
+    =====================================================
+    TAP UNTUK MEMULAI VIDEO
+    =====================================================
+    */
+
+    document.addEventListener(
+        "click",
+        () => {
+
+            if (
+                remoteVideo.srcObject
+            ) {
+
+                remoteVideo.play()
+                    .then(() => {
+                        hideStatus();
+                    })
+                    .catch(() => {});
+
+            }
+
+        },
+        { passive: true }
+    );
+
+    /*
+    =====================================================
+    BERSIHKAN SAAT KELUAR
+    =====================================================
+    */
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            if (peerConnection) {
+
+                try {
+                    peerConnection.close();
+                } catch (error) {}
+
+            }
+
+            try {
+                supabaseClient.removeChannel(
+                    channel
+                );
+            } catch (error) {}
+
+        }
+    );
+
+});
