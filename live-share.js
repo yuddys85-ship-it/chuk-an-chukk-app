@@ -1,77 +1,24 @@
 "use strict";
 
-/*
-=========================================================
- CHUK AN CHUKK
- LIVE SHARE
-=========================================================
-
- Host:
- live.html?room=CHUK-XXXXXX
-
- Viewer:
- live-watch.html?room=CHUK-XXXXXX
-=========================================================
-*/
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const shareButton =
         document.getElementById("shareLiveButton");
 
     if (!shareButton) {
-
-        console.error(
-            "❌ Tombol Bagikan Live tidak ditemukan"
-        );
-
+        console.error("❌ Tombol Share tidak ditemukan");
         return;
     }
 
-    /*
-    =====================================================
-    AMBIL ROOM ID
-    =====================================================
-    */
-
     function getRoomId() {
 
-        /*
-        -----------------------------------------------
-        Prioritas 1:
-        window.CHUK_LIVE_ROOM
-        -----------------------------------------------
-        */
-
-        if (
-            window.CHUK_LIVE_ROOM
-        ) {
-
+        if (window.CHUK_LIVE_ROOM) {
             return window.CHUK_LIVE_ROOM;
-
         }
 
-        /*
-        -----------------------------------------------
-        Prioritas 2:
-        window.liveRoomId
-        -----------------------------------------------
-        */
-
-        if (
-            window.liveRoomId
-        ) {
-
+        if (window.liveRoomId) {
             return window.liveRoomId;
-
         }
-
-        /*
-        -----------------------------------------------
-        Prioritas 3:
-        URL ?room=
-        -----------------------------------------------
-        */
 
         const params =
             new URLSearchParams(
@@ -79,44 +26,36 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
         return params.get("room");
-
     }
 
-    /*
-    =====================================================
-    BUAT LINK VIEWER
-    =====================================================
-    */
+    function createViewerUrl(roomId) {
 
-    function getViewerUrl() {
+        /*
+         * Ambil folder tempat live.html berada.
+         * Contoh:
+         * https://domain.com/live.html
+         *
+         * menjadi:
+         * https://domain.com/live-watch.html
+         */
 
-        const roomId =
-            getRoomId();
+        const basePath =
+            window.location.href
+                .split("?")[0]
+                .split("#")[0];
 
-        if (!roomId) {
-
-            return null;
-
-        }
+        const folder =
+            basePath.substring(
+                0,
+                basePath.lastIndexOf("/") + 1
+            );
 
         return (
-            `${window.location.origin}` +
-            `${window.location.pathname
-                .replace(
-                    /[^/]+$/,
-                    ""
-                )}` +
-            `live-watch.html?room=` +
+            folder +
+            "live-watch.html?room=" +
             encodeURIComponent(roomId)
         );
-
     }
-
-    /*
-    =====================================================
-    SHARE
-    =====================================================
-    */
 
     shareButton.addEventListener(
         "click",
@@ -128,27 +67,18 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!roomId) {
 
                 alert(
-                    "Room Live belum tersedia. Tunggu sampai Live siap."
+                    "Room Live belum siap."
                 );
 
-                console.warn(
-                    "❌ ROOM ID tidak ditemukan"
-                );
-
-                return;
-            }
-
-            const liveUrl =
-                getViewerUrl();
-
-            if (!liveUrl) {
-
-                alert(
-                    "Link Live tidak dapat dibuat."
+                console.error(
+                    "❌ Room ID tidak ditemukan"
                 );
 
                 return;
             }
+
+            const viewerUrl =
+                createViewerUrl(roomId);
 
             console.log(
                 "🏠 ROOM:",
@@ -157,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             console.log(
                 "🔗 LINK VIEWER:",
-                liveUrl
+                viewerUrl
             );
 
             const shareData = {
@@ -166,20 +96,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     "CHUK AN CHUKK — Live",
 
                 text:
-                    "Ayo lihat Live saya di Chuk an Chukk! 🔥",
+                    "Ayo nonton Live saya di Chuk an Chukk 🔥",
 
                 url:
-                    liveUrl
-
+                    viewerUrl
             };
 
-            /*
-            =================================================
-            NATIVE SHARE
-            =================================================
-            */
-
             try {
+
+                /*
+                =========================================
+                SHARE NATIVE
+                =========================================
+                */
 
                 if (
                     navigator.share
@@ -190,16 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
                     console.log(
-                        "✅ Link Viewer berhasil dibagikan"
+                        "✅ LINK VIEWER DIBAGIKAN"
                     );
 
                     return;
                 }
 
                 /*
-                =============================================
-                CLIPBOARD
-                =============================================
+                =========================================
+                COPY LINK
+                =========================================
                 */
 
                 if (
@@ -208,68 +137,53 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) {
 
                     await navigator.clipboard.writeText(
-                        liveUrl
+                        viewerUrl
                     );
 
                     alert(
                         "Link Live berhasil disalin!"
                     );
 
-                    console.log(
-                        "📋 LINK DISALIN:",
-                        liveUrl
-                    );
-
                     return;
                 }
 
                 /*
-                =============================================
+                =========================================
                 FALLBACK
-                =============================================
+                =========================================
                 */
 
-                const textArea =
+                const textarea =
                     document.createElement(
                         "textarea"
                     );
 
-                textArea.value =
-                    liveUrl;
+                textarea.value =
+                    viewerUrl;
 
-                textArea.style.position =
+                textarea.style.position =
                     "fixed";
 
-                textArea.style.left =
+                textarea.style.left =
                     "-9999px";
 
-                textArea.style.top =
-                    "0";
-
                 document.body.appendChild(
-                    textArea
+                    textarea
                 );
 
-                textArea.focus();
-                textArea.select();
+                textarea.select();
 
                 document.execCommand(
                     "copy"
                 );
 
-                textArea.remove();
+                textarea.remove();
 
                 alert(
                     "Link Live berhasil disalin!"
                 );
 
             } catch (error) {
-
-                /*
-                ---------------------------------------------
-                User membatalkan Share
-                ---------------------------------------------
-                */
 
                 if (
                     error &&
@@ -285,34 +199,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 console.error(
-                    "❌ Gagal membagikan Live:",
+                    "❌ Share gagal:",
                     error
                 );
 
-                /*
-                ---------------------------------------------
-                Coba tampilkan link jika Share gagal
-                ---------------------------------------------
-                */
-
-                try {
-
-                    await navigator.clipboard.writeText(
-                        liveUrl
-                    );
-
-                    alert(
-                        "Share gagal, tetapi link Live berhasil disalin!"
-                    );
-
-                } catch (clipboardError) {
-
-                    alert(
-                        "Gagal membagikan Live."
-                    );
-
-                }
-
+                alert(
+                    "Gagal membagikan Live."
+                );
             }
 
         }
