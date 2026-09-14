@@ -779,3 +779,54 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
+
+/* PROFILE */
+const profile = document.createElement("div");
+profile.id = "liveUserDisplay";
+
+profile.innerHTML = `
+    <img id="liveUserAvatar" src="assets/logo.png" alt="Profil">
+    <span id="liveUserName">CHUK USER</span>
+`;
+
+liveApp.appendChild(profile);
+
+
+/* ROOM ID */
+const roomIdDisplay = document.createElement("div");
+roomIdDisplay.id = "liveRoomDisplay";
+liveApp.appendChild(roomIdDisplay);
+
+
+/* NAMA ROOM */
+const roomNameDisplay = document.createElement("div");
+roomNameDisplay.id = "liveRoomNameDisplay";
+liveApp.appendChild(roomNameDisplay);
+
+
+/* DATA ROOM */
+window.liveRoom = {
+    name: "",
+    screens: 2
+};
+
+
+/* UPDATE NAMA ROOM */
+function updateRoomName() {
+    const name = window.liveRoom.name.trim();
+
+    roomNameDisplay.textContent = name;
+    roomNameDisplay.style.display =
+        name ? "block" : "none";
+}
+
+
+/* INPUT NAMA ROOM */
+input.addEventListener("input", () => {
+
+    window.liveRoom.name =
+        input.value.trim();
+
+    updateRoomName();
+
+});
