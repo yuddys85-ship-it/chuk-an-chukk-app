@@ -1,11 +1,4 @@
-  "use strict";
-
-/* =========================================================
-   CHUK AN CHUKK
-   LIVE COMMENTS
-   TIKTOK STYLE
-   SWIPE KIRI / KANAN
-   ========================================================= */
+"use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -18,90 +11,186 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeButton =
         document.getElementById("closeLiveComments");
 
+    const commentsList =
+        document.getElementById("liveCommentsList");
+
     const form =
         document.getElementById("liveCommentForm");
 
     const input =
         document.getElementById("liveCommentInput");
 
-    const list =
-        document.getElementById("liveCommentsList");
 
+    if (!commentButton || !panel || !closeButton || !commentsList || !form || !input) {
 
-    if (
-        !commentButton ||
-        !panel ||
-        !closeButton ||
-        !form ||
-        !input ||
-        !list
-    ) {
-
-        console.error(
-            "❌ Sistem komentar Live tidak lengkap"
-        );
+        console.error("❌ Elemen komentar Live tidak lengkap");
 
         return;
     }
 
 
     /* =====================================================
-       BUKA KOMENTAR
-       ===================================================== */
+       DATA KOMENTAR LOKAL
+    ===================================================== */
+
+    let comments = [
+
+        {
+            name: "ChukOfficial",
+            text: "Selamat datang di Live Chuk an Chukk 👋"
+        },
+
+        {
+            name: "Chuk User",
+            text: "Halo semuanya 🔥"
+        }
+
+    ];
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHTML(text) {
+
+        const div = document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+    }
+
+
+    /* =====================================================
+       TAMPILKAN KOMENTAR
+    ===================================================== */
+
+    function renderComments() {
+
+        commentsList.innerHTML = "";
+
+        comments.forEach(comment => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "live-comment-item";
+
+            item.innerHTML = `
+
+                <div class="live-comment-avatar">
+                    👤
+                </div>
+
+                <div class="live-comment-content">
+
+                    <div class="live-comment-name">
+                        ${escapeHTML(comment.name)}
+                    </div>
+
+                    <div class="live-comment-text">
+                        ${escapeHTML(comment.text)}
+                    </div>
+
+                </div>
+
+            `;
+
+            commentsList.appendChild(item);
+
+        });
+
+        commentsList.scrollTop =
+            commentsList.scrollHeight;
+    }
+
+
+    /* =====================================================
+       BUKA PANEL
+    ===================================================== */
 
     function openComments() {
 
         panel.hidden = false;
 
-        panel.classList.add(
-            "comments-visible"
+        /*
+         * CSS menggunakan display:flex !important.
+         * Karena itu gunakan !important juga dari JS.
+         */
+
+        panel.style.setProperty(
+            "display",
+            "flex",
+            "important"
         );
 
+        panel.style.transition =
+            "transform 0.22s ease";
+
+        panel.style.transform =
+            "translateX(0)";
+
+        renderComments();
+
+        console.log("💬 Komentar Live dibuka");
     }
 
 
     /* =====================================================
-       TUTUP KOMENTAR
-       ===================================================== */
+       TUTUP PANEL
+    ===================================================== */
 
     function closeComments() {
 
-        panel.classList.remove(
-            "comments-visible"
-        );
+        panel.style.transition =
+            "transform 0.22s ease";
 
-        panel.hidden = true;
+        panel.style.transform =
+            "translateX(100%)";
 
-        input.blur();
+        setTimeout(() => {
 
+            panel.hidden = true;
+
+            panel.style.setProperty(
+                "display",
+                "none",
+                "important"
+            );
+
+            panel.style.transform =
+                "translateX(0)";
+
+        }, 220);
+
+        console.log("💬 Komentar Live ditutup");
     }
 
 
     /* =====================================================
        TOMBOL KOMENTAR
-       ===================================================== */
+    ===================================================== */
 
-    commentButton.addEventListener(
-        "click",
-        () => {
+    commentButton.addEventListener("click", () => {
 
-            if (panel.hidden) {
+        if (panel.hidden) {
 
-                openComments();
+            openComments();
 
-            } else {
+        } else {
 
-                closeComments();
-
-            }
+            closeComments();
 
         }
-    );
+
+    });
 
 
     /* =====================================================
        TOMBOL X
-       ===================================================== */
+    ===================================================== */
 
     closeButton.addEventListener(
         "click",
@@ -111,129 +200,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        KIRIM KOMENTAR
-       ===================================================== */
+    ===================================================== */
 
-    form.addEventListener(
-        "submit",
-        (event) => {
+    form.addEventListener("submit", event => {
 
-            event.preventDefault();
+        event.preventDefault();
 
+        const text =
+            input.value.trim();
 
-            const text =
-                input.value.trim();
-
-
-            if (!text) return;
-
-
-            addComment(
-                "CHUK USER",
-                text
-            );
-
-
-            input.value = "";
-
+        if (!text) {
+            return;
         }
-    );
 
 
-    /* =====================================================
-       TAMBAH KOMENTAR
-       ===================================================== */
+        comments.push({
 
-    function addComment(
-        username,
-        text
-    ) {
+            name: "Anda",
 
-        const comment =
-            document.createElement("div");
+            text: text
+
+        });
 
 
-        comment.className =
-            "live-comment-item";
+        input.value = "";
 
+        renderComments();
 
-        comment.innerHTML = `
-
-            <div class="live-comment-avatar">
-                👤
-            </div>
-
-            <div class="live-comment-content">
-
-                <div class="live-comment-name">
-                    ${escapeHTML(username)}
-                </div>
-
-                <div class="live-comment-text">
-                    ${escapeHTML(text)}
-                </div>
-
-            </div>
-
-        `;
-
-
-        list.appendChild(
-            comment
+        console.log(
+            "💬 Komentar dikirim:",
+            text
         );
 
-
-        list.scrollTop =
-            list.scrollHeight;
-
-    }
+    });
 
 
     /* =====================================================
-       SWIPE
-       ===================================================== */
+       SWIPE PANEL KE KANAN
+       HANYA PANEL KOMENTAR
+    ===================================================== */
 
     let startX = 0;
     let startY = 0;
 
-    let trackingSwipe = false;
+    let currentX = 0;
+
+    let dragging = false;
+
+    let horizontalSwipe = false;
 
 
-    document.addEventListener(
+    panel.addEventListener(
         "touchstart",
-        (event) => {
+        event => {
 
-            /* Jangan ganggu input */
-
-            if (
-                event.target.closest(
-                    "input, textarea, button"
-                )
-            ) {
-
-                trackingSwipe = false;
-
+            if (panel.hidden) {
                 return;
             }
 
-
-            if (
-                event.touches.length !== 1
-            ) {
-
-                trackingSwipe = false;
-
-                return;
-            }
-
+            const touch =
+                event.touches[0];
 
             startX =
-                event.touches[0].clientX;
+                touch.clientX;
 
             startY =
-                event.touches[0].clientY;
+                touch.clientY;
 
+            currentX =
+                startX;
 
-            trackingSwipe = true;
+            dragging = true;
+
+            horizontalSwipe = false;
+
+            panel.style.transition =
+                "none";
 
         },
         {
@@ -242,143 +284,156 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    document.addEventListener(
-        "touchend",
-        (event) => {
+    panel.addEventListener(
+        "touchmove",
+        event => {
 
-            if (!trackingSwipe) {
+            if (!dragging) {
                 return;
             }
 
+            const touch =
+                event.touches[0];
 
-            trackingSwipe = false;
-
-
-            if (
-                event.changedTouches.length !== 1
-            ) {
-                return;
-            }
-
-
-            const endX =
-                event.changedTouches[0].clientX;
-
-            const endY =
-                event.changedTouches[0].clientY;
-
+            currentX =
+                touch.clientX;
 
             const deltaX =
-                endX - startX;
+                currentX - startX;
 
             const deltaY =
-                endY - startY;
+                touch.clientY - startY;
 
 
-            /* =================================================
-               HANYA SWIPE HORIZONTAL
-               ================================================= */
+            /*
+             * Tentukan apakah gerakan horizontal.
+             */
 
-            if (
-                Math.abs(deltaX) <
-                Math.abs(deltaY)
-            ) {
+            if (!horizontalSwipe) {
 
-                return;
+                if (
+                    Math.abs(deltaX) > 10 &&
+                    Math.abs(deltaX) > Math.abs(deltaY)
+                ) {
+
+                    horizontalSwipe = true;
+
+                }
+
             }
 
 
-            /* =================================================
-               MINIMAL JARAK SWIPE
-               ================================================= */
-
-            const MIN_SWIPE = 80;
-
+            /*
+             * Hanya geser ke kanan.
+             */
 
             if (
-                Math.abs(deltaX) <
-                MIN_SWIPE
+                horizontalSwipe &&
+                deltaX > 0
             ) {
 
+                event.preventDefault();
+
+                panel.style.transform =
+                    `translateX(${deltaX}px)`;
+
+            }
+
+        },
+        {
+            passive: false
+        }
+    );
+
+
+    panel.addEventListener(
+        "touchend",
+        () => {
+
+            if (!dragging) {
                 return;
             }
 
+            dragging = false;
 
-            /* =================================================
-               SWIPE KIRI
-               BUKA KOMENTAR
-               ================================================= */
+            const deltaX =
+                currentX - startX;
 
-            if (
-                deltaX < 0
-            ) {
 
-                openComments();
+            /*
+             * Jika digeser cukup jauh ke kanan,
+             * panel benar-benar ditutup.
+             */
 
-                console.log(
-                    "👈 Swipe kiri → komentar muncul"
+            const threshold =
+                Math.max(
+                    80,
+                    panel.offsetWidth * 0.25
                 );
 
-                return;
-            }
-
-
-            /* =================================================
-               SWIPE KANAN
-               TUTUP KOMENTAR
-               ================================================= */
 
             if (
-                deltaX > 0
+                horizontalSwipe &&
+                deltaX >= threshold
             ) {
 
                 closeComments();
 
-                console.log(
-                    "👉 Swipe kanan → komentar hilang"
-                );
-
+                return;
             }
 
-        },
-        {
-            passive: true
+
+            /*
+             * Kalau belum cukup jauh,
+             * kembali ke posisi awal.
+             */
+
+            panel.style.transition =
+                "transform 0.22s ease";
+
+            panel.style.transform =
+                "translateX(0)";
+
+        }
+    );
+
+
+    panel.addEventListener(
+        "touchcancel",
+        () => {
+
+            dragging = false;
+
+            panel.style.transition =
+                "transform 0.22s ease";
+
+            panel.style.transform =
+                "translateX(0)";
+
         }
     );
 
 
     /* =====================================================
-       KOMENTAR AWAL
-       ================================================= */
+       AWAL
+    ===================================================== */
 
-    addComment(
-        "ChukOfficial",
-        "Selamat datang di Live CHUK AN CHUKK 👋"
+    panel.hidden = true;
+
+    panel.style.setProperty(
+        "display",
+        "none",
+        "important"
     );
 
+    panel.style.transform =
+        "translateX(0)";
 
-    addComment(
-        "CHUK USER",
-        "Halo semuanya 🔥"
+    renderComments();
+
+
+    console.log(
+        "✅ LIVE COMMENTS AKTIF"
     );
 
-
-    /* =====================================================
-       ESCAPE HTML
-       ================================================= */
-
-    function escapeHTML(text) {
-
-        const div =
-            document.createElement(
-                "div"
-            );
-
-        div.textContent =
-            text;
-
-        return div.innerHTML;
-
-    }
-
-});          
+});
