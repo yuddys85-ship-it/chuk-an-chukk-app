@@ -1115,3 +1115,31 @@ body {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
+
+/* =========================================================
+   HILANGKAN TULISAN DI PANEL MENU LIVE
+   ========================================================= */
+
+/* Judul Room */
+#roomPanel h1,
+#roomPanel h2,
+#roomPanel h3,
+#roomPanel .room-title,
+#roomPanel .room-label {
+    display: none !important;
+}
+
+/* Tulisan Live Host */
+#roomPanel .live-host,
+#roomPanel .host-title,
+#roomPanel .host-label {
+    display: none !important;
+}
+
+/* Tulisan Pilih jumlah layar berbagi */
+#roomPanel .share-title,
+#roomPanel .screen-title,
+#roomPanel .screen-label,
+#roomPanel p {
+    display: none !important;
+}
