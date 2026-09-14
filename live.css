@@ -884,3 +884,114 @@ body {
         font-size: 12px !important;
     }
 }
+
+ /* =========================================================
+   PROFILE + ROOM — KIRI ATAS
+   ========================================================= */
+
+#liveUserDisplay {
+    position: fixed !important;
+    top: 14px !important;
+    left: 14px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+
+    z-index: 99998 !important;
+    pointer-events: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+#liveUserAvatar {
+    width: 42px !important;
+    height: 42px !important;
+
+    border-radius: 50% !important;
+    object-fit: cover !important;
+
+    border: 2px solid #fff !important;
+    background: transparent !important;
+}
+
+#liveUserName {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+
+/* =========================================================
+   ROOM — TEPAT DI BAWAH PROFIL
+   HANYA MUNCUL SETELAH ROOM DIBUAT
+   ========================================================= */
+
+#liveRoomDisplay {
+    position: fixed !important;
+
+    top: 61px !important;
+    left: 18px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: transparent !important;
+    border: none !important;
+
+    color: #fff !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    text-align: left !important;
+
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+
+    z-index: 99998 !important;
+
+    display: none !important;
+}
+
+
+/* ROOM SUDAH DIBUAT */
+#liveRoomDisplay.room-active {
+    display: block !important;
+}
+
+
+/* =========================================================
+   HP KECIL
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    #liveUserDisplay {
+        top: 10px !important;
+        left: 10px !important;
+    }
+
+    #liveUserAvatar {
+        width: 38px !important;
+        height: 38px !important;
+    }
+
+    #liveUserName {
+        font-size: 14px !important;
+    }
+
+    #liveRoomDisplay {
+        top: 54px !important;
+        left: 12px !important;
+        font-size: 12px !important;
+    }
+}
