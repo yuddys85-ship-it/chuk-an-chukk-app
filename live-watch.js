@@ -1,138 +1,64 @@
 "use strict";
 
-/*
-=========================================================
- CHUK AN CHUKK
- LIVE WATCH — DIAGNOSTIC VIEWER
-=========================================================
-
- VIEWER:
- - Tidak membuka kamera
- - Tidak membuka microphone
- - Hanya menerima video Host
- - Room dari URL:
-   live-watch.html?room=CHUK-XXXXXX
-
- STATUS KONEKSI DITAMPILKAN LANGSUNG DI LAYAR
-=========================================================
-*/
-
 document.addEventListener("DOMContentLoaded", async () => {
 
-    console.log("🚀 LIVE WATCH START");
+    console.log("🚀 CHUK AN CHUKK — SUPABASE DIAGNOSTIC");
 
-    const remoteVideo =
-        document.getElementById("chukRemoteLive");
+    const video = document.getElementById("chukRemoteLive");
 
-    if (!remoteVideo) {
-        console.error("❌ VIDEO VIEWER TIDAK DITEMUKAN");
+    /* =====================================================
+       STATUS
+    ===================================================== */
+
+    const box = document.createElement("div");
+
+    box.id = "supabaseDebug";
+
+    Object.assign(box.style, {
+        position: "fixed",
+        left: "10px",
+        right: "10px",
+        bottom: "15px",
+        zIndex: "999999",
+        padding: "16px",
+        borderRadius: "14px",
+        background: "rgba(0,0,0,.92)",
+        color: "#fff",
+        fontFamily: "Arial,sans-serif",
+        fontSize: "14px",
+        lineHeight: "1.55",
+        textAlign: "center",
+        wordBreak: "break-word"
+    });
+
+    document.body.appendChild(box);
+
+    function show(message) {
+
+        console.log("📺", message);
+
+        box.innerHTML = message;
+    }
+
+
+    /* =====================================================
+       VIDEO CHECK
+    ===================================================== */
+
+    if (!video) {
+
+        show(
+            "🔴 VIDEO ERROR<br><br>" +
+            "#chukRemoteLive tidak ditemukan."
+        );
+
         return;
     }
 
-    remoteVideo.autoplay = true;
-    remoteVideo.playsInline = true;
-    remoteVideo.muted = true;
 
-    /*
-    =====================================================
-    STATUS BOX
-    =====================================================
-    */
-
-    const statusBox =
-        document.createElement("div");
-
-    statusBox.id =
-        "chukLiveDiagnostic";
-
-    statusBox.style.position =
-        "fixed";
-
-    statusBox.style.left =
-        "12px";
-
-    statusBox.style.right =
-        "12px";
-
-    statusBox.style.bottom =
-        "20px";
-
-    statusBox.style.zIndex =
-        "999999";
-
-    statusBox.style.padding =
-        "14px";
-
-    statusBox.style.background =
-        "rgba(0,0,0,.85)";
-
-    statusBox.style.color =
-        "#fff";
-
-    statusBox.style.borderRadius =
-        "14px";
-
-    statusBox.style.fontFamily =
-        "Arial,sans-serif";
-
-    statusBox.style.fontSize =
-        "14px";
-
-    statusBox.style.lineHeight =
-        "1.5";
-
-    statusBox.style.textAlign =
-        "center";
-
-    statusBox.style.pointerEvents =
-        "none";
-
-    document.body.appendChild(
-        statusBox
-    );
-
-
-    function status(message) {
-
-        console.log(
-            "📺 LIVE STATUS:",
-            message
-        );
-
-        statusBox.innerHTML =
-            message;
-    }
-
-
-    function success(message) {
-
-        console.log(
-            "✅",
-            message
-        );
-
-        statusBox.innerHTML =
-            "🟢 " + message;
-    }
-
-
-    function error(message) {
-
-        console.error(
-            "❌",
-            message
-        );
-
-        statusBox.innerHTML =
-            "🔴 " + message;
-    }
-
-
-    /*
-    =====================================================
-    ROOM
-    =====================================================
-    */
+    /* =====================================================
+       ROOM CHECK
+    ===================================================== */
 
     const params =
         new URLSearchParams(
@@ -142,32 +68,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     const roomId =
         params.get("room");
 
+
     if (!roomId) {
 
-        error(
-            "ROOM TIDAK DITEMUKAN"
+        show(
+            "🔴 ROOM ERROR<br><br>" +
+            "Room tidak ditemukan di URL."
         );
 
         return;
     }
 
-    console.log(
-        "🏠 ROOM:",
-        roomId
-    );
 
-    status(
-        "🏠 Room: " +
-        roomId +
-        "<br>⏳ Menyiapkan koneksi..."
+    show(
+        "🏠 ROOM<br>" +
+        "<b>" + roomId + "</b><br><br>" +
+        "⏳ Memeriksa Supabase..."
     );
 
 
-    /*
-    =====================================================
-    SUPABASE
-    =====================================================
-    */
+    /* =====================================================
+       SUPABASE CONFIG
+    ===================================================== */
 
     const SUPABASE_URL =
         "https://aoaqvbrxgtfuvyiscpic.supabase.co";
@@ -176,918 +98,430 @@ document.addEventListener("DOMContentLoaded", async () => {
         "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
 
 
+    /* =====================================================
+       SUPABASE SDK
+    ===================================================== */
+
     if (
         !window.supabase ||
         !window.supabase.createClient
     ) {
 
-        error(
-            "SUPABASE SDK TIDAK TERSEDIA"
+        show(
+            "🔴 SUPABASE SDK ERROR<br><br>" +
+            "Supabase JS belum tersedia."
         );
 
         return;
     }
 
 
-    let supabaseClient;
+    let client;
+
 
     try {
 
-        supabaseClient =
+        client =
             window.supabase.createClient(
                 SUPABASE_URL,
                 SUPABASE_KEY
             );
 
         console.log(
-            "✅ SUPABASE CLIENT SIAP"
+            "✅ Supabase client dibuat"
         );
 
     } catch (err) {
 
-        console.error(
-            err
-        );
+        console.error(err);
 
-        error(
-            "GAGAL MEMBUAT SUPABASE CLIENT"
+        show(
+            "🔴 SUPABASE CLIENT ERROR<br><br>" +
+            "<small>" +
+            String(
+                err.message || err
+            ) +
+            "</small>"
         );
 
         return;
     }
 
 
-    /*
-    =====================================================
-    VIEWER ID
-    =====================================================
-    */
+    /* =====================================================
+       VIEWER ID
+    ===================================================== */
 
     const viewerId =
         "viewer-" +
         Math.random()
             .toString(36)
-            .substring(2, 10) +
-        "-" +
-        Date.now().toString(36);
+            .substring(2, 10);
 
 
     console.log(
-        "👀 VIEWER ID:",
+        "👀 VIEWER:",
         viewerId
     );
 
 
-    /*
-    =====================================================
-    WEBRTC
-    =====================================================
-    */
+    /* =====================================================
+       CHANNEL NAME
+    ===================================================== */
 
-    const rtcConfig = {
-
-        iceServers: [
-
-            {
-                urls:
-                    "stun:stun.l.google.com:19302"
-            },
-
-            {
-                urls:
-                    "stun:stun1.l.google.com:19302"
-            }
-
-        ]
-
-    };
+    const channelName =
+        "chuk-live-" + roomId;
 
 
-    let peerConnection =
-        null;
-
-    let remoteDescriptionReady =
-        false;
-
-    const pendingIce =
-        [];
+    console.log(
+        "📡 CHANNEL:",
+        channelName
+    );
 
 
-    /*
-    =====================================================
-    CHANNEL
-    =====================================================
-    */
+    show(
+        "🟢 SUPABASE CLIENT OK<br><br>" +
+        "📡 Channel:<br>" +
+        "<b>" +
+        channelName +
+        "</b><br><br>" +
+        "⏳ Menghubungkan Realtime..."
+    );
 
-    const channel =
-        supabaseClient.channel(
-            "chuk-live-" + roomId,
-            {
-                config: {
-                    broadcast: {
-                        self: false
+
+    /* =====================================================
+       CHANNEL
+    ===================================================== */
+
+    let channel;
+
+    try {
+
+        channel =
+            client.channel(
+                channelName,
+                {
+                    config: {
+                        broadcast: {
+                            self: false
+                        }
                     }
                 }
+            );
+
+    } catch (err) {
+
+        console.error(
+            "CHANNEL CREATE ERROR:",
+            err
+        );
+
+        show(
+            "🔴 CHANNEL CREATE ERROR<br><br>" +
+            "<small>" +
+            String(
+                err.message || err
+            ) +
+            "</small>"
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       LISTEN HOST OFFER
+    ===================================================== */
+
+    channel.on(
+        "broadcast",
+        {
+            event: "host-offer"
+        },
+        payload => {
+
+            console.log(
+                "📡 HOST OFFER:",
+                payload
+            );
+
+            show(
+                "🟢 SUPABASE TERHUBUNG 🔥<br><br>" +
+                "📡 Host Offer diterima.<br>" +
+                "WebRTC siap dilanjutkan."
+            );
+        }
+    );
+
+
+    /* =====================================================
+       LISTEN HOST ICE
+    ===================================================== */
+
+    channel.on(
+        "broadcast",
+        {
+            event: "host-ice"
+        },
+        payload => {
+
+            console.log(
+                "🧊 HOST ICE:",
+                payload
+            );
+        }
+    );
+
+
+    /* =====================================================
+       SUBSCRIBE
+    ===================================================== */
+
+    try {
+
+        channel.subscribe(
+            async status => {
+
+                console.log(
+                    "📡 SUPABASE STATUS:",
+                    status
+                );
+
+
+                /* =========================================
+                   BERHASIL
+                ========================================= */
+
+                if (
+                    status === "SUBSCRIBED"
+                ) {
+
+                    show(
+                        "🟢 SUPABASE REALTIME OK 🔥<br><br>" +
+                        "Room: <b>" +
+                        roomId +
+                        "</b><br><br>" +
+                        "⏳ Mengirim Viewer Join..."
+                    );
+
+
+                    try {
+
+                        const result =
+                            await channel.send({
+
+                                type:
+                                    "broadcast",
+
+                                event:
+                                    "viewer-join",
+
+                                payload: {
+
+                                    roomId:
+                                        roomId,
+
+                                    viewerId:
+                                        viewerId
+
+                                }
+
+                            });
+
+
+                        console.log(
+                            "📡 VIEWER JOIN RESULT:",
+                            result
+                        );
+
+
+                        show(
+                            "🟢 VIEWER TERHUBUNG KE SUPABASE 🔥<br><br>" +
+                            "Room: <b>" +
+                            roomId +
+                            "</b><br><br>" +
+                            "⏳ Menunggu Host..."
+                        );
+
+
+                    } catch (sendError) {
+
+                        console.error(
+                            "❌ SEND ERROR:",
+                            sendError
+                        );
+
+
+                        show(
+                            "🔴 SUPABASE SEND ERROR<br><br>" +
+                            "<small>" +
+                            formatError(
+                                sendError
+                            ) +
+                            "</small>"
+                        );
+                    }
+
+                }
+
+
+                /* =========================================
+                   CHANNEL ERROR
+                ========================================= */
+
+                else if (
+                    status === "CHANNEL_ERROR"
+                ) {
+
+                    show(
+                        "🔴 SUPABASE CHANNEL ERROR<br><br>" +
+                        "Channel:<br>" +
+                        "<b>" +
+                        channelName +
+                        "</b><br><br>" +
+                        "⚠️ Realtime Broadcast gagal.<br><br>" +
+                        "Cek detail Console browser."
+                    );
+                }
+
+
+                /* =========================================
+                   TIMEOUT
+                ========================================= */
+
+                else if (
+                    status === "TIMED_OUT"
+                ) {
+
+                    show(
+                        "🔴 SUPABASE TIMEOUT<br><br>" +
+                        "Realtime tidak merespons.<br><br>" +
+                        "Periksa koneksi internet."
+                    );
+                }
+
+
+                /* =========================================
+                   CLOSED
+                ========================================= */
+
+                else if (
+                    status === "CLOSED"
+                ) {
+
+                    show(
+                        "🟡 SUPABASE CHANNEL DITUTUP"
+                    );
+                }
+
             }
         );
 
+    } catch (err) {
 
-    /*
-    =====================================================
-    ADD ICE
-    =====================================================
-    */
+        console.error(
+            "❌ SUBSCRIBE ERROR:",
+            err
+        );
 
-    async function addIce(candidate) {
+        show(
+            "🔴 SUPABASE SUBSCRIBE ERROR<br><br>" +
+            "<small>" +
+            formatError(err) +
+            "</small>"
+        );
 
-        if (!candidate) {
-            return;
+        return;
+    }
+
+
+    /* =====================================================
+       FORMAT ERROR
+    ===================================================== */
+
+    function formatError(err) {
+
+        if (!err) {
+            return "Unknown error";
         }
-
-
-        if (
-            !peerConnection ||
-            !remoteDescriptionReady
-        ) {
-
-            pendingIce.push(
-                candidate
-            );
-
-            console.log(
-                "⏳ ICE MASUK ANTREAN:",
-                pendingIce.length
-            );
-
-            return;
-        }
-
 
         try {
 
-            await peerConnection.addIceCandidate(
-                new RTCIceCandidate(candidate)
+            return JSON.stringify(
+                err,
+                Object.getOwnPropertyNames(err),
+                2
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /\n/g,
+                "<br>"
             );
 
-            console.log(
-                "🧊 ICE HOST DITAMBAHKAN"
-            );
+        } catch (e) {
 
-        } catch (err) {
-
-            console.error(
-                "❌ ICE GAGAL:",
+            return String(
+                err.message ||
                 err
             );
         }
     }
 
 
-    /*
-    =====================================================
-    FLUSH ICE
-    =====================================================
-    */
+    /* =====================================================
+       GLOBAL ERROR
+    ===================================================== */
 
-    async function flushIce() {
+    window.addEventListener(
+        "error",
+        event => {
 
-        if (
-            !peerConnection ||
-            !remoteDescriptionReady
-        ) {
-            return;
-        }
-
-
-        console.log(
-            "🧊 MEMPROSES ICE:",
-            pendingIce.length
-        );
-
-
-        while (
-            pendingIce.length > 0
-        ) {
-
-            const candidate =
-                pendingIce.shift();
-
-            try {
-
-                await peerConnection.addIceCandidate(
-                    new RTCIceCandidate(candidate)
-                );
-
-                console.log(
-                    "✅ ICE ANTREAN OK"
-                );
-
-            } catch (err) {
-
-                console.error(
-                    "❌ ICE ANTREAN GAGAL:",
-                    err
-                );
-            }
-        }
-    }
-
-
-    /*
-    =====================================================
-    CREATE PEER
-    =====================================================
-    */
-
-    function createPeer() {
-
-        if (peerConnection) {
-
-            try {
-                peerConnection.close();
-            } catch (e) {}
-
-        }
-
-
-        console.log(
-            "🔗 MEMBUAT PEER CONNECTION"
-        );
-
-
-        peerConnection =
-            new RTCPeerConnection(
-                rtcConfig
+            console.error(
+                "GLOBAL ERROR:",
+                event.error
             );
 
-
-        /*
-        ================================================
-        TRACK HOST
-        ================================================
-        */
-
-        peerConnection.ontrack =
-            event => {
-
-                console.log(
-                    "🎥 TRACK HOST DITERIMA"
-                );
-
-
-                let stream;
-
-
-                if (
-                    event.streams &&
-                    event.streams.length > 0
-                ) {
-
-                    stream =
-                        event.streams[0];
-
-                } else {
-
-                    stream =
-                        new MediaStream();
-
-                    stream.addTrack(
-                        event.track
-                    );
-                }
-
-
-                remoteVideo.srcObject =
-                    stream;
-
-
-                remoteVideo.muted =
-                    true;
-
-
-                remoteVideo.play()
-                    .then(() => {
-
-                        success(
-                            "LIVE TERHUBUNG 🔥"
-                        );
-
-                    })
-                    .catch(err => {
-
-                        console.warn(
-                            "⚠️ VIDEO PLAY GAGAL:",
-                            err
-                        );
-
-                        status(
-                            "🟡 STREAM SUDAH MASUK<br>" +
-                            "Tap layar untuk memutar."
-                        );
-
-                    });
-            };
-
-
-        /*
-        ================================================
-        ICE VIEWER
-        ================================================
-        */
-
-        peerConnection.onicecandidate =
-            async event => {
-
-                if (
-                    !event.candidate
-                ) {
-                    return;
-                }
-
-
-                console.log(
-                    "🧊 ICE VIEWER DIKIRIM"
-                );
-
-
-                try {
-
-                    await channel.send({
-
-                        type:
-                            "broadcast",
-
-                        event:
-                            "viewer-ice",
-
-                        payload: {
-
-                            roomId:
-                                roomId,
-
-                            viewerId:
-                                viewerId,
-
-                            candidate:
-                                event.candidate
-                        }
-
-                    });
-
-                } catch (err) {
-
-                    console.error(
-                        "❌ GAGAL KIRIM ICE VIEWER:",
-                        err
-                    );
-                }
-            };
-
-
-        /*
-        ================================================
-        CONNECTION STATE
-        ================================================
-        */
-
-        peerConnection.onconnectionstatechange =
-            () => {
-
-                const state =
-                    peerConnection.connectionState;
-
-
-                console.log(
-                    "🌐 WEBRTC:",
-                    state
-                );
-
-
-                if (
-                    state === "new"
-                ) {
-
-                    status(
-                        "🔵 WebRTC siap..."
-                    );
-
-                }
-
-
-                if (
-                    state === "connecting"
-                ) {
-
-                    status(
-                        "🟡 Menghubungkan ke Host..."
-                    );
-
-                }
-
-
-                if (
-                    state === "connected"
-                ) {
-
-                    success(
-                        "LIVE TERHUBUNG 🔥"
-                    );
-
-                }
-
-
-                if (
-                    state === "disconnected"
-                ) {
-
-                    error(
-                        "Koneksi Live terputus."
-                    );
-
-                }
-
-
-                if (
-                    state === "failed"
-                ) {
-
-                    error(
-                        "WEBRTC GAGAL TERHUBUNG"
-                    );
-
-                    statusBox.innerHTML +=
-                        "<br><small>" +
-                        "Kemungkinan jaringan/NAT. " +
-                        "Kita perlu cek TURN." +
-                        "</small>";
-
-                }
-
-
-                if (
-                    state === "closed"
-                ) {
-
-                    error(
-                        "Koneksi Live ditutup."
-                    );
-                }
-
-            };
-
-
-        /*
-        ================================================
-        ICE CONNECTION STATE
-        ================================================
-        */
-
-        peerConnection.oniceconnectionstatechange =
-            () => {
-
-                const state =
-                    peerConnection.iceConnectionState;
-
-
-                console.log(
-                    "🧊 ICE STATE:",
-                    state
-                );
-
-
-                if (
-                    state === "checking"
-                ) {
-
-                    status(
-                        "🟡 Memeriksa koneksi jaringan..."
-                    );
-
-                }
-
-
-                if (
-                    state === "connected"
-                ) {
-
-                    console.log(
-                        "✅ ICE CONNECTED"
-                    );
-
-                }
-
-
-                if (
-                    state === "completed"
-                ) {
-
-                    console.log(
-                        "✅ ICE COMPLETED"
-                    );
-
-                }
-
-
-                if (
-                    state === "failed"
-                ) {
-
-                    error(
-                        "ICE GAGAL — jaringan tidak bisa terhubung."
-                    );
-
-                }
-
-            };
-
-
-        return peerConnection;
-    }
-
-
-    /*
-    =====================================================
-    HOST OFFER
-    =====================================================
-    */
-
-    channel.on(
-        "broadcast",
-        {
-            event:
-                "host-offer"
-        },
-
-        async payload => {
-
-            console.log(
-                "📡 HOST OFFER DITERIMA"
-            );
-
-
-            const data =
-                payload.payload || {};
-
-
             if (
-                data.roomId &&
-                data.roomId !== roomId
-            ) {
-                return;
-            }
-
-
-            if (
-                data.viewerId &&
-                data.viewerId !== viewerId
+                event.error
             ) {
 
-                console.log(
-                    "ℹ️ OFFER UNTUK VIEWER LAIN"
-                );
-
-                return;
-            }
-
-
-            if (!data.offer) {
-
-                error(
-                    "OFFER HOST KOSONG"
-                );
-
-                return;
-            }
-
-
-            try {
-
-                status(
-                    "📡 Offer Host diterima..."
-                );
-
-
-                const pc =
-                    createPeer();
-
-
-                await pc.setRemoteDescription(
-                    new RTCSessionDescription(
-                        data.offer
-                    )
-                );
-
-
-                remoteDescriptionReady =
-                    true;
-
-
-                console.log(
-                    "✅ REMOTE DESCRIPTION SIAP"
-                );
-
-
-                await flushIce();
-
-
-                const answer =
-                    await pc.createAnswer();
-
-
-                await pc.setLocalDescription(
-                    answer
-                );
-
-
-                console.log(
-                    "📡 MENGIRIM ANSWER KE HOST"
-                );
-
-
-                await channel.send({
-
-                    type:
-                        "broadcast",
-
-                    event:
-                        "viewer-answer",
-
-                    payload: {
-
-                        roomId:
-                            roomId,
-
-                        viewerId:
-                            viewerId,
-
-                        answer:
-                            pc.localDescription
-                    }
-
-                });
-
-
-                success(
-                    "Answer terkirim. Menunggu video..."
-                );
-
-
-            } catch (err) {
-
-                console.error(
-                    "❌ OFFER ERROR:",
-                    err
-                );
-
-
-                error(
-                    "Gagal memproses Offer Host."
+                show(
+                    "🔴 JAVASCRIPT ERROR<br><br>" +
+                    "<small>" +
+                    formatError(
+                        event.error
+                    ) +
+                    "</small>"
                 );
             }
-
         }
     );
 
 
-    /*
-    =====================================================
-    HOST ICE
-    =====================================================
-    */
-
-    channel.on(
-        "broadcast",
-        {
-            event:
-                "host-ice"
-        },
-
-        async payload => {
-
-            console.log(
-                "🧊 HOST ICE DITERIMA"
-            );
-
-
-            const data =
-                payload.payload || {};
-
-
-            if (
-                data.roomId &&
-                data.roomId !== roomId
-            ) {
-                return;
-            }
-
-
-            if (
-                data.viewerId &&
-                data.viewerId !== viewerId
-            ) {
-                return;
-            }
-
-
-            if (
-                !data.candidate
-            ) {
-                return;
-            }
-
-
-            await addIce(
-                data.candidate
-            );
-
-        }
-    );
-
-
-    /*
-    =====================================================
-    SUBSCRIBE
-    =====================================================
-    */
-
-    status(
-        "🔄 Menghubungkan ke server..."
-    );
-
-
-    channel.subscribe(
-        async state => {
-
-            console.log(
-                "📡 CHANNEL:",
-                state
-            );
-
-
-            if (
-                state === "SUBSCRIBED"
-            ) {
-
-                console.log(
-                    "✅ CHANNEL SUBSCRIBED"
-                );
-
-
-                status(
-                    "🟢 Terhubung ke server<br>" +
-                    "⏳ Menunggu Host..."
-                );
-
-
-                try {
-
-                    await channel.send({
-
-                        type:
-                            "broadcast",
-
-                        event:
-                            "viewer-join",
-
-                        payload: {
-
-                            roomId:
-                                roomId,
-
-                            viewerId:
-                                viewerId
-                        }
-
-                    });
-
-
-                    console.log(
-                        "📡 VIEWER-JOIN TERKIRIM"
-                    );
-
-
-                    status(
-                        "🟢 Terhubung ke room<br>" +
-                        "⏳ Menunggu Host..."
-                    );
-
-
-                } catch (err) {
-
-                    console.error(
-                        "❌ VIEWER-JOIN GAGAL:",
-                        err
-                    );
-
-
-                    error(
-                        "Gagal mengirim koneksi ke Host."
-                    );
-                }
-
-            }
-
-
-            if (
-                state === "CHANNEL_ERROR"
-            ) {
-
-                error(
-                    "SUPABASE CHANNEL ERROR"
-                );
-
-            }
-
-
-            if (
-                state === "TIMED_OUT"
-            ) {
-
-                error(
-                    "Koneksi server TIMEOUT"
-                );
-
-            }
-
-        }
-    );
-
-
-    /*
-    =====================================================
-    TAP VIDEO
-    =====================================================
-    */
-
-    document.addEventListener(
-        "click",
-        () => {
-
-            if (
-                remoteVideo.srcObject
-            ) {
-
-                remoteVideo.play()
-                    .then(() => {
-
-                        if (
-                            peerConnection &&
-                            peerConnection.connectionState ===
-                            "connected"
-                        ) {
-
-                            success(
-                                "LIVE TERHUBUNG 🔥"
-                            );
-                        }
-
-                    })
-                    .catch(() => {});
-
-            }
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    /*
-    =====================================================
-    CLEANUP
-    =====================================================
-    */
+    /* =====================================================
+       UNLOAD
+    ===================================================== */
 
     window.addEventListener(
         "beforeunload",
         () => {
 
-            if (peerConnection) {
-
-                try {
-                    peerConnection.close();
-                } catch (e) {}
-
-                peerConnection =
-                    null;
-            }
-
-
             try {
 
-                supabaseClient.removeChannel(
+                client.removeChannel(
                     channel
                 );
 
             } catch (e) {}
 
         }
-    );
-
-
-    console.log(
-        "✅ LIVE WATCH DIAGNOSTIC SIAP"
     );
 
 });
