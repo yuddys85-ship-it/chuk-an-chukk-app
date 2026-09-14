@@ -461,18 +461,15 @@ body {
 
 /* =========================================================
    USER PROFILE DI LIVE
-   POSISI: 1/4 LAYAR DARI BAWAH
+   POSISI: TEPAT DI BAWAH NAMA ROOM
    ========================================================= */
 
 #liveUserDisplay {
 
     position: fixed !important;
 
+    top: 62px !important;
     left: 18px !important;
-
-    bottom: 25vh !important;
-
-    top: auto !important;
 
     display: flex !important;
 
@@ -497,6 +494,76 @@ body {
     backdrop-filter: blur(8px) !important;
 
     -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* =========================================================
+   FOTO PROFIL
+   ========================================================= */
+
+#liveUserAvatar {
+
+    width: 42px !important;
+
+    height: 42px !important;
+
+    border-radius: 50% !important;
+
+    object-fit: cover !important;
+
+    display: block !important;
+
+    background: #222 !important;
+
+    border: 2px solid rgba(255,255,255,0.9) !important;
+
+    flex-shrink: 0 !important;
+}
+
+/* =========================================================
+   NAMA USER
+   ========================================================= */
+
+#liveUserName {
+
+    max-width: 40vw !important;
+
+    overflow: hidden !important;
+
+    white-space: nowrap !important;
+
+    text-overflow: ellipsis !important;
+
+    font-size: 15px !important;
+
+    font-weight: 700 !important;
+
+    color: #fff !important;
+}
+
+/* =========================================================
+   HP KECIL
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    #liveUserDisplay {
+
+        top: 58px !important;
+
+        left: 10px !important;
+    }
+
+    #liveUserAvatar {
+
+        width: 38px !important;
+
+        height: 38px !important;
+    }
+
+    #liveUserName {
+
+        font-size: 14px !important;
+    }
 }
 
 /* =========================================================
