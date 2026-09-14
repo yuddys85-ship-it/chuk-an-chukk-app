@@ -2,130 +2,32 @@
 
 /*
 =========================================================
-CHUK AN CHUKK
-LIVE STREAM V1
-1 HOST -> MANY VIEWERS
+ CHUK AN CHUKK
+ LIVE STREAM V1
+ 1 HOST -> MANY VIEWERS
 
-WebRTC video
-Supabase Realtime signaling
+ WebRTC = video/audio
+ Supabase Realtime = signaling
 
-Tidak mengubah live.js
-Tidak mengubah kamera utama
+ PENTING:
+ - Tidak membuka kamera kedua
+ - Memakai stream dari live.js
+ - Host = halaman tanpa ?live=
+ - Viewer = halaman dengan ?live=ROOM_ID
 =========================================================
 */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
     /* =====================================================
-       SUPABASE
-    ===================================================== */
-
-    const SUPABASE_URL =
-        "https://aoaqvbrxgtfuvyiscpic.supabase.co";
-
-    const SUPABASE_KEY =
-        "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
-
-    /*
-     * Supabase JS harus tersedia.
-     */
-
-    if (!window.supabase) {
-
-        console.error(
-            "❌ Supabase JS belum dimuat."
-        );
-
-        return;
-    }
-
-
-    const client =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
-
-
-    /* =====================================================
-       ROOM
-    ===================================================== */
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    let roomId =
-        params.get("live");
-
-
-    /*
-     * Kalau belum ada room:
-     * halaman ini dianggap HOST.
-     */
-
-    const isNewHost =
-        !roomId;
-
-
-    if (!roomId) {
-
-        roomId =
-            "chuk-" +
-            Date.now().toString(36) +
-            "-" +
-            Math.random()
-                .toString(36)
-                .slice(2, 8);
-
-        /*
-         * URL yang dibagikan TIDAK mempunyai
-         * parameter host.
-         */
-
-        const viewerUrl =
-            window.location.origin +
-            window.location.pathname +
-            "?live=" +
-            encodeURIComponent(roomId);
-
-        window.history.replaceState(
-            {},
-            "",
-            viewerUrl
-        );
-
-    }
-
-
-    /*
-     * Host hanya ditentukan saat halaman
-     * pertama kali membuat room.
-     */
-
-    const isHost = isNewHost;
-
-
-    console.log(
-        isHost
-            ? "🎥 CHUK LIVE HOST"
-            : "👀 CHUK LIVE VIEWER"
-    );
-
-    console.log(
-        "🏠 ROOM:",
-        roomId
-    );
-
-
-    /* =====================================================
-       VIDEO HOST
+       ELEMENT
     ===================================================== */
 
     const video =
         document.getElementById("camera");
 
+    const remoteVideo =
+        document.getElementById("chukRemoteLive");
 
     if (!video) {
 
@@ -137,41 +39,146 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* =====================================================
+       SUPABASE
+    ===================================================== */
+
+    const SUPABASE_URL =
+        "https://aoaqvbrxgtfuvyiscpic.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
+
+    if (!window.supabase) {
+
+        console.error(
+            "❌ Supabase JS belum dimuat."
+        );
+
+        return;
+    }
+
+    const supabase =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    /* =====================================================
+       ROLE
+    ===================================================== */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const roomFromUrl =
+        params.get("live");
+
     /*
-     * Penonton tidak boleh membuka kamera.
+     * Host:
+     * live.html
+     *
+     * Viewer:
+     * live.html?live=ROOM_ID
      */
 
-    if (!isHost) {
+    const isViewer =
+        Boolean(roomFromUrl);
 
-        video.srcObject = null;
+    const isHost =
+        !isViewer;
 
-        video.pause();
 
-        video.style.transform =
-            "scaleX(1)";
+    /* =====================================================
+       ROOM
+    ===================================================== */
 
-        video.muted = true;
+    let roomId =
+        roomFromUrl;
+
+
+    if (isHost) {
+
+        roomId =
+            "chuk-" +
+            Date.now().toString(36) +
+            "-" +
+            Math.random()
+                .toString(36)
+                .slice(2, 10);
 
         /*
-         * Kita akan membuat video receiver
-         * di atas kamera lokal.
+         * Simpan URL viewer.
+         *
+         * Role Host tetap disimpan
+         * di variable isHost.
          */
 
-        video.style.display =
-            "none";
+        const viewerUrl =
+            window.location.origin +
+            window.location.pathname +
+            "?live=" +
+            encodeURIComponent(roomId);
+
+        window.CHUK_LIVE_VIEWER_URL =
+            viewerUrl;
+
+        window.CHUK_LIVE_ROOM =
+            roomId;
+
+        /*
+         * URL browser menjadi link room.
+         */
+
+        window.history.replaceState(
+            {},
+            "",
+            "?live=" +
+            encodeURIComponent(roomId)
+        );
+
+        console.log(
+            "🎥 HOST MEMBUAT ROOM:"
+        );
+
+        console.log(
+            viewerUrl
+        );
+
+    } else {
+
+        window.CHUK_LIVE_ROOM =
+            roomId;
+
+        console.log(
+            "👀 VIEWER MASUK ROOM:",
+            roomId
+        );
 
     }
 
 
     /* =====================================================
-       ROOM CHANNEL
+       CLIENT ID
+    ===================================================== */
+
+    const clientId =
+        crypto.randomUUID();
+
+
+    /* =====================================================
+       SUPABASE CHANNEL
     ===================================================== */
 
     const channelName =
-        "chuk-live-" + roomId;
+        "chuk-live-" +
+        roomId;
 
     const channel =
-        client.channel(
+        supabase.channel(
             channelName,
             {
                 config: {
@@ -184,201 +191,231 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       CONNECTIONS HOST
+       WEBRTC CONFIG
     ===================================================== */
 
-    const peers =
+    const RTC_CONFIG = {
+
+        iceServers: [
+
+            {
+                urls:
+                    "stun:stun.l.google.com:19302"
+            },
+
+            {
+                urls:
+                    "stun:stun1.l.google.com:19302"
+            }
+
+        ]
+
+    };
+
+
+    /* =====================================================
+       HOST PEERS
+       viewerId -> RTCPeerConnection
+    ===================================================== */
+
+    const hostPeers =
         new Map();
 
 
     /* =====================================================
-       ID VIEWER
+       VIEWER PEER
     ===================================================== */
 
-    const viewerId =
-        "viewer-" +
-        Date.now().toString(36) +
-        "-" +
-        Math.random()
-            .toString(36)
-            .slice(2, 10);
+    let viewerPeer =
+        null;
 
 
     /* =====================================================
-       HOST CAMERA
+       GET HOST STREAM
     ===================================================== */
 
-    let hostStream = null;
+    function getHostStream() {
 
+        /*
+         * live.js sudah melakukan:
+         *
+         * video.srcObject = stream
+         *
+         * Kita hanya mengambilnya.
+         */
 
-    async function getHostCamera() {
+        const stream =
+            video.srcObject;
 
-        if (hostStream) {
-            return hostStream;
+        if (
+            stream &&
+            stream instanceof MediaStream
+        ) {
+
+            return stream;
+
         }
 
-
-        try {
-
-            hostStream =
-                await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: {
-                            ideal: "user"
-                        },
-                        width: {
-                            ideal: 1280
-                        },
-                        height: {
-                            ideal: 720
-                        }
-                    },
-                    audio: true
-                });
-
-
-            /*
-             * live.js tetap menangani tampilan
-             * kamera lokal.
-             *
-             * Kita hanya memastikan stream
-             * tersedia untuk WebRTC.
-             */
-
-            if (
-                !video.srcObject
-            ) {
-
-                video.srcObject =
-                    hostStream;
-
-            }
-
-
-            console.log(
-                "🎥 HOST STREAM SIAP"
-            );
-
-
-            return hostStream;
-
-
-        } catch (error) {
-
-            console.error(
-                "❌ Kamera host gagal:",
-                error
-            );
-
-            alert(
-                "Kamera/mikrofon Live tidak dapat digunakan."
-            );
-
-            throw error;
-        }
-
+        return null;
     }
 
 
     /* =====================================================
-       HOST -> BUAT PEER UNTUK VIEWER
+       MENUNGGU KAMERA HOST
+    ===================================================== */
+
+    async function waitForHostStream() {
+
+        for (
+            let attempt = 0;
+            attempt < 100;
+            attempt++
+        ) {
+
+            const stream =
+                getHostStream();
+
+            if (stream) {
+
+                console.log(
+                    "✅ STREAM DARI LIVE.JS DITEMUKAN"
+                );
+
+                return stream;
+
+            }
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        200
+                    )
+            );
+        }
+
+        console.error(
+            "❌ Stream Host tidak ditemukan."
+        );
+
+        return null;
+    }
+
+
+    /* =====================================================
+       HOST:
+       BUAT PEER UNTUK VIEWER
     ===================================================== */
 
     async function createHostPeer(
-        targetViewerId
+        viewerId
     ) {
 
         /*
-         * Tutup koneksi lama jika ada.
+         * Jika viewer sudah mempunyai
+         * koneksi lama, tutup dulu.
          */
 
         if (
-            peers.has(targetViewerId)
+            hostPeers.has(viewerId)
         ) {
 
             try {
 
-                peers
-                    .get(targetViewerId)
-                    .pc
+                hostPeers
+                    .get(viewerId)
                     .close();
 
-            } catch (e) {}
+            } catch (error) {}
 
-            peers.delete(
-                targetViewerId
+            hostPeers.delete(
+                viewerId
             );
+        }
+
+
+        const peer =
+            new RTCPeerConnection(
+                RTC_CONFIG
+            );
+
+
+        hostPeers.set(
+            viewerId,
+            peer
+        );
+
+
+        /*
+         * Ambil kamera yang sudah
+         * dibuka oleh live.js.
+         */
+
+        const stream =
+            await waitForHostStream();
+
+
+        if (!stream) {
+
+            peer.close();
+
+            hostPeers.delete(
+                viewerId
+            );
+
+            return;
 
         }
 
 
-        const pc =
-            new RTCPeerConnection({
-                iceServers: [
-                    {
-                        urls:
-                            "stun:stun.l.google.com:19302"
-                    },
-                    {
-                        urls:
-                            "stun:stun1.l.google.com:19302"
-                    }
-                ]
-            });
-
-
-        peers.set(
-            targetViewerId,
-            {
-                pc
-            }
-        );
-
-
-        const stream =
-            await getHostCamera();
-
-
         /*
-         * Kirim video + audio Host.
+         * Kirim semua track:
+         *
+         * video
+         * audio jika tersedia
          */
 
         stream
             .getTracks()
-            .forEach(track => {
+            .forEach(
+                track => {
 
-                pc.addTrack(
-                    track,
-                    stream
-                );
+                    peer.addTrack(
+                        track,
+                        stream
+                    );
 
-            });
+                }
+            );
 
 
-        /*
-         * ICE candidate Host
-         * dikirim ke Viewer tertentu.
-         */
+        /* =================================================
+           ICE HOST -> VIEWER
+        ================================================= */
 
-        pc.onicecandidate =
-            async event => {
+        peer.onicecandidate =
+            event => {
 
-                if (!event.candidate) {
+                if (
+                    !event.candidate
+                ) {
                     return;
                 }
 
 
-                await channel.send({
+                channel.send({
 
                     type: "broadcast",
 
-                    event: "ice",
+                    event: "signal",
 
                     payload: {
 
-                        from: "host",
+                        action: "ice",
 
-                        to: targetViewerId,
+                        from: clientId,
+
+                        to: viewerId,
 
                         candidate:
                             event.candidate
@@ -390,32 +427,70 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
 
+        /* =================================================
+           CONNECTION STATE
+        ================================================= */
+
+        peer.onconnectionstatechange =
+            () => {
+
+                console.log(
+                    "🔗 HOST ->",
+                    viewerId,
+                    ":",
+                    peer.connectionState
+                );
+
+
+                if (
+                    peer.connectionState ===
+                    "failed"
+                ) {
+
+                    peer.close();
+
+                    hostPeers.delete(
+                        viewerId
+                    );
+
+                }
+
+            };
+
+
+        /* =================================================
+           CREATE OFFER
+        ================================================= */
+
         const offer =
-            await pc.createOffer();
+            await peer.createOffer();
 
 
-        await pc.setLocalDescription(
+        await peer.setLocalDescription(
             offer
         );
 
 
-        /*
-         * Kirim OFFER ke viewer.
-         */
+        /* =================================================
+           SEND OFFER
+        ================================================= */
 
         await channel.send({
 
             type: "broadcast",
 
-            event: "offer",
+            event: "signal",
 
             payload: {
 
-                from: "host",
+                action: "offer",
 
-                to: targetViewerId,
+                from: clientId,
 
-                offer: pc.localDescription
+                to: viewerId,
+
+                offer:
+                    peer.localDescription
 
             }
 
@@ -423,134 +498,90 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         console.log(
-            "📡 OFFER dikirim ke:",
-            targetViewerId
+            "📡 OFFER dikirim ke Viewer:",
+            viewerId
         );
 
     }
 
 
     /* =====================================================
-       VIEWER PEER
+       VIEWER:
+       BUAT PEER
     ===================================================== */
 
-    let viewerPeer = null;
-
-
-    function createViewerPeer() {
+    function createViewerPeer(
+        hostId
+    ) {
 
         if (viewerPeer) {
 
             try {
                 viewerPeer.close();
-            } catch (e) {}
+            } catch (error) {}
 
         }
 
 
         viewerPeer =
-            new RTCPeerConnection({
-                iceServers: [
-                    {
-                        urls:
-                            "stun:stun.l.google.com:19302"
-                    },
-                    {
-                        urls:
-                            "stun:stun1.l.google.com:19302"
-                    }
-                ]
-            });
+            new RTCPeerConnection(
+                RTC_CONFIG
+            );
 
 
-        /*
-         * Video hasil Host.
-         */
+        /* =================================================
+           REMOTE TRACK
+        ================================================= */
 
         viewerPeer.ontrack =
             event => {
 
-                let remoteVideo =
-                    document.getElementById(
-                        "chukRemoteLive"
-                    );
+                const stream =
+                    event.streams &&
+                    event.streams[0];
+
+
+                if (!stream) {
+                    return;
+                }
 
 
                 if (!remoteVideo) {
 
-                    remoteVideo =
-                        document.createElement(
-                            "video"
-                        );
+                    console.error(
+                        "❌ #chukRemoteLive tidak ditemukan."
+                    );
 
-                    remoteVideo.id =
-                        "chukRemoteLive";
-
-                    remoteVideo.autoplay =
-                        true;
-
-                    remoteVideo.playsInline =
-                        true;
-
-                    remoteVideo.controls =
-                        false;
-
-                    remoteVideo.muted =
-                        false;
-
-
-                    remoteVideo.style.position =
-                        "absolute";
-
-                    remoteVideo.style.inset =
-                        "0";
-
-                    remoteVideo.style.width =
-                        "100%";
-
-                    remoteVideo.style.height =
-                        "100%";
-
-                    remoteVideo.style.objectFit =
-                        "contain";
-
-                    remoteVideo.style.objectPosition =
-                        "center center";
-
-                    remoteVideo.style.background =
-                        "#000";
-
-                    remoteVideo.style.zIndex =
-                        "2";
-
-
-                    const app =
-                        document.getElementById(
-                            "liveApp"
-                        );
-
-                    if (app) {
-                        app.appendChild(
-                            remoteVideo
-                        );
-                    }
+                    return;
 
                 }
 
 
-                if (
-                    remoteVideo.srcObject !==
-                    event.streams[0]
-                ) {
+                remoteVideo.srcObject =
+                    stream;
 
-                    remoteVideo.srcObject =
-                        event.streams[0];
 
-                }
+                remoteVideo.autoplay =
+                    true;
+
+                remoteVideo.playsInline =
+                    true;
+
+                remoteVideo.muted =
+                    false;
 
 
                 remoteVideo.play()
-                    .catch(() => {});
+                    .catch(
+                        error => {
+
+                            console.warn(
+                                "⚠️ Remote video menunggu interaksi:",
+                                error
+                            );
+
+                        }
+                    );
 
 
                 console.log(
@@ -560,29 +591,33 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
 
-        /*
-         * ICE Viewer -> Host
-         */
+        /* =================================================
+           ICE VIEWER -> HOST
+        ================================================= */
 
         viewerPeer.onicecandidate =
-            async event => {
+            event => {
 
-                if (!event.candidate) {
+                if (
+                    !event.candidate
+                ) {
                     return;
                 }
 
 
-                await channel.send({
+                channel.send({
 
                     type: "broadcast",
 
-                    event: "ice",
+                    event: "signal",
 
                     payload: {
 
-                        from: viewerId,
+                        action: "ice",
 
-                        to: "host",
+                        from: clientId,
+
+                        to: hostId,
 
                         candidate:
                             event.candidate
@@ -590,6 +625,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                 });
+
+            };
+
+
+        viewerPeer.onconnectionstatechange =
+            () => {
+
+                console.log(
+                    "🔗 VIEWER CONNECTION:",
+                    viewerPeer.connectionState
+                );
 
             };
 
@@ -600,75 +646,111 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       TERIMA SIGNAL
+       SIGNALING
     ===================================================== */
 
     channel.on(
         "broadcast",
         {
-            event: "*"
+            event: "signal"
         },
         async message => {
 
-            const event =
-                message.payload || {};
+            const payload =
+                message.payload;
 
 
-            /* =============================================
-               HOST MENERIMA JOIN
-            ============================================= */
-
-            if (
-                isHost &&
-                event.from &&
-                event.from !== "host" &&
-                event.type === "join"
-            ) {
-
-                console.log(
-                    "👤 VIEWER MASUK:",
-                    event.from
-                );
-
-
-                await createHostPeer(
-                    event.from
-                );
-
-
+            if (!payload) {
                 return;
             }
 
 
-            /* =============================================
-               VIEWER MENERIMA OFFER
-            ============================================= */
+            /*
+             * Pesan bukan untuk kita.
+             */
 
             if (
-                !isHost &&
-                event.type === "offer" &&
-                event.to === viewerId
+                payload.to &&
+                payload.to !== clientId
             ) {
+
+                return;
+
+            }
+
+
+            /* =================================================
+               HOST:
+               VIEWER JOIN
+            ================================================= */
+
+            if (
+                isHost &&
+                payload.action ===
+                "join"
+            ) {
+
+                const viewerId =
+                    payload.from;
+
+
+                if (!viewerId) {
+                    return;
+                }
+
+
+                console.log(
+                    "👤 VIEWER MASUK:",
+                    viewerId
+                );
+
+
+                await createHostPeer(
+                    viewerId
+                );
+
+
+                return;
+
+            }
+
+
+            /* =================================================
+               VIEWER:
+               OFFER HOST
+            ================================================= */
+
+            if (
+                isViewer &&
+                payload.action ===
+                "offer"
+            ) {
+
+                const hostId =
+                    payload.from;
+
 
                 console.log(
                     "📥 OFFER HOST DITERIMA"
                 );
 
 
-                const pc =
-                    createViewerPeer();
+                const peer =
+                    createViewerPeer(
+                        hostId
+                    );
 
 
-                await pc.setRemoteDescription(
-                    event.offer
+                await peer.setRemoteDescription(
+                    payload.offer
                 );
 
 
                 const answer =
-                    await pc.createAnswer();
+                    await peer.createAnswer();
 
 
-                await pc.setLocalDescription(
+                await peer.setLocalDescription(
                     answer
                 );
 
@@ -677,39 +759,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     type: "broadcast",
 
-                    event: "answer",
+                    event: "signal",
 
                     payload: {
 
-                        from: viewerId,
+                        action: "answer",
 
-                        to: "host",
+                        from: clientId,
+
+                        to: hostId,
 
                         answer:
-                            pc.localDescription
+                            peer.localDescription
 
                     }
 
                 });
 
 
+                console.log(
+                    "📡 ANSWER DIKIRIM KE HOST"
+                );
+
+
                 return;
+
             }
 
 
-            /* =============================================
-               HOST MENERIMA ANSWER
-            ============================================= */
+            /* =================================================
+               HOST:
+               ANSWER VIEWER
+            ================================================= */
 
             if (
                 isHost &&
-                event.type === "answer" &&
-                event.to === "host"
+                payload.action ===
+                "answer"
             ) {
 
+                const viewerId =
+                    payload.from;
+
+
                 const peer =
-                    peers.get(
-                        event.from
+                    hostPeers.get(
+                        viewerId
                     );
 
 
@@ -718,59 +813,61 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                await peer.pc.setRemoteDescription(
-                    event.answer
+                await peer.setRemoteDescription(
+                    payload.answer
                 );
 
 
                 console.log(
-                    "✅ ANSWER VIEWER DITERIMA"
+                    "✅ ANSWER VIEWER DITERIMA:",
+                    viewerId
                 );
 
 
                 return;
+
             }
 
 
-            /* =============================================
+            /* =================================================
                ICE
-            ============================================= */
+            ================================================= */
 
             if (
-                event.type === "ice"
+                payload.action ===
+                "ice"
             ) {
 
                 /*
-                 * Host menerima ICE dari Viewer.
+                 * HOST menerima ICE Viewer.
                  */
 
                 if (
                     isHost &&
-                    event.to === "host"
+                    payload.to === clientId
                 ) {
 
                     const peer =
-                        peers.get(
-                            event.from
+                        hostPeers.get(
+                            payload.from
                         );
 
 
                     if (
                         peer &&
-                        event.candidate
+                        payload.candidate
                     ) {
 
                         try {
 
-                            await peer.pc
-                                .addIceCandidate(
-                                    event.candidate
-                                );
+                            await peer.addIceCandidate(
+                                payload.candidate
+                            );
 
                         } catch (error) {
 
                             console.warn(
-                                "ICE host error:",
+                                "⚠️ ICE Host:",
                                 error
                             );
 
@@ -782,28 +879,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 /*
-                 * Viewer menerima ICE Host.
+                 * VIEWER menerima ICE Host.
                  */
 
                 if (
-                    !isHost &&
-                    event.to === viewerId &&
-                    event.candidate
+                    isViewer &&
+                    payload.to === clientId
                 ) {
 
-                    if (viewerPeer) {
+                    if (
+                        viewerPeer &&
+                        payload.candidate
+                    ) {
 
                         try {
 
-                            await viewerPeer
-                                .addIceCandidate(
-                                    event.candidate
-                                );
+                            await viewerPeer.addIceCandidate(
+                                payload.candidate
+                            );
 
                         } catch (error) {
 
                             console.warn(
-                                "ICE viewer error:",
+                                "⚠️ ICE Viewer:",
                                 error
                             );
 
@@ -820,14 +918,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       CONNECT CHANNEL
+       SUBSCRIBE
     ===================================================== */
 
-    channel.subscribe(
+    await channel.subscribe(
         async status => {
 
             console.log(
-                "📡 Supabase Live:",
+                "📡 SUPABASE LIVE:",
                 status
             );
 
@@ -837,38 +935,57 @@ document.addEventListener("DOMContentLoaded", () => {
             ) {
 
                 return;
+
             }
 
 
-            /* =============================================
+            /* =================================================
                HOST
-            ============================================= */
+            ================================================= */
 
             if (isHost) {
 
-                await getHostCamera();
+                const stream =
+                    await waitForHostStream();
+
+
+                if (!stream) {
+
+                    console.error(
+                        "❌ HOST STREAM BELUM SIAP"
+                    );
+
+                    return;
+
+                }
 
 
                 console.log(
                     "🎥 HOST LIVE AKTIF"
                 );
 
+
                 console.log(
-                    "🔗 ROOM:",
-                    roomId
+                    "🔗 LINK VIEWER:"
+                );
+
+
+                console.log(
+                    window.CHUK_LIVE_VIEWER_URL
                 );
 
 
                 return;
+
             }
 
 
-            /* =============================================
+            /* =================================================
                VIEWER
-            ============================================= */
+            ================================================= */
 
             console.log(
-                "👀 VIEWER TERHUBUNG"
+                "👀 VIEWER SIAP"
             );
 
 
@@ -876,13 +993,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 type: "broadcast",
 
-                event: "join",
+                event: "signal",
 
                 payload: {
 
-                    type: "join",
+                    action: "join",
 
-                    from: viewerId
+                    from: clientId,
+
+                    to: null
 
                 }
 
@@ -890,7 +1009,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             console.log(
-                "📨 PERMINTAAN STREAM DIKIRIM"
+                "📨 PERMINTAAN LIVE DIKIRIM"
             );
 
         }
@@ -898,7 +1017,83 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       GLOBAL INFO
+       VIEWER UI
+    ===================================================== */
+
+    if (isViewer) {
+
+        /*
+         * Kamera lokal disembunyikan.
+         */
+
+        video.style.display =
+            "none";
+
+
+        const flipButton =
+            document.getElementById(
+                "flipCameraButton"
+            );
+
+
+        if (flipButton) {
+
+            flipButton.style.display =
+                "none";
+
+        }
+
+
+        if (remoteVideo) {
+
+            remoteVideo.style.display =
+                "block";
+
+            remoteVideo.style.position =
+                "absolute";
+
+            remoteVideo.style.inset =
+                "0";
+
+            remoteVideo.style.width =
+                "100%";
+
+            remoteVideo.style.height =
+                "100%";
+
+            remoteVideo.style.objectFit =
+                "contain";
+
+            remoteVideo.style.objectPosition =
+                "center center";
+
+            remoteVideo.style.background =
+                "#000";
+
+            remoteVideo.style.zIndex =
+                "2";
+
+        }
+
+    } else {
+
+        /*
+         * Host tidak menampilkan
+         * remote video.
+         */
+
+        if (remoteVideo) {
+
+            remoteVideo.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       GLOBAL
     ===================================================== */
 
     window.CHUK_LIVE_STREAM = {
@@ -907,18 +1102,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         isHost,
 
-        viewerId,
+        isViewer,
 
-        getViewerUrl() {
+        clientId,
 
-            return (
+        viewerUrl:
+            window.CHUK_LIVE_VIEWER_URL ||
+            (
                 window.location.origin +
                 window.location.pathname +
                 "?live=" +
                 encodeURIComponent(roomId)
-            );
-
-        }
+            )
 
     };
 
@@ -937,34 +1132,29 @@ document.addEventListener("DOMContentLoaded", () => {
                     viewerPeer.close();
                 }
 
-                peers.forEach(
+
+                hostPeers.forEach(
                     peer => {
 
                         try {
-                            peer.pc.close();
-                        } catch (e) {}
+                            peer.close();
+                        } catch (error) {}
 
                     }
                 );
 
-                if (hostStream) {
 
-                    hostStream
-                        .getTracks()
-                        .forEach(
-                            track => track.stop()
-                        );
+                hostPeers.clear();
 
-                }
 
-                client.removeChannel(
+                supabase.removeChannel(
                     channel
                 );
 
             } catch (error) {
 
                 console.warn(
-                    "Cleanup error:",
+                    "⚠️ Cleanup:",
                     error
                 );
 
@@ -973,5 +1163,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+
+    console.log(
+        "🚀 CHUK AN CHUKK LIVE STREAM V1 AKTIF"
+    );
 
 });
