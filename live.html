@@ -1,215 +1,273 @@
-<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
->
-
-<meta
-    name="theme-color"
-    content="#000000"
->
-
-<title>CHUK AN CHUKK — Live</title>
-
-<link
-    rel="stylesheet"
-    href="live.css"
->
-
-</head><body><div
-    id="liveApp"
-    class="live-app"
-><!-- =================================================
-     KAMERA HOST
-================================================== -->
-
-<video
-    id="camera"
-    class="camera-source"
-    autoplay
-    muted
-    playsinline
-    webkit-playsinline
-></video>
-
-
-<!-- =================================================
-     MENU
-================================================== -->
-
-<button
-    id="menuButton"
-    class="menu-button"
-    type="button"
-    aria-label="Menu"
->
-    ☰
-</button>
-
-
-<!-- =================================================
-     PINDAH KAMERA
-================================================== -->
-
-<button
-    id="flipCameraButton"
-    class="flip-camera-button"
-    type="button"
-    aria-label="Pindah kamera"
->
-    ↻
-</button>
-
-
-<!-- =================================================
-     SHARE LIVE
-================================================== -->
-
-<button
-    id="shareLiveButton"
-    class="share-live-button"
-    type="button"
-    aria-label="Bagikan Live"
->
-
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
-        <circle
-            cx="18"
-            cy="5"
-            r="2.5"
-        ></circle>
+    <title>Chuk an Chukk — Live</title>
 
-        <circle
-            cx="6"
-            cy="12"
-            r="2.5"
-        ></circle>
+    <link rel="stylesheet" href="live.css">
+</head>
 
-        <circle
-            cx="18"
-            cy="19"
-            r="2.5"
-        ></circle>
+<body>
 
-        <line
-            x1="8.2"
-            y1="10.8"
-            x2="15.8"
-            y2="6.2"
-        ></line>
+<div class="live-app" id="liveApp">
 
-        <line
-            x1="8.2"
-            y1="13.2"
-            x2="15.8"
-            y2="17.8"
-        ></line>
+    <!-- =====================================================
+         CAMERA
+         ===================================================== -->
 
-    </svg>
+    <video
+        id="camera"
+        autoplay
+        muted
+        playsinline
+        webkit-playsinline
+    ></video>
 
-</button>
+    <!-- Canvas untuk filter/efek kamera -->
+    <canvas id="filterCanvas"></canvas>
 
 
-<!-- =================================================
-     KOMENTAR
-================================================== -->
+    <!-- =====================================================
+         PROFILE — ATAS TENGAH
+         ===================================================== -->
 
-<button
-    id="liveCommentButton"
-    class="live-comment-button"
-    type="button"
-    aria-label="Komentar"
->
-    💬
-</button>
+    <div id="liveUserDisplay">
 
-
-<!-- =================================================
-     PANEL KOMENTAR
-================================================== -->
-
-<div
-    id="liveCommentPanel"
-    class="live-comment-panel"
-    hidden
->
-
-    <div class="live-comment-header">
-
-        <strong>
-            Komentar Live
-        </strong>
-
-        <button
-            id="closeLiveComments"
-            type="button"
-            aria-label="Tutup komentar"
+        <img
+            id="liveUserAvatar"
+            src="assets/logo.png"
+            alt="Profile"
         >
-            ✕
-        </button>
+
+        <span id="liveUserName">
+            Chuk User
+        </span>
 
     </div>
 
 
-    <div
-        id="liveCommentsList"
-        class="live-comments-list"
-    ></div>
+    <!-- =====================================================
+         ROOM — DI BAWAH PROFILE
+         ===================================================== -->
+
+    <div id="liveRoomDisplay">
+        CHUK-XXXXXX
+    </div>
 
 
-    <form
-        id="liveCommentForm"
-        class="live-comment-form"
+    <!-- =====================================================
+         FLIP CAMERA
+         ===================================================== -->
+
+    <button
+        class="flip-camera-button"
+        id="flipCameraButton"
+        type="button"
+        aria-label="Balik kamera"
     >
+        🔄
+    </button>
+
+
+    <!-- =====================================================
+         MENU
+         ===================================================== -->
+
+    <button
+        class="menu-button"
+        id="menuButton"
+        type="button"
+        aria-label="Menu"
+    >
+        ☰
+    </button>
+
+
+    <!-- =====================================================
+         ROOM PANEL
+         ===================================================== -->
+
+    <div id="roomPanel" hidden>
+
+        <div class="room-name-label">
+            Nama Room
+        </div>
 
         <input
-            id="liveCommentInput"
+            class="room-name-input"
+            id="roomNameInput"
             type="text"
-            maxlength="200"
-            placeholder="Tambahkan komentar..."
-            autocomplete="off"
+            placeholder="Masukkan nama room"
+            maxlength="40"
         >
 
-        <button
-            type="submit"
-            aria-label="Kirim komentar"
-        >
-            ➤
-        </button>
+        <div class="room-title">
+            Live Room
+        </div>
 
-    </form>
+        <div class="room-live">
+            CHUK-XXXXXX
+        </div>
+
+        <div class="room-subtitle">
+            Pilih jumlah penonton
+        </div>
+
+        <div class="room-options">
+
+            <button
+                class="room-option selected"
+                type="button"
+            >
+                4
+            </button>
+
+            <button
+                class="room-option"
+                type="button"
+            >
+                10
+            </button>
+
+            <button
+                class="room-option"
+                type="button"
+            >
+                50
+            </button>
+
+            <button
+                class="room-option"
+                type="button"
+            >
+                ∞
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         COMMENT BUTTON
+         ===================================================== -->
+
+    <button
+        class="live-comment-button"
+        id="liveCommentButton"
+        type="button"
+        aria-label="Komentar"
+    >
+        💬
+    </button>
+
+
+    <!-- =====================================================
+         SHARE
+         ===================================================== -->
+
+    <button
+        class="share-live-button"
+        id="shareLiveButton"
+        type="button"
+        aria-label="Bagikan Live"
+    >
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
+            <path d="M12 16V3"></path>
+            <path d="M7 8l5-5 5 5"></path>
+            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path>
+        </svg>
+    </button>
+
+
+    <!-- =====================================================
+         COMMENT PANEL
+         ===================================================== -->
+
+    <section
+        class="live-comment-panel"
+        id="liveCommentPanel"
+        hidden
+    >
+
+        <div class="live-comment-header">
+
+            <strong>
+                Komentar
+            </strong>
+
+            <button
+                id="closeLiveComments"
+                type="button"
+                aria-label="Tutup komentar"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div
+            class="live-comments-list"
+            id="liveCommentsList"
+        ></div>
+
+
+        <form
+            class="live-comment-form"
+            id="liveCommentForm"
+        >
+
+            <input
+                id="liveCommentInput"
+                type="text"
+                placeholder="Tulis komentar..."
+                autocomplete="off"
+                maxlength="300"
+            >
+
+            <button
+                type="submit"
+                aria-label="Kirim komentar"
+            >
+                ➤
+            </button>
+
+        </form>
+
+    </section>
 
 </div>
 
-</div><!-- =====================================================
+
+<!-- =========================================================
      SUPABASE
-     HARUS DIMUAT SEBELUM live-stream.js
-====================================================== --><script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script><!-- =====================================================
-     HOST CAMERA
-====================================================== --><script
-    src="live.js"
-></script><!-- =====================================================
-     HOST WEBRTC STREAM
-     HARUS SETELAH live.js
-====================================================== --><script
-    src="live-stream.js"
-></script><!-- =====================================================
-     MENU
-====================================================== --><script
-    src="live-menu.js"
-></script><!-- =====================================================
-     SHARE LIVE
-====================================================== --><script
-    src="live-share.js"
-></script><!-- =====================================================
-     KOMENTAR
-====================================================== --><script
-    src="live-comments.js"
-></script></body></html>
+     ========================================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- =========================================================
+     CHUK AN CHUKK LIVE SCRIPTS
+     ========================================================= -->
+
+<script src="live.js"></script>
+
+<script src="live-stream.js"></script>
+
+<script src="live-menu.js"></script>
+
+<script src="live-share.js"></script>
+
+<script src="live-comments.js"></script>
+
+</body>
+</html>
