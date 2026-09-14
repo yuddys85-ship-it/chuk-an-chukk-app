@@ -10,21 +10,30 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
-    <meta name="theme-color" content="#000000">
+    <meta
+        name="theme-color"
+        content="#000000"
+    >
 
     <title>CHUK AN CHUKK — Live</title>
 
-    <link rel="stylesheet" href="live.css">
+    <link
+        rel="stylesheet"
+        href="live.css"
+    >
 
 </head>
 
 <body>
 
-<div id="liveApp" class="live-app">
+<div
+    id="liveApp"
+    class="live-app"
+>
 
-    <!-- =====================================================
+    <!-- =================================================
          KAMERA
-         ===================================================== -->
+         ================================================= -->
 
     <video
         id="camera"
@@ -36,9 +45,9 @@
     ></video>
 
 
-    <!-- =====================================================
-         MENU — KIRI ATAS
-         ===================================================== -->
+    <!-- =================================================
+         MENU
+         ================================================= -->
 
     <button
         id="menuButton"
@@ -50,9 +59,9 @@
     </button>
 
 
-    <!-- =====================================================
-         PINDAH KAMERA — KANAN ATAS
-         ===================================================== -->
+    <!-- =================================================
+         PINDAH KAMERA
+         ================================================= -->
 
     <button
         id="flipCameraButton"
@@ -64,10 +73,9 @@
     </button>
 
 
-    <!-- =====================================================
-         BAGIKAN LIVE — KANAN BAWAH
-         IKON SHARE UMUM
-         ===================================================== -->
+    <!-- =================================================
+         SHARE
+         ================================================= -->
 
     <button
         id="shareLiveButton"
@@ -117,18 +125,101 @@
 
     </button>
 
+
+    <!-- =================================================
+         TOMBOL KOMENTAR
+         ================================================= -->
+
+    <button
+        id="liveCommentButton"
+        class="live-comment-button"
+        type="button"
+        aria-label="Komentar"
+    >
+        💬
+    </button>
+
+
+    <!-- =================================================
+         PANEL KOMENTAR
+         ================================================= -->
+
+    <div
+        id="liveCommentPanel"
+        class="live-comment-panel"
+        hidden
+    >
+
+        <!-- HEADER -->
+
+        <div
+            class="live-comment-header"
+        >
+
+            <strong>
+                Komentar Live
+            </strong>
+
+            <button
+                id="closeLiveComments"
+                type="button"
+                aria-label="Tutup komentar"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <!-- DAFTAR KOMENTAR -->
+
+        <div
+            id="liveCommentsList"
+            class="live-comments-list"
+        >
+        </div>
+
+
+        <!-- INPUT KOMENTAR -->
+
+        <form
+            id="liveCommentForm"
+            class="live-comment-form"
+        >
+
+            <input
+                id="liveCommentInput"
+                type="text"
+                maxlength="200"
+                placeholder="Tambahkan komentar..."
+                autocomplete="off"
+            >
+
+            <button
+                type="submit"
+                aria-label="Kirim komentar"
+            >
+                ➤
+            </button>
+
+        </form>
+
+    </div>
+
 </div>
 
 
-<!-- =========================================================
+<!-- =====================================================
      JAVASCRIPT
-     ========================================================= -->
+     ===================================================== -->
 
 <script src="live.js"></script>
 
 <script src="live-menu.js"></script>
 
 <script src="live-share.js"></script>
+
+<script src="live-comments.js"></script>
 
 
 </body>
