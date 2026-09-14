@@ -3,19 +3,20 @@
 /*
 =========================================================
  CHUK AN CHUKK
- LIVE WATCH — VIEWER ONLY
+ LIVE WATCH — VIEWER
 =========================================================
 
- Fungsi:
- - Penonton hanya menerima video Host
+ Viewer:
  - Tidak membuka kamera
  - Tidak membuka microphone
- - Tidak menjalankan live.js
- - WebRTC untuk video
- - Supabase Realtime untuk signaling
+ - Hanya menerima video Host
+ - Room: live-watch.html?room=CHUK-XXXXXX
 
- URL:
- live-watch.html?room=ROOM_ID
+ Signaling:
+ Supabase Realtime Broadcast
+
+ Media:
+ WebRTC
 =========================================================
 */
 
@@ -27,7 +28,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("chukRemoteLive");
 
     if (!remoteVideo) {
-        console.error("❌ Video penonton tidak ditemukan");
+        console.error(
+            "❌ #chukRemoteLive tidak ditemukan"
+        );
         return;
     }
 
@@ -44,11 +47,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
 
     if (
-        typeof window.supabase === "undefined" ||
+        !window.supabase ||
         !window.supabase.createClient
     ) {
-        console.error("❌ Supabase SDK tidak tersedia");
-        showStatus("Supabase belum siap.");
+        console.error(
+            "❌ Supabase SDK belum tersedia"
+        );
+
+        showStatus(
+            "Supabase belum siap."
+        );
+
         return;
     }
 
@@ -60,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    AMBIL ROOM ID
+    AMBIL ROOM
     =====================================================
     */
 
@@ -74,7 +83,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!roomId) {
 
-        console.error("❌ ROOM ID tidak ditemukan");
+        console.error(
+            "❌ ROOM ID tidak ditemukan"
+        );
 
         showStatus(
             "Room Live tidak ditemukan."
@@ -84,30 +95,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log(
-        "🏠 ROOM:",
+        "🏠 ROOM VIEWER:",
         roomId
     );
 
     /*
     =====================================================
-    WEBRTC
+    VIEWER ID
     =====================================================
     */
 
-    let peerConnection = null;
+    const viewerId =
+        "viewer-" +
+        Math.random()
+            .toString(36)
+            .substring(2, 10) +
+        "-" +
+        Date.now()
+            .toString(36);
 
-    const rtcConfig = {
-
-        iceServers: [
-            {
-                urls: [
-                    "stun:stun.l.google.com:19302",
-                    "stun:stun1.l.google.com:19302"
-                ]
-            }
-        ]
-
-    };
+    console.log(
+        "👀 VIEWER ID:",
+        viewerId
+    );
 
     /*
     =====================================================
@@ -146,10 +156,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 "999999";
 
             status.style.color =
-                "#ffffff";
+                "#fff";
 
             status.style.background =
-                "rgba(0,0,0,0.65)";
+                "rgba(0,0,0,.65)";
 
             status.style.padding =
                 "12px 18px";
@@ -166,7 +176,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             status.style.pointerEvents =
                 "none";
 
-            document.body.appendChild(status);
+            document.body.appendChild(
+                status
+            );
         }
 
         status.textContent =
@@ -187,7 +199,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    BUAT PEER CONNECTION
+    WEBRTC
+    =====================================================
+    */
+
+    const rtcConfig = {
+
+        iceServers: [
+
+            {
+                urls: [
+                    "stun:stun.l.google.com:19302",
+                    "stun:stun1.l.google.com:19302"
+                ]
+            }
+
+        ]
+
+    };
+
+    let peerConnection = null;
+
+    /*
+    =====================================================
+    BUAT PEER
     =====================================================
     */
 
@@ -197,11 +232,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             try {
                 peerConnection.close();
-            } catch (error) {
-                console.warn(error);
-            }
+            } catch (error) {}
 
-            peerConnection = null;
         }
 
         peerConnection =
@@ -211,7 +243,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         /*
         -------------------------------------------------
-        TERIMA VIDEO DARI HOST
+        VIDEO HOST MASUK
         -------------------------------------------------
         */
 
@@ -222,22 +254,29 @@ document.addEventListener("DOMContentLoaded", async () => {
                     "🎥 TRACK HOST DITERIMA"
                 );
 
-                const stream =
-                    event.streams &&
-                    event.streams[0];
+                let stream = null;
 
-                if (!stream) {
-                    console.warn(
-                        "⚠️ Stream Host tidak ditemukan"
+                if (
+                    event.streams &&
+                    event.streams.length > 0
+                ) {
+
+                    stream =
+                        event.streams[0];
+
+                } else {
+
+                    stream =
+                        new MediaStream();
+
+                    stream.addTrack(
+                        event.track
                     );
-                    return;
+
                 }
 
                 remoteVideo.srcObject =
                     stream;
-
-                remoteVideo.muted =
-                    false;
 
                 remoteVideo.autoplay =
                     true;
@@ -245,7 +284,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 remoteVideo.playsInline =
                     true;
 
-                hideStatus();
+                remoteVideo.setAttribute(
+                    "playsinline",
+                    ""
+                );
+
+                remoteVideo.setAttribute(
+                    "webkit-playsinline",
+                    ""
+                );
 
                 remoteVideo.play()
                     .then(() => {
@@ -254,11 +301,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                             "✅ LIVE HOST TAMPIL"
                         );
 
+                        hideStatus();
+
                     })
                     .catch(error => {
 
                         console.warn(
-                            "⚠️ Video belum bisa autoplay:",
+                            "⚠️ Autoplay gagal:",
                             error
                         );
 
@@ -267,41 +316,57 @@ document.addEventListener("DOMContentLoaded", async () => {
                         );
 
                     });
+
             };
 
         /*
         -------------------------------------------------
-        ICE
+        ICE VIEWER → HOST
         -------------------------------------------------
         */
 
         peerConnection.onicecandidate =
-            event => {
+            async event => {
 
                 if (!event.candidate) {
                     return;
                 }
 
-                channel.send({
+                try {
 
-                    type: "broadcast",
+                    await channel.send({
 
-                    event: "viewer-ice",
+                        type: "broadcast",
 
-                    payload: {
-                        roomId: roomId,
-                        candidate:
-                            event.candidate
-                    }
+                        event: "viewer-ice",
 
-                }).catch(error => {
+                        payload: {
+
+                            roomId:
+                                roomId,
+
+                            viewerId:
+                                viewerId,
+
+                            candidate:
+                                event.candidate
+
+                        }
+
+                    });
+
+                    console.log(
+                        "🧊 ICE Viewer dikirim"
+                    );
+
+                } catch (error) {
 
                     console.error(
-                        "❌ Gagal kirim ICE:",
+                        "❌ Gagal kirim ICE Viewer:",
                         error
                     );
 
-                });
+                }
 
             };
 
@@ -314,8 +379,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         peerConnection.onconnectionstatechange =
             () => {
 
+                if (!peerConnection) {
+                    return;
+                }
+
                 console.log(
-                    "🌐 WebRTC:",
+                    "🌐 WEBRTC:",
                     peerConnection.connectionState
                 );
 
@@ -326,13 +395,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     hideStatus();
 
+                    console.log(
+                        "✅ VIEWER TERHUBUNG KE HOST"
+                    );
+
                 }
 
                 if (
                     peerConnection.connectionState ===
-                    "disconnected" ||
+                    "connecting"
+                ) {
+
+                    showStatus(
+                        "Menghubungkan ke Live..."
+                    );
+
+                }
+
+                if (
                     peerConnection.connectionState ===
-                    "failed"
+                    "disconnected"
                 ) {
 
                     showStatus(
@@ -340,6 +422,37 @@ document.addEventListener("DOMContentLoaded", async () => {
                     );
 
                 }
+
+                if (
+                    peerConnection.connectionState ===
+                    "failed"
+                ) {
+
+                    showStatus(
+                        "Gagal terhubung ke Live."
+                    );
+
+                }
+
+            };
+
+        /*
+        -------------------------------------------------
+        ICE CONNECTION
+        -------------------------------------------------
+        */
+
+        peerConnection.oniceconnectionstatechange =
+            () => {
+
+                if (!peerConnection) {
+                    return;
+                }
+
+                console.log(
+                    "🧊 ICE:",
+                    peerConnection.iceConnectionState
+                );
 
             };
 
@@ -366,7 +479,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    TERIMA SIGNAL DARI HOST
+    TERIMA OFFER HOST
     =====================================================
     */
 
@@ -377,24 +490,57 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
         async payload => {
 
+            const data =
+                payload.payload || {};
+
             console.log(
                 "📡 OFFER HOST DITERIMA"
             );
 
+            /*
+            ------------------------------------------------
+            Pastikan room benar
+            ------------------------------------------------
+            */
+
+            if (
+                data.roomId &&
+                data.roomId !== roomId
+            ) {
+                return;
+            }
+
+            /*
+            ------------------------------------------------
+            Pastikan offer untuk viewer ini
+            ------------------------------------------------
+            */
+
+            if (
+                data.viewerId &&
+                data.viewerId !== viewerId
+            ) {
+
+                console.log(
+                    "ℹ️ Offer untuk viewer lain"
+                );
+
+                return;
+            }
+
+            const offer =
+                data.offer;
+
+            if (!offer) {
+
+                console.warn(
+                    "⚠️ OFFER kosong"
+                );
+
+                return;
+            }
+
             try {
-
-                const offer =
-                    payload.payload &&
-                    payload.payload.offer;
-
-                if (!offer) {
-
-                    console.warn(
-                        "⚠️ Offer kosong"
-                    );
-
-                    return;
-                }
 
                 const pc =
                     createPeerConnection();
@@ -405,6 +551,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     )
                 );
 
+                console.log(
+                    "✅ Remote Description Host dipasang"
+                );
+
                 const answer =
                     await pc.createAnswer();
 
@@ -413,9 +563,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 );
 
                 /*
-                -----------------------------------------
+                --------------------------------------------
                 KIRIM ANSWER KE HOST
-                -----------------------------------------
+                --------------------------------------------
                 */
 
                 await channel.send({
@@ -426,7 +576,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     payload: {
 
-                        roomId: roomId,
+                        roomId:
+                            roomId,
+
+                        viewerId:
+                            viewerId,
 
                         answer:
                             pc.localDescription
@@ -436,18 +590,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
 
                 console.log(
-                    "📡 ANSWER DIKIRIM KE HOST"
+                    "📡 ANSWER VIEWER DIKIRIM"
                 );
 
             } catch (error) {
 
                 console.error(
-                    "❌ Gagal memproses offer:",
+                    "❌ Gagal memproses OFFER:",
                     error
                 );
 
                 showStatus(
-                    "Gagal terhubung ke Live."
+                    "Gagal menghubungkan Live."
                 );
 
             }
@@ -457,7 +611,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    TERIMA ICE DARI HOST
+    TERIMA ICE HOST
     =====================================================
     */
 
@@ -468,18 +622,40 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
         async payload => {
 
+            const data =
+                payload.payload || {};
+
+            if (
+                data.roomId &&
+                data.roomId !== roomId
+            ) {
+                return;
+            }
+
+            if (
+                data.viewerId &&
+                data.viewerId !== viewerId
+            ) {
+                return;
+            }
+
+            const candidate =
+                data.candidate;
+
+            if (!candidate) {
+                return;
+            }
+
+            if (!peerConnection) {
+
+                console.log(
+                    "⏳ Peer belum siap menerima ICE"
+                );
+
+                return;
+            }
+
             try {
-
-                const candidate =
-                    payload.payload &&
-                    payload.payload.candidate;
-
-                if (
-                    !candidate ||
-                    !peerConnection
-                ) {
-                    return;
-                }
 
                 await peerConnection.addIceCandidate(
                     new RTCIceCandidate(
@@ -488,13 +664,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 );
 
                 console.log(
-                    "🧊 HOST ICE DITERIMA"
+                    "🧊 ICE HOST DITERIMA"
                 );
 
             } catch (error) {
 
                 console.warn(
-                    "⚠️ Gagal tambah Host ICE:",
+                    "⚠️ Gagal menambahkan ICE Host:",
                     error
                 );
 
@@ -505,7 +681,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    CONNECT SUPABASE
+    CONNECT CHANNEL
     =====================================================
     */
 
@@ -514,22 +690,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
     channel.subscribe(
-        status => {
+        async status => {
 
             console.log(
-                "📡 CHANNEL:",
+                "📡 VIEWER CHANNEL:",
                 status
             );
 
-            if (status === "SUBSCRIBED") {
+            if (
+                status === "SUBSCRIBED"
+            ) {
 
                 console.log(
-                    "✅ Viewer terhubung ke room"
+                    "✅ VIEWER TERHUBUNG KE ROOM"
                 );
 
                 showStatus(
                     "Menunggu Host..."
                 );
+
+                /*
+                --------------------------------------------
+                BERITAHU HOST
+                --------------------------------------------
+                */
+
+                try {
+
+                    await channel.send({
+
+                        type: "broadcast",
+
+                        event: "viewer-join",
+
+                        payload: {
+
+                            roomId:
+                                roomId,
+
+                            viewerId:
+                                viewerId
+
+                        }
+
+                    });
+
+                    console.log(
+                        "📡 VIEWER-JOIN DIKIRIM"
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "❌ Gagal mengirim viewer-join:",
+                        error
+                    );
+
+                }
 
             }
 
@@ -558,7 +775,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    TAP UNTUK MEMULAI VIDEO
+    TAP LAYAR
     =====================================================
     */
 
@@ -579,12 +796,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
         },
-        { passive: true }
+        {
+            passive: true
+        }
     );
 
     /*
     =====================================================
-    BERSIHKAN SAAT KELUAR
+    CLEANUP
     =====================================================
     */
 
@@ -598,15 +817,23 @@ document.addEventListener("DOMContentLoaded", async () => {
                     peerConnection.close();
                 } catch (error) {}
 
+                peerConnection =
+                    null;
             }
 
             try {
+
                 supabaseClient.removeChannel(
                     channel
                 );
+
             } catch (error) {}
 
         }
+    );
+
+    console.log(
+        "🚀 LIVE WATCH SIAP"
     );
 
 });
