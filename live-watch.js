@@ -3,63 +3,136 @@
 /*
 =========================================================
  CHUK AN CHUKK
- LIVE WATCH — VIEWER WEBRTC
+ LIVE WATCH — DIAGNOSTIC VIEWER
 =========================================================
 
- Viewer:
+ VIEWER:
  - Tidak membuka kamera
  - Tidak membuka microphone
  - Hanya menerima video Host
- - Room: live-watch.html?room=CHUK-XXXXXX
+ - Room dari URL:
+   live-watch.html?room=CHUK-XXXXXX
 
- Signaling:
- Supabase Realtime Broadcast
-
- Media:
- WebRTC
+ STATUS KONEKSI DITAMPILKAN LANGSUNG DI LAYAR
 =========================================================
 */
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-    console.log("👀 CHUK AN CHUKK LIVE WATCH START");
+    console.log("🚀 LIVE WATCH START");
 
     const remoteVideo =
         document.getElementById("chukRemoteLive");
 
     if (!remoteVideo) {
-        console.error("❌ #chukRemoteLive tidak ditemukan");
+        console.error("❌ VIDEO VIEWER TIDAK DITEMUKAN");
         return;
     }
 
     remoteVideo.autoplay = true;
     remoteVideo.playsInline = true;
-    remoteVideo.muted = false;
+    remoteVideo.muted = true;
 
-    remoteVideo.setAttribute("autoplay", "");
-    remoteVideo.setAttribute("playsinline", "");
-    remoteVideo.setAttribute("webkit-playsinline", "");
+    /*
+    =====================================================
+    STATUS BOX
+    =====================================================
+    */
 
-    const SUPABASE_URL =
-        "https://aoaqvbrxgtfuvyiscpic.supabase.co";
+    const statusBox =
+        document.createElement("div");
 
-    const SUPABASE_KEY =
-        "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
+    statusBox.id =
+        "chukLiveDiagnostic";
 
-    if (
-        !window.supabase ||
-        !window.supabase.createClient
-    ) {
-        console.error("❌ Supabase SDK belum tersedia");
-        showStatus("Supabase belum siap.");
-        return;
+    statusBox.style.position =
+        "fixed";
+
+    statusBox.style.left =
+        "12px";
+
+    statusBox.style.right =
+        "12px";
+
+    statusBox.style.bottom =
+        "20px";
+
+    statusBox.style.zIndex =
+        "999999";
+
+    statusBox.style.padding =
+        "14px";
+
+    statusBox.style.background =
+        "rgba(0,0,0,.85)";
+
+    statusBox.style.color =
+        "#fff";
+
+    statusBox.style.borderRadius =
+        "14px";
+
+    statusBox.style.fontFamily =
+        "Arial,sans-serif";
+
+    statusBox.style.fontSize =
+        "14px";
+
+    statusBox.style.lineHeight =
+        "1.5";
+
+    statusBox.style.textAlign =
+        "center";
+
+    statusBox.style.pointerEvents =
+        "none";
+
+    document.body.appendChild(
+        statusBox
+    );
+
+
+    function status(message) {
+
+        console.log(
+            "📺 LIVE STATUS:",
+            message
+        );
+
+        statusBox.innerHTML =
+            message;
     }
 
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
+
+    function success(message) {
+
+        console.log(
+            "✅",
+            message
         );
+
+        statusBox.innerHTML =
+            "🟢 " + message;
+    }
+
+
+    function error(message) {
+
+        console.error(
+            "❌",
+            message
+        );
+
+        statusBox.innerHTML =
+            "🔴 " + message;
+    }
+
+
+    /*
+    =====================================================
+    ROOM
+    =====================================================
+    */
 
     const params =
         new URLSearchParams(
@@ -70,12 +143,85 @@ document.addEventListener("DOMContentLoaded", async () => {
         params.get("room");
 
     if (!roomId) {
-        console.error("❌ ROOM ID tidak ditemukan");
-        showStatus("Room Live tidak ditemukan.");
+
+        error(
+            "ROOM TIDAK DITEMUKAN"
+        );
+
         return;
     }
 
-    console.log("🏠 ROOM VIEWER:", roomId);
+    console.log(
+        "🏠 ROOM:",
+        roomId
+    );
+
+    status(
+        "🏠 Room: " +
+        roomId +
+        "<br>⏳ Menyiapkan koneksi..."
+    );
+
+
+    /*
+    =====================================================
+    SUPABASE
+    =====================================================
+    */
+
+    const SUPABASE_URL =
+        "https://aoaqvbrxgtfuvyiscpic.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
+
+
+    if (
+        !window.supabase ||
+        !window.supabase.createClient
+    ) {
+
+        error(
+            "SUPABASE SDK TIDAK TERSEDIA"
+        );
+
+        return;
+    }
+
+
+    let supabaseClient;
+
+    try {
+
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+        console.log(
+            "✅ SUPABASE CLIENT SIAP"
+        );
+
+    } catch (err) {
+
+        console.error(
+            err
+        );
+
+        error(
+            "GAGAL MEMBUAT SUPABASE CLIENT"
+        );
+
+        return;
+    }
+
+
+    /*
+    =====================================================
+    VIEWER ID
+    =====================================================
+    */
 
     const viewerId =
         "viewer-" +
@@ -85,117 +231,97 @@ document.addEventListener("DOMContentLoaded", async () => {
         "-" +
         Date.now().toString(36);
 
-    console.log("👀 VIEWER ID:", viewerId);
 
-    function showStatus(message) {
+    console.log(
+        "👀 VIEWER ID:",
+        viewerId
+    );
 
-        let status =
-            document.getElementById("liveWatchStatus");
 
-        if (!status) {
-
-            status =
-                document.createElement("div");
-
-            status.id =
-                "liveWatchStatus";
-
-            status.style.position =
-                "fixed";
-
-            status.style.left =
-                "50%";
-
-            status.style.top =
-                "50%";
-
-            status.style.transform =
-                "translate(-50%, -50%)";
-
-            status.style.zIndex =
-                "999999";
-
-            status.style.color =
-                "#fff";
-
-            status.style.background =
-                "rgba(0,0,0,.75)";
-
-            status.style.padding =
-                "14px 20px";
-
-            status.style.borderRadius =
-                "14px";
-
-            status.style.fontSize =
-                "15px";
-
-            status.style.textAlign =
-                "center";
-
-            status.style.pointerEvents =
-                "none";
-
-            document.body.appendChild(status);
-        }
-
-        status.textContent =
-            message;
-    }
-
-    function hideStatus() {
-
-        const status =
-            document.getElementById(
-                "liveWatchStatus"
-            );
-
-        if (status) {
-            status.remove();
-        }
-    }
+    /*
+    =====================================================
+    WEBRTC
+    =====================================================
+    */
 
     const rtcConfig = {
 
         iceServers: [
 
             {
-                urls: [
-                    "stun:stun.l.google.com:19302",
+                urls:
+                    "stun:stun.l.google.com:19302"
+            },
+
+            {
+                urls:
                     "stun:stun1.l.google.com:19302"
-                ]
             }
 
         ]
 
     };
 
-    let peerConnection = null;
+
+    let peerConnection =
+        null;
+
+    let remoteDescriptionReady =
+        false;
+
+    const pendingIce =
+        [];
+
 
     /*
     =====================================================
-    ICE QUEUE
+    CHANNEL
     =====================================================
     */
 
-    const pendingHostIce = [];
+    const channel =
+        supabaseClient.channel(
+            "chuk-live-" + roomId,
+            {
+                config: {
+                    broadcast: {
+                        self: false
+                    }
+                }
+            }
+        );
 
-    async function addHostIce(candidate) {
+
+    /*
+    =====================================================
+    ADD ICE
+    =====================================================
+    */
+
+    async function addIce(candidate) {
 
         if (!candidate) {
             return;
         }
 
-        if (!peerConnection) {
 
-            console.log(
-                "⏳ ICE Host diantrikan"
+        if (
+            !peerConnection ||
+            !remoteDescriptionReady
+        ) {
+
+            pendingIce.push(
+                candidate
             );
 
-            pendingHostIce.push(candidate);
+            console.log(
+                "⏳ ICE MASUK ANTREAN:",
+                pendingIce.length
+            );
 
             return;
         }
+
 
         try {
 
@@ -204,39 +330,47 @@ document.addEventListener("DOMContentLoaded", async () => {
             );
 
             console.log(
-                "🧊 ICE HOST DITERIMA"
+                "🧊 ICE HOST DITAMBAHKAN"
             );
 
-        } catch (error) {
+        } catch (err) {
 
-            console.warn(
-                "⚠️ ICE Host belum bisa ditambahkan:",
-                error
+            console.error(
+                "❌ ICE GAGAL:",
+                err
             );
-
-            pendingHostIce.push(candidate);
         }
     }
 
-    async function flushHostIce() {
 
-        if (!peerConnection) {
+    /*
+    =====================================================
+    FLUSH ICE
+    =====================================================
+    */
+
+    async function flushIce() {
+
+        if (
+            !peerConnection ||
+            !remoteDescriptionReady
+        ) {
             return;
         }
 
-        if (!pendingHostIce.length) {
-            return;
-        }
 
         console.log(
-            "🧊 Memproses ICE antrean:",
-            pendingHostIce.length
+            "🧊 MEMPROSES ICE:",
+            pendingIce.length
         );
 
-        while (pendingHostIce.length) {
+
+        while (
+            pendingIce.length > 0
+        ) {
 
             const candidate =
-                pendingHostIce.shift();
+                pendingIce.shift();
 
             try {
 
@@ -245,18 +379,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 );
 
                 console.log(
-                    "✅ ICE antrean berhasil ditambahkan"
+                    "✅ ICE ANTREAN OK"
                 );
 
-            } catch (error) {
+            } catch (err) {
 
-                console.warn(
-                    "⚠️ Gagal memproses ICE antrean:",
-                    error
+                console.error(
+                    "❌ ICE ANTREAN GAGAL:",
+                    err
                 );
             }
         }
     }
+
 
     /*
     =====================================================
@@ -264,24 +399,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     =====================================================
     */
 
-    function createPeerConnection() {
+    function createPeer() {
 
         if (peerConnection) {
 
             try {
                 peerConnection.close();
-            } catch (error) {}
+            } catch (e) {}
 
         }
 
+
         console.log(
-            "🔗 Membuat PeerConnection Viewer"
+            "🔗 MEMBUAT PEER CONNECTION"
         );
+
 
         peerConnection =
             new RTCPeerConnection(
                 rtcConfig
             );
+
+
+        /*
+        ================================================
+        TRACK HOST
+        ================================================
+        */
 
         peerConnection.ontrack =
             event => {
@@ -290,11 +434,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                     "🎥 TRACK HOST DITERIMA"
                 );
 
-                let stream = null;
+
+                let stream;
+
 
                 if (
                     event.streams &&
-                    event.streams.length
+                    event.streams.length > 0
                 ) {
 
                     stream =
@@ -310,50 +456,69 @@ document.addEventListener("DOMContentLoaded", async () => {
                     );
                 }
 
+
                 remoteVideo.srcObject =
                     stream;
 
-                console.log(
-                    "📺 STREAM HOST DIPASANG KE VIDEO"
-                );
+
+                remoteVideo.muted =
+                    true;
+
 
                 remoteVideo.play()
                     .then(() => {
 
-                        console.log(
-                            "✅ LIVE HOST TAMPIL"
+                        success(
+                            "LIVE TERHUBUNG 🔥"
                         );
-
-                        hideStatus();
 
                     })
-                    .catch(error => {
+                    .catch(err => {
 
                         console.warn(
-                            "⚠️ Autoplay gagal:",
-                            error
+                            "⚠️ VIDEO PLAY GAGAL:",
+                            err
                         );
 
-                        showStatus(
-                            "Tap layar untuk menonton Live."
+                        status(
+                            "🟡 STREAM SUDAH MASUK<br>" +
+                            "Tap layar untuk memutar."
                         );
+
                     });
             };
+
+
+        /*
+        ================================================
+        ICE VIEWER
+        ================================================
+        */
 
         peerConnection.onicecandidate =
             async event => {
 
-                if (!event.candidate) {
+                if (
+                    !event.candidate
+                ) {
                     return;
                 }
+
+
+                console.log(
+                    "🧊 ICE VIEWER DIKIRIM"
+                );
+
 
                 try {
 
                     await channel.send({
 
-                        type: "broadcast",
+                        type:
+                            "broadcast",
 
-                        event: "viewer-ice",
+                        event:
+                            "viewer-ice",
 
                         payload: {
 
@@ -366,126 +531,179 @@ document.addEventListener("DOMContentLoaded", async () => {
                             candidate:
                                 event.candidate
                         }
+
                     });
 
-                    console.log(
-                        "🧊 ICE VIEWER DIKIRIM"
-                    );
-
-                } catch (error) {
+                } catch (err) {
 
                     console.error(
-                        "❌ Gagal kirim ICE Viewer:",
-                        error
+                        "❌ GAGAL KIRIM ICE VIEWER:",
+                        err
                     );
                 }
             };
+
+
+        /*
+        ================================================
+        CONNECTION STATE
+        ================================================
+        */
 
         peerConnection.onconnectionstatechange =
             () => {
 
-                if (!peerConnection) {
-                    return;
-                }
+                const state =
+                    peerConnection.connectionState;
+
 
                 console.log(
                     "🌐 WEBRTC:",
-                    peerConnection.connectionState
+                    state
                 );
 
-                switch (
-                    peerConnection.connectionState
+
+                if (
+                    state === "new"
                 ) {
 
-                    case "new":
+                    status(
+                        "🔵 WebRTC siap..."
+                    );
 
-                        showStatus(
-                            "Menunggu koneksi..."
-                        );
-
-                        break;
-
-                    case "connecting":
-
-                        showStatus(
-                            "Menghubungkan ke Live..."
-                        );
-
-                        break;
-
-                    case "connected":
-
-                        console.log(
-                            "✅ VIEWER TERHUBUNG KE HOST"
-                        );
-
-                        hideStatus();
-
-                        break;
-
-                    case "disconnected":
-
-                        showStatus(
-                            "Koneksi Live terputus."
-                        );
-
-                        break;
-
-                    case "failed":
-
-                        console.error(
-                            "❌ WEBRTC CONNECTION FAILED"
-                        );
-
-                        showStatus(
-                            "Gagal terhubung ke Live."
-                        );
-
-                        break;
-
-                    case "closed":
-
-                        showStatus(
-                            "Live telah ditutup."
-                        );
-
-                        break;
                 }
+
+
+                if (
+                    state === "connecting"
+                ) {
+
+                    status(
+                        "🟡 Menghubungkan ke Host..."
+                    );
+
+                }
+
+
+                if (
+                    state === "connected"
+                ) {
+
+                    success(
+                        "LIVE TERHUBUNG 🔥"
+                    );
+
+                }
+
+
+                if (
+                    state === "disconnected"
+                ) {
+
+                    error(
+                        "Koneksi Live terputus."
+                    );
+
+                }
+
+
+                if (
+                    state === "failed"
+                ) {
+
+                    error(
+                        "WEBRTC GAGAL TERHUBUNG"
+                    );
+
+                    statusBox.innerHTML +=
+                        "<br><small>" +
+                        "Kemungkinan jaringan/NAT. " +
+                        "Kita perlu cek TURN." +
+                        "</small>";
+
+                }
+
+
+                if (
+                    state === "closed"
+                ) {
+
+                    error(
+                        "Koneksi Live ditutup."
+                    );
+                }
+
             };
+
+
+        /*
+        ================================================
+        ICE CONNECTION STATE
+        ================================================
+        */
 
         peerConnection.oniceconnectionstatechange =
             () => {
 
-                if (!peerConnection) {
-                    return;
-                }
+                const state =
+                    peerConnection.iceConnectionState;
+
 
                 console.log(
                     "🧊 ICE STATE:",
-                    peerConnection.iceConnectionState
+                    state
                 );
+
+
+                if (
+                    state === "checking"
+                ) {
+
+                    status(
+                        "🟡 Memeriksa koneksi jaringan..."
+                    );
+
+                }
+
+
+                if (
+                    state === "connected"
+                ) {
+
+                    console.log(
+                        "✅ ICE CONNECTED"
+                    );
+
+                }
+
+
+                if (
+                    state === "completed"
+                ) {
+
+                    console.log(
+                        "✅ ICE COMPLETED"
+                    );
+
+                }
+
+
+                if (
+                    state === "failed"
+                ) {
+
+                    error(
+                        "ICE GAGAL — jaringan tidak bisa terhubung."
+                    );
+
+                }
+
             };
+
 
         return peerConnection;
     }
 
-    /*
-    =====================================================
-    SUPABASE CHANNEL
-    =====================================================
-    */
-
-    const channel =
-        supabaseClient.channel(
-            `chuk-live-${roomId}`,
-            {
-                config: {
-                    broadcast: {
-                        self: false
-                    }
-                }
-            }
-        );
 
     /*
     =====================================================
@@ -496,16 +714,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     channel.on(
         "broadcast",
         {
-            event: "host-offer"
+            event:
+                "host-offer"
         },
+
         async payload => {
+
+            console.log(
+                "📡 HOST OFFER DITERIMA"
+            );
+
 
             const data =
                 payload.payload || {};
 
-            console.log(
-                "📡 OFFER HOST DITERIMA"
-            );
 
             if (
                 data.roomId &&
@@ -514,31 +736,40 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
+
             if (
                 data.viewerId &&
                 data.viewerId !== viewerId
             ) {
 
                 console.log(
-                    "ℹ️ Offer untuk viewer lain"
+                    "ℹ️ OFFER UNTUK VIEWER LAIN"
                 );
 
                 return;
             }
+
 
             if (!data.offer) {
 
-                console.warn(
-                    "⚠️ OFFER HOST KOSONG"
+                error(
+                    "OFFER HOST KOSONG"
                 );
 
                 return;
             }
 
+
             try {
 
+                status(
+                    "📡 Offer Host diterima..."
+                );
+
+
                 const pc =
-                    createPeerConnection();
+                    createPeer();
+
 
                 await pc.setRemoteDescription(
                     new RTCSessionDescription(
@@ -546,24 +777,40 @@ document.addEventListener("DOMContentLoaded", async () => {
                     )
                 );
 
+
+                remoteDescriptionReady =
+                    true;
+
+
                 console.log(
-                    "✅ REMOTE DESCRIPTION HOST TERPASANG"
+                    "✅ REMOTE DESCRIPTION SIAP"
                 );
 
-                await flushHostIce();
+
+                await flushIce();
+
 
                 const answer =
                     await pc.createAnswer();
+
 
                 await pc.setLocalDescription(
                     answer
                 );
 
+
+                console.log(
+                    "📡 MENGIRIM ANSWER KE HOST"
+                );
+
+
                 await channel.send({
 
-                    type: "broadcast",
+                    type:
+                        "broadcast",
 
-                    event: "viewer-answer",
+                    event:
+                        "viewer-answer",
 
                     payload: {
 
@@ -576,25 +823,31 @@ document.addEventListener("DOMContentLoaded", async () => {
                         answer:
                             pc.localDescription
                     }
+
                 });
 
-                console.log(
-                    "📡 ANSWER VIEWER DIKIRIM"
+
+                success(
+                    "Answer terkirim. Menunggu video..."
                 );
 
-            } catch (error) {
+
+            } catch (err) {
 
                 console.error(
-                    "❌ GAGAL MEMPROSES OFFER:",
-                    error
+                    "❌ OFFER ERROR:",
+                    err
                 );
 
-                showStatus(
-                    "Gagal menghubungkan Live."
+
+                error(
+                    "Gagal memproses Offer Host."
                 );
             }
+
         }
     );
+
 
     /*
     =====================================================
@@ -605,12 +858,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     channel.on(
         "broadcast",
         {
-            event: "host-ice"
+            event:
+                "host-ice"
         },
+
         async payload => {
+
+            console.log(
+                "🧊 HOST ICE DITERIMA"
+            );
+
 
             const data =
                 payload.payload || {};
+
 
             if (
                 data.roomId &&
@@ -619,6 +880,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
+
             if (
                 data.viewerId &&
                 data.viewerId !== viewerId
@@ -626,54 +888,66 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            if (!data.candidate) {
+
+            if (
+                !data.candidate
+            ) {
                 return;
             }
 
-            await addHostIce(
+
+            await addIce(
                 data.candidate
             );
+
         }
     );
 
+
     /*
     =====================================================
-    CONNECT CHANNEL
+    SUBSCRIBE
     =====================================================
     */
 
-    showStatus(
-        "Menghubungkan ke Live..."
+    status(
+        "🔄 Menghubungkan ke server..."
     );
 
+
     channel.subscribe(
-        async status => {
+        async state => {
 
             console.log(
-                "📡 VIEWER CHANNEL:",
-                status
+                "📡 CHANNEL:",
+                state
             );
 
+
             if (
-                status === "SUBSCRIBED"
+                state === "SUBSCRIBED"
             ) {
 
                 console.log(
-                    "✅ VIEWER TERHUBUNG KE ROOM:",
-                    roomId
+                    "✅ CHANNEL SUBSCRIBED"
                 );
 
-                showStatus(
-                    "Menunggu Host..."
+
+                status(
+                    "🟢 Terhubung ke server<br>" +
+                    "⏳ Menunggu Host..."
                 );
+
 
                 try {
 
                     await channel.send({
 
-                        type: "broadcast",
+                        type:
+                            "broadcast",
 
-                        event: "viewer-join",
+                        event:
+                            "viewer-join",
 
                         payload: {
 
@@ -683,57 +957,65 @@ document.addEventListener("DOMContentLoaded", async () => {
                             viewerId:
                                 viewerId
                         }
+
                     });
 
+
                     console.log(
-                        "📡 VIEWER-JOIN DIKIRIM:",
-                        viewerId
+                        "📡 VIEWER-JOIN TERKIRIM"
                     );
 
-                } catch (error) {
+
+                    status(
+                        "🟢 Terhubung ke room<br>" +
+                        "⏳ Menunggu Host..."
+                    );
+
+
+                } catch (err) {
 
                     console.error(
-                        "❌ GAGAL KIRIM VIEWER-JOIN:",
-                        error
+                        "❌ VIEWER-JOIN GAGAL:",
+                        err
                     );
 
-                    showStatus(
-                        "Gagal masuk ke Live."
+
+                    error(
+                        "Gagal mengirim koneksi ke Host."
                     );
                 }
+
             }
+
 
             if (
-                status === "CHANNEL_ERROR"
+                state === "CHANNEL_ERROR"
             ) {
 
-                console.error(
-                    "❌ SUPABASE CHANNEL ERROR"
+                error(
+                    "SUPABASE CHANNEL ERROR"
                 );
 
-                showStatus(
-                    "Gagal terhubung ke Live."
-                );
             }
+
 
             if (
-                status === "TIMED_OUT"
+                state === "TIMED_OUT"
             ) {
 
-                console.error(
-                    "❌ SUPABASE CHANNEL TIMEOUT"
+                error(
+                    "Koneksi server TIMEOUT"
                 );
 
-                showStatus(
-                    "Koneksi timeout."
-                );
             }
+
         }
     );
 
+
     /*
     =====================================================
-    TAP UNTUK PLAY
+    TAP VIDEO
     =====================================================
     */
 
@@ -747,15 +1029,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 remoteVideo.play()
                     .then(() => {
-                        hideStatus();
+
+                        if (
+                            peerConnection &&
+                            peerConnection.connectionState ===
+                            "connected"
+                        ) {
+
+                            success(
+                                "LIVE TERHUBUNG 🔥"
+                            );
+                        }
+
                     })
                     .catch(() => {});
+
             }
+
         },
         {
             passive: true
         }
     );
+
 
     /*
     =====================================================
@@ -771,11 +1067,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 try {
                     peerConnection.close();
-                } catch (error) {}
+                } catch (e) {}
 
                 peerConnection =
                     null;
             }
+
 
             try {
 
@@ -783,11 +1080,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     channel
                 );
 
-            } catch (error) {}
+            } catch (e) {}
+
         }
     );
 
+
     console.log(
-        "🚀 LIVE WATCH VIEWER SIAP"
+        "✅ LIVE WATCH DIAGNOSTIC SIAP"
     );
+
 });
