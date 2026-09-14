@@ -95,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
     userDisplay.id =
         "liveUserDisplay";
 
-
     userDisplay.innerHTML = `
 
         <img
@@ -138,10 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        /* ================================================
-           NAMA
-           ================================================ */
-
         if (name) {
 
             name.textContent =
@@ -150,10 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 "CHUK USER";
         }
 
-
-        /* ================================================
-           FOTO
-           ================================================ */
 
         if (avatar) {
 
@@ -182,16 +173,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* =====================================================
-       JALANKAN SETELAH ELEMEN SUDAH DIBUAT
-       ===================================================== */
-
     refreshLiveProfile();
 
-
-    /* =====================================================
-       CEK KEMBALI SAAT KEMBALI KE LIVE
-       ===================================================== */
 
     window.addEventListener(
         "focus",
@@ -216,24 +199,127 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       NAMA ROOM DI LAYAR
+       ID ROOM DI LAYAR
        ===================================================== */
 
     const liveRoomDisplay =
         document.createElement("div");
 
-
     liveRoomDisplay.id =
         "liveRoomDisplay";
-
 
     liveRoomDisplay.textContent =
         "";
 
-
     liveApp.appendChild(
         liveRoomDisplay
     );
+
+
+    /* =====================================================
+       NAMA ROOM DI BAWAH ID ROOM
+       ===================================================== */
+
+    const liveRoomNameDisplay =
+        document.createElement("div");
+
+    liveRoomNameDisplay.id =
+        "liveRoomNameDisplay";
+
+    liveRoomNameDisplay.textContent =
+        "";
+
+    liveApp.appendChild(
+        liveRoomNameDisplay
+    );
+
+
+    /* =====================================================
+       STYLE NAMA ROOM
+       ===================================================== */
+
+    liveRoomNameDisplay.style.position =
+        "fixed";
+
+    liveRoomNameDisplay.style.background =
+        "transparent";
+
+    liveRoomNameDisplay.style.border =
+        "none";
+
+    liveRoomNameDisplay.style.boxShadow =
+        "none";
+
+    liveRoomNameDisplay.style.color =
+        "#fff";
+
+    liveRoomNameDisplay.style.fontSize =
+        "12px";
+
+    liveRoomNameDisplay.style.fontWeight =
+        "600";
+
+    liveRoomNameDisplay.style.lineHeight =
+        "18px";
+
+    liveRoomNameDisplay.style.padding =
+        "0";
+
+    liveRoomNameDisplay.style.margin =
+        "0";
+
+    liveRoomNameDisplay.style.display =
+        "none";
+
+    liveRoomNameDisplay.style.textShadow =
+        "0 2px 5px rgba(0,0,0,.9)";
+
+    liveRoomNameDisplay.style.zIndex =
+        "99999";
+
+
+    /* =====================================================
+       POSISI NAMA ROOM
+       ===================================================== */
+
+    function positionRoomName() {
+
+        const roomRect =
+            liveRoomDisplay.getBoundingClientRect();
+
+        liveRoomNameDisplay.style.left =
+            `${roomRect.left}px`;
+
+        liveRoomNameDisplay.style.top =
+            `${roomRect.bottom + 1}px`;
+    }
+
+
+    /* =====================================================
+       UPDATE NAMA ROOM
+       ===================================================== */
+
+    function updateRoomName() {
+
+        const name =
+            window.liveRoom.name.trim();
+
+        liveRoomNameDisplay.textContent =
+            name;
+
+        if (name) {
+
+            liveRoomNameDisplay.style.display =
+                "block";
+
+            positionRoomName();
+
+        } else {
+
+            liveRoomNameDisplay.style.display =
+                "none";
+        }
+    }
 
 
     /* =====================================================
@@ -376,10 +462,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             updateMirror();
 
-
-            /* =============================================
-               PLAY VIDEO
-               ============================================= */
 
             try {
 
@@ -659,9 +741,35 @@ document.addEventListener("DOMContentLoaded", () => {
                                 name;
 
 
-                            liveRoomDisplay
-                                .textContent =
+                            /* TAMPILKAN NAMA ROOM */
+                            updateRoomName();
+
+
+                            /* SIMPAN GLOBAL */
+                            window.liveRoomName =
                                 name;
+
+                            window.CHUK_LIVE_ROOM_NAME =
+                                name;
+
+
+                            /* EVENT UNTUK FILE LAIN */
+                            window.dispatchEvent(
+                                new CustomEvent(
+                                    "chuk-room-created",
+                                    {
+                                        detail: {
+                                            name: name
+                                        }
+                                    }
+                                )
+                            );
+
+
+                            console.log(
+                                "🏷️ NAMA ROOM:",
+                                name
+                            );
 
                         }
                     );
@@ -746,6 +854,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
+       POSISI ULANG SAAT LAYAR BERUBAH
+       ===================================================== */
+
+    window.addEventListener(
+        "resize",
+        () => {
+
+            if (
+                liveRoomNameDisplay.style.display !==
+                "none"
+            ) {
+
+                positionRoomName();
+            }
+
+        }
+    );
+
+
+    window.addEventListener(
+        "orientationchange",
+        () => {
+
+            setTimeout(
+                positionRoomName,
+                100
+            );
+
+        }
+    );
+
+
+    /* =====================================================
        CEK CAMERA
        ===================================================== */
 
@@ -777,56 +918,5 @@ document.addEventListener("DOMContentLoaded", () => {
         "beforeunload",
         stopCamera
     );
-
-});
-
-/* PROFILE */
-const profile = document.createElement("div");
-profile.id = "liveUserDisplay";
-
-profile.innerHTML = `
-    <img id="liveUserAvatar" src="assets/logo.png" alt="Profil">
-    <span id="liveUserName">CHUK USER</span>
-`;
-
-liveApp.appendChild(profile);
-
-
-/* ROOM ID */
-const roomIdDisplay = document.createElement("div");
-roomIdDisplay.id = "liveRoomDisplay";
-liveApp.appendChild(roomIdDisplay);
-
-
-/* NAMA ROOM */
-const roomNameDisplay = document.createElement("div");
-roomNameDisplay.id = "liveRoomNameDisplay";
-liveApp.appendChild(roomNameDisplay);
-
-
-/* DATA ROOM */
-window.liveRoom = {
-    name: "",
-    screens: 2
-};
-
-
-/* UPDATE NAMA ROOM */
-function updateRoomName() {
-    const name = window.liveRoom.name.trim();
-
-    roomNameDisplay.textContent = name;
-    roomNameDisplay.style.display =
-        name ? "block" : "none";
-}
-
-
-/* INPUT NAMA ROOM */
-input.addEventListener("input", () => {
-
-    window.liveRoom.name =
-        input.value.trim();
-
-    updateRoomName();
 
 });
