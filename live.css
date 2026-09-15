@@ -278,7 +278,6 @@ body {
 }
 
 /* ================= FLIP CAMERA ================= */
-/* KANAN BAWAH — TEPAT DI ATAS KOMENTAR */
 
 #flipCameraButton,
 .flip-camera-button {
@@ -572,7 +571,9 @@ body {
 }
 
 .live-comment-form input {
-    flex: 1 !important;
+    flex: 0 1 auto !important;
+
+    width: calc(100% - 2.5cm) !important;
     min-width: 0 !important;
 
     height: 44px !important;
