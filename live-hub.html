@@ -15,119 +15,137 @@
 
 <body>
 
-    <main id="liveHub" class="live-hub">
+<main id="liveHub" class="live-hub">
 
-        <!-- =====================================================
-             HALAMAN 1 — LIVE FEED
-             TIDAK MENGAKSES KAMERA
-        ====================================================== -->
-        <section
-            id="liveFeedPage"
-            class="hub-page live-feed-page"
-        >
+    <!-- =================================================
+         PAGE 1 — LIVE FEED
+         TIDAK MEMBUKA KAMERA
+         ================================================= -->
 
-            <header class="live-feed-header">
-                <div>
-                    <div class="brand-title">
-                        CHUK AN CHUKK
-                    </div>
+    <section
+        id="liveFeedPage"
+        class="hub-page live-feed-page"
+    >
 
-                    <div class="brand-subtitle">
-                        LIVE
-                    </div>
+        <header class="live-feed-header">
+
+            <div>
+                <div class="brand-title">
+                    CHUK AN CHUKK
                 </div>
 
-                <button
-                    id="startLiveButton"
-                    class="start-live-button"
-                    type="button"
-                >
+                <div class="brand-subtitle">
                     LIVE
-                </button>
-            </header>
-
-            <div
-                id="liveFeed"
-                class="live-feed"
-            >
-
-                <div
-                    id="liveLoading"
-                    class="live-status"
-                >
-                    Memuat LIVE...
                 </div>
-
-            </div>
-
-            <div class="swipe-hint">
-                Geser ke kiri untuk LIVE
-            </div>
-
-        </section>
-
-
-        <!-- =====================================================
-             HALAMAN 2 — LIVE VIEWER
-        ====================================================== -->
-        <section
-            id="liveViewerPage"
-            class="hub-page live-viewer-page"
-        >
-
-            <div
-                id="viewerContainer"
-                class="viewer-container"
-            >
-
-                <div class="viewer-placeholder">
-
-                    <div class="viewer-icon">
-                        LIVE
-                    </div>
-
-                    <div
-                        id="viewerTitle"
-                        class="viewer-title"
-                    >
-                        Pilih LIVE
-                    </div>
-
-                    <div
-                        id="viewerRoom"
-                        class="viewer-room"
-                    >
-                        Belum ada room
-                    </div>
-
-                    <button
-                        id="openViewerButton"
-                        class="open-viewer-button"
-                        type="button"
-                    >
-                        Buka LIVE
-                    </button>
-
-                </div>
-
             </div>
 
             <button
-                id="backToFeedButton"
-                class="back-to-feed-button"
+                id="startLiveButton"
+                class="start-live-button"
                 type="button"
-                aria-label="Kembali ke daftar LIVE"
             >
-                ‹
+                LIVE
             </button>
 
-        </section>
-
-    </main>
+        </header>
 
 
-    <!-- JavaScript -->
-    <script src="live-hub.js"></script>
+        <div
+            id="liveFeed"
+            class="live-feed"
+        >
+
+            <div
+                id="liveLoading"
+                class="live-status"
+            >
+                🔄 Memuat LIVE...
+            </div>
+
+        </div>
+
+
+        <div class="swipe-hint">
+            Geser ke kiri untuk LIVE
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         PAGE 2 — LIVE VIEWER
+         TIDAK MEMBUKA KAMERA
+         ================================================= -->
+
+    <section
+        id="liveViewerPage"
+        class="hub-page live-viewer-page"
+    >
+
+        <div
+            id="viewerContainer"
+            class="viewer-container"
+        >
+
+            <div class="viewer-placeholder">
+
+                <div class="viewer-icon">
+                    LIVE
+                </div>
+
+                <div
+                    id="viewerTitle"
+                    class="viewer-title"
+                >
+                    Pilih LIVE
+                </div>
+
+                <div
+                    id="viewerRoom"
+                    class="viewer-room"
+                >
+                    Belum ada room
+                </div>
+
+                <button
+                    id="openViewerButton"
+                    class="open-viewer-button"
+                    type="button"
+                >
+                    Buka LIVE
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="backToFeedButton"
+            class="back-to-feed-button"
+            type="button"
+            aria-label="Kembali ke daftar LIVE"
+        >
+            ‹
+        </button>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     SUPABASE SDK
+     HARUS SEBELUM live-hub.js
+     ===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- =====================================================
+     CHUK AN CHUKK LIVE HUB
+     ===================================================== -->
+
+<script src="live-hub.js"></script>
 
 </body>
 </html>
