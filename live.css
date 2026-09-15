@@ -1147,3 +1147,35 @@ body {
         max-width: 310px !important;
     }
 }
+
+/* KOLOM TULIS PESAN - KIRI BAWAH */
+#liveCommentForm {
+    position: fixed;
+    left: 14px;
+    bottom: 20px;
+    width: calc(100% - 28px);
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#liveCommentInput {
+    flex: 1;
+    min-height: 44px;
+    max-height: 90px;
+
+    padding: 11px 14px;
+    border-radius: 22px;
+
+    box-sizing: border-box;
+}
+
+#liveCommentForm button[type="submit"] {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+}
