@@ -969,3 +969,13 @@ body {
         font-size: 14px !important;
     }
 }
+
+/* HILANGKAN HEADER KOMENTAR LIVE */
+.live-comment-header {
+    display: none !important;
+}
+
+/* HILANGKAN TOMBOL CLOSE KOMENTAR */
+#closeLiveComments {
+    display: none !important;
+}
