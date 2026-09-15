@@ -2,14 +2,8 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const commentButton =
-        document.getElementById("liveCommentButton");
-
     const panel =
         document.getElementById("liveCommentPanel");
-
-    const closeButton =
-        document.getElementById("closeLiveComments");
 
     const commentsList =
         document.getElementById("liveCommentsList");
@@ -20,23 +14,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const input =
         document.getElementById("liveCommentInput");
 
-
-    if (
-        !commentButton ||
-        !panel ||
-        !closeButton ||
-        !commentsList ||
-        !form ||
-        !input
-    ) {
-        console.error("❌ Elemen komentar Live tidak lengkap");
+    if (!panel || !commentsList || !form || !input) {
+        console.error("❌ Sistem pesan Live tidak lengkap");
         return;
     }
 
+    /* =====================================================
+       PANEL SELALU AKTIF
+    ===================================================== */
+
+    panel.hidden = false;
+
+    panel.style.setProperty(
+        "display",
+        "flex",
+        "important"
+    );
+
+    panel.style.transform = "none";
+
 
     /* =====================================================
-       DATA KOMENTAR LOKAL
-       KOSONG — TIDAK ADA KOMENTAR CONTOH
+       DATA PESAN
     ===================================================== */
 
     let comments = [];
@@ -58,14 +57,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       TAMPILKAN KOMENTAR
+       TAMPILKAN PESAN
     ===================================================== */
 
     function renderComments() {
 
         commentsList.innerHTML = "";
 
-        comments.forEach(comment => {
+        comments.forEach((comment, index) => {
 
             const item =
                 document.createElement("div");
@@ -73,11 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
             item.className =
                 "live-comment-item";
 
-            item.innerHTML = `
+            item.dataset.index = index;
 
-                <div class="live-comment-avatar">
-                    👤
-                </div>
+            item.innerHTML = `
 
                 <div class="live-comment-content">
 
@@ -95,104 +92,152 @@ document.addEventListener("DOMContentLoaded", () => {
 
             commentsList.appendChild(item);
 
+            enableSwipeToRemove(item, index);
         });
 
-        commentsList.scrollTop =
-            commentsList.scrollHeight;
     }
 
 
     /* =====================================================
-       BUKA PANEL
+       SWIPE PESAN KE KANAN
     ===================================================== */
 
-    function openComments() {
+    function enableSwipeToRemove(item, index) {
 
-        panel.hidden = false;
+        let startX = 0;
+        let startY = 0;
 
-        panel.style.setProperty(
-            "display",
-            "flex",
-            "important"
+        let currentX = 0;
+
+        let dragging = false;
+
+        item.addEventListener(
+            "touchstart",
+            event => {
+
+                const touch =
+                    event.touches[0];
+
+                startX =
+                    touch.clientX;
+
+                startY =
+                    touch.clientY;
+
+                currentX = 0;
+
+                dragging = true;
+
+                item.style.transition =
+                    "none";
+
+            },
+            {
+                passive: true
+            }
         );
 
-        panel.style.transition =
-            "transform 0.22s ease";
 
-        panel.style.transform =
-            "translateX(0)";
+        item.addEventListener(
+            "touchmove",
+            event => {
 
-        renderComments();
+                if (!dragging) {
+                    return;
+                }
 
-        console.log("💬 Komentar Live dibuka");
-    }
+                const touch =
+                    event.touches[0];
 
+                const deltaX =
+                    touch.clientX - startX;
 
-    /* =====================================================
-       TUTUP PANEL
-    ===================================================== */
-
-    function closeComments() {
-
-        panel.style.transition =
-            "transform 0.22s ease";
-
-        panel.style.transform =
-            "translateX(100%)";
-
-        setTimeout(() => {
-
-            panel.hidden = true;
-
-            panel.style.setProperty(
-                "display",
-                "none",
-                "important"
-            );
-
-            panel.style.transform =
-                "translateX(0)";
-
-        }, 220);
-
-        console.log("💬 Komentar Live ditutup");
-    }
+                const deltaY =
+                    touch.clientY - startY;
 
 
-    /* =====================================================
-       TOMBOL KOMENTAR
-    ===================================================== */
+                /*
+                 * Hanya swipe ke kanan
+                 */
 
-    commentButton.addEventListener(
-        "click",
-        () => {
+                if (
+                    deltaX > 0 &&
+                    Math.abs(deltaX) >
+                    Math.abs(deltaY)
+                ) {
 
-            if (panel.hidden) {
+                    currentX = deltaX;
 
-                openComments();
+                    item.style.transform =
+                        `translateX(${currentX}px)`;
 
-            } else {
+                }
 
-                closeComments();
+            },
+            {
+                passive: true
+            }
+        );
+
+
+        item.addEventListener(
+            "touchend",
+            () => {
+
+                if (!dragging) {
+                    return;
+                }
+
+                dragging = false;
+
+                /*
+                 * Kalau digeser cukup jauh
+                 * pesan langsung hilang
+                 */
+
+                if (currentX > 80) {
+
+                    item.style.transition =
+                        "transform .22s ease, opacity .22s ease";
+
+                    item.style.transform =
+                        "translateX(120%)";
+
+                    item.style.opacity =
+                        "0";
+
+
+                    setTimeout(() => {
+
+                        comments.splice(index, 1);
+
+                        renderComments();
+
+                    }, 220);
+
+                } else {
+
+                    /*
+                     * Kalau gesernya sedikit,
+                     * kembali ke posisi awal
+                     */
+
+                    item.style.transition =
+                        "transform .2s ease";
+
+                    item.style.transform =
+                        "translateX(0)";
+
+                }
 
             }
+        );
 
-        }
-    );
-
-
-    /* =====================================================
-       TOMBOL X
-    ===================================================== */
-
-    closeButton.addEventListener(
-        "click",
-        closeComments
-    );
+    }
 
 
     /* =====================================================
-       KIRIM KOMENTAR
+       KIRIM PESAN
     ===================================================== */
 
     form.addEventListener(
@@ -203,6 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const text =
                 input.value.trim();
+
 
             if (!text) {
                 return;
@@ -220,10 +266,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
             input.value = "";
 
+
             renderComments();
 
+
+            /*
+             * Kembalikan fokus ke kolom
+             */
+
+            input.focus();
+
+
             console.log(
-                "💬 Komentar dikirim:",
+                "💬 Pesan dikirim:",
                 text
             );
 
@@ -232,185 +287,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       SWIPE PANEL KE KANAN
-       ===================================================== */
+       ENTER UNTUK KIRIM
+    ===================================================== */
 
-    let startX = 0;
-    let startY = 0;
-
-    let currentX = 0;
-
-    let dragging = false;
-
-    let horizontalSwipe = false;
-
-
-    panel.addEventListener(
-        "touchstart",
+    input.addEventListener(
+        "keydown",
         event => {
 
-            if (panel.hidden) {
-                return;
-            }
-
-            const touch =
-                event.touches[0];
-
-            startX =
-                touch.clientX;
-
-            startY =
-                touch.clientY;
-
-            currentX =
-                startX;
-
-            dragging = true;
-
-            horizontalSwipe = false;
-
-            panel.style.transition =
-                "none";
-
-        },
-        {
-            passive: true
-        }
-    );
-
-
-    panel.addEventListener(
-        "touchmove",
-        event => {
-
-            if (!dragging) {
-                return;
-            }
-
-            const touch =
-                event.touches[0];
-
-            currentX =
-                touch.clientX;
-
-            const deltaX =
-                currentX - startX;
-
-            const deltaY =
-                touch.clientY - startY;
-
-
-            if (!horizontalSwipe) {
-
-                if (
-                    Math.abs(deltaX) > 10 &&
-                    Math.abs(deltaX) > Math.abs(deltaY)
-                ) {
-
-                    horizontalSwipe = true;
-
-                }
-
-            }
-
+            /*
+             * Enter = kirim
+             * Shift + Enter = baris baru
+             */
 
             if (
-                horizontalSwipe &&
-                deltaX > 0
+                event.key === "Enter" &&
+                !event.shiftKey
             ) {
 
                 event.preventDefault();
 
-                panel.style.transform =
-                    `translateX(${deltaX}px)`;
+                form.requestSubmit();
 
             }
-
-        },
-        {
-            passive: false
-        }
-    );
-
-
-    panel.addEventListener(
-        "touchend",
-        () => {
-
-            if (!dragging) {
-                return;
-            }
-
-            dragging = false;
-
-            const deltaX =
-                currentX - startX;
-
-
-            const threshold =
-                Math.max(
-                    80,
-                    panel.offsetWidth * 0.25
-                );
-
-
-            if (
-                horizontalSwipe &&
-                deltaX >= threshold
-            ) {
-
-                closeComments();
-
-                return;
-            }
-
-
-            panel.style.transition =
-                "transform 0.22s ease";
-
-            panel.style.transform =
-                "translateX(0)";
-
-        }
-    );
-
-
-    panel.addEventListener(
-        "touchcancel",
-        () => {
-
-            dragging = false;
-
-            panel.style.transition =
-                "transform 0.22s ease";
-
-            panel.style.transform =
-                "translateX(0)";
 
         }
     );
 
 
     /* =====================================================
-       AWAL
+       INPUT OTOMATIS MEMBESAR
     ===================================================== */
 
-    panel.hidden = true;
+    input.addEventListener(
+        "input",
+        () => {
 
-    panel.style.setProperty(
-        "display",
-        "none",
-        "important"
+            input.style.height =
+                "36px";
+
+            input.style.height =
+                Math.min(
+                    input.scrollHeight,
+                    90
+                ) + "px";
+
+        }
     );
 
-    panel.style.transform =
-        "translateX(0)";
 
-    renderComments();
+    /* =====================================================
+       TIDAK ADA LAGI:
+       - OPEN PANEL
+       - CLOSE PANEL
+       - TOMBOL KOMENTAR
+       - TOMBOL X
+       - SWIPE PANEL
+    ===================================================== */
 
 
     console.log(
-        "✅ LIVE COMMENTS AKTIF — TANPA KOMENTAR CONTOH"
+        "💬 CHUK AN CHUKK LIVE MESSAGE READY"
     );
 
 });
