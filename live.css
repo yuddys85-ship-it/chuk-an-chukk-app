@@ -1179,3 +1179,43 @@ body {
 
     border-radius: 50%;
 }
+
+/* =====================================================
+   LIVE MESSAGE — HIDE / SHOW
+===================================================== */
+
+#liveCommentsList {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
+}
+
+/* Geser layar ke kanan */
+#liveCommentsList.live-comments-hidden {
+    opacity: 0 !important;
+    transform: translateX(80px) !important;
+    pointer-events: none !important;
+}
+
+/* Jarak komentar rapat */
+.live-comment-item {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Kolom pesan tetap aktif */
+#liveCommentForm {
+    pointer-events: auto !important;
+    z-index: 10000 !important;
+}
+
+#liveCommentInput {
+    pointer-events: auto !important;
+    touch-action: auto !important;
+}
