@@ -384,34 +384,61 @@ body {
    KOLOM KOMENTAR = 3 CM
    HANYA BAGIAN INI YANG DIUBAH
    ========================================================= */
+/* =========================================================
+   CHAT KOMENTAR — MODEL CHATGPT
+   ========================================================= */
+
+.live-comment-form {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    display: flex;
+    align-items: flex-end;
+
+    gap: 8px;
+
+    padding:
+        10px
+        12px
+        calc(10px + env(safe-area-inset-bottom))
+        12px;
+
+    background: transparent;
+}
+
+/* KOLOM CHAT */
 
 .live-comment-form textarea {
-    flex: 0 0 5cm;
+    flex: 1 1 auto;
 
-    width: 5cm;
-    min-width: 5cm;
-    max-width: 5cm;
+    width: auto;
+    min-width: 0;
+    max-width: none;
 
     height: 44px;
     min-height: 44px;
     max-height: 120px;
 
-    padding: 7px;
+    padding: 11px 14px;
+
     margin: 0;
 
     box-sizing: border-box;
 
-    border: 1px solid rgba(255,255,255,.35);
-    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 22px;
 
     outline: none;
 
-    background: rgba(0,0,0,.38);
+    background: rgba(255,255,255,.08);
+
     color: #fff;
 
     font-family: inherit;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 20px;
 
     resize: none;
 
@@ -422,15 +449,60 @@ body {
     overflow-wrap: anywhere;
     word-break: break-word;
 
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-
     -webkit-appearance: none;
     appearance: none;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    transition:
+        border-color .15s ease,
+        background .15s ease;
+}
+
+.live-comment-form textarea:focus {
+    border-color: rgba(255,255,255,.45);
+    background: rgba(255,255,255,.11);
 }
 
 .live-comment-form textarea::placeholder {
-    color: rgba(255,255,255,.65);
+    color: rgba(255,255,255,.60);
+}
+
+/* TOMBOL KIRIM — TETAP 44 PX */
+
+.live-comment-form button {
+    flex: 0 0 44px;
+
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+
+    height: 44px;
+
+    padding: 0;
+    margin: 0;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.15);
+
+    color: #fff;
+
+    font-size: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.live-comment-form button:active {
+    transform: scale(.92);
 }
 
 /* SEND BUTTON = TETAP 44 PX */
