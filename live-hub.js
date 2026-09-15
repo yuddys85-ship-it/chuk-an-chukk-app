@@ -1,21 +1,47 @@
 "use strict";
 
-/*
-=========================================================
- CHUK AN CHUKK
- LIVE HUB
- HALAMAN 1 = LIVE FEED
- HALAMAN 2 = LIVE VIEWER
-=========================================================
-*/
+/* =========================================================
+   CHUK AN CHUKK — LIVE HUB
+   PAGE 1 = LIVE FEED
+   PAGE 2 = LIVE VIEWER
+   NO CAMERA
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const hub = document.getElementById("liveHub");
-    const feed = document.getElementById("liveFeed");
+    console.log("🚀 CHUK AN CHUKK — LIVE HUB");
 
-    const viewerContainer =
-        document.getElementById("viewerContainer");
+    const SUPABASE_URL =
+        "https://aoaqvbrxgtfuvyiscpic.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
+
+    /* -----------------------------------------------------
+       SUPABASE
+       ----------------------------------------------------- */
+
+    let supabaseClient = null;
+
+    if (window.supabase) {
+        supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+    }
+
+    /* -----------------------------------------------------
+       ELEMENT
+       ----------------------------------------------------- */
+
+    const liveHub = document.getElementById("liveHub");
+    const liveFeed = document.getElementById("liveFeed");
+
+    const startLiveButton =
+        document.getElementById("startLiveButton");
+
+    const backToFeedButton =
+        document.getElementById("backToFeedButton");
 
     const viewerTitle =
         document.getElementById("viewerTitle");
@@ -26,271 +52,194 @@ document.addEventListener("DOMContentLoaded", () => {
     const openViewerButton =
         document.getElementById("openViewerButton");
 
-    const backButton =
-        document.getElementById("backToFeedButton");
-
-    const startLiveButton =
-        document.getElementById("startLiveButton");
-
-    if (!hub || !feed) {
-        console.error("❌ Live Hub tidak ditemukan");
-        return;
-    }
-
-    /* =====================================================
-       SUPABASE
-    ===================================================== */
-
-    const SUPABASE_URL =
-        "https://aoaqvbrxgtfuvyiscpic.supabase.co";
-
-    const SUPABASE_KEY =
-        "sb_publishable_Yjdm78LEqtijgVfB160byA_RHsml_Ga";
-
-    let supabaseClient = null;
-
-    if (window.supabase) {
-
-        supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_KEY
-            );
-
-        console.log("✅ Supabase Live Hub siap");
-
-    } else {
-
-        console.warn(
-            "⚠️ Supabase library belum tersedia"
-        );
-
-        showEmpty(
-            "LIVE belum dapat dimuat"
-        );
-    }
-
-
-    /* =====================================================
+    /* -----------------------------------------------------
        STATE
-    ===================================================== */
+       ----------------------------------------------------- */
 
+    let liveRooms = [];
     let selectedRoom = "";
-    let selectedName = "";
 
-    let touchStartX = 0;
-    let touchStartY = 0;
+    /* -----------------------------------------------------
+       OPEN VIEWER
+       ----------------------------------------------------- */
 
-    let touchEndX = 0;
-    let touchEndY = 0;
+    function openViewer(roomId, title = "CHUK LIVE") {
 
-    let isDragging = false;
-
-
-    /* =====================================================
-       BUKA HALAMAN VIEWER
-    ===================================================== */
-
-    function showViewer(roomId, name) {
-
-        if (!roomId) return;
-
-        selectedRoom = roomId;
-        selectedName = name || "LIVE";
-
-        if (viewerTitle) {
-            viewerTitle.textContent =
-                selectedName;
-        }
-
-        if (viewerRoom) {
-            viewerRoom.textContent =
-                roomId;
-        }
-
-        hub.classList.add("viewer-active");
-
-        /*
-        -----------------------------------------------------
-        Jangan langsung membuat iframe ketika halaman
-        pertama dibuka.
-
-        iframe hanya dibuat setelah user memilih LIVE.
-        -----------------------------------------------------
-        */
-
-        createViewer();
-
-        console.log(
-            "▶️ Membuka LIVE:",
-            roomId
-        );
-    }
-
-
-    /* =====================================================
-       BUAT VIEWER
-    ===================================================== */
-
-    function createViewer() {
-
-        if (!viewerContainer || !selectedRoom) {
+        if (!roomId) {
+            console.warn("⚠️ Room ID kosong");
             return;
         }
 
-        /*
-        Hapus placeholder
-        */
+        selectedRoom = roomId;
 
-        const placeholder =
-            viewerContainer.querySelector(
-                ".viewer-placeholder"
-            );
-
-        if (placeholder) {
-            placeholder.remove();
+        if (viewerTitle) {
+            viewerTitle.textContent = title || "CHUK LIVE";
         }
 
-        /*
-        Jangan membuat iframe dua kali
-        */
-
-        const oldFrame =
-            viewerContainer.querySelector(
-                "#chukLiveViewerFrame"
-            );
-
-        if (oldFrame) {
-            oldFrame.remove();
+        if (viewerRoom) {
+            viewerRoom.textContent = roomId;
         }
 
-        /*
-        -----------------------------------------------------
-        LIVE WATCH
-        -----------------------------------------------------
-        */
+        if (openViewerButton) {
+            openViewerButton.style.display = "block";
+        }
 
-        const iframe =
-            document.createElement("iframe");
+        liveHub.classList.add("viewer-active");
 
-        iframe.id =
-            "chukLiveViewerFrame";
+        console.log("▶️ Viewer:", roomId);
+    }
 
-        iframe.src =
+    /* -----------------------------------------------------
+       OPEN WATCH PAGE
+       ----------------------------------------------------- */
+
+    function openWatchPage() {
+
+        if (!selectedRoom) {
+            console.warn("⚠️ Tidak ada room dipilih");
+            return;
+        }
+
+        const url =
             "live-watch.html?room=" +
             encodeURIComponent(selectedRoom);
 
-        iframe.allow =
-            "camera; microphone; autoplay; fullscreen; display-capture";
+        console.log("📺 Membuka:", url);
 
-        iframe.allowFullscreen = true;
-
-        iframe.setAttribute(
-            "allow",
-            "autoplay; fullscreen; picture-in-picture"
-        );
-
-        iframe.setAttribute(
-            "title",
-            "Chuk an Chukk Live"
-        );
-
-        viewerContainer.appendChild(iframe);
+        window.location.href = url;
     }
 
+    /* -----------------------------------------------------
+       BACK TO FEED
+       ----------------------------------------------------- */
 
-    /* =====================================================
-       KEMBALI KE FEED
-    ===================================================== */
+    function backToFeed() {
 
-    function showFeed() {
-
-        hub.classList.remove(
-            "viewer-active"
-        );
-
-        /*
-        Hapus iframe agar koneksi viewer
-        tidak tetap berjalan di belakang.
-        */
-
-        const iframe =
-            viewerContainer?.querySelector(
-                "#chukLiveViewerFrame"
-            );
-
-        if (iframe) {
-            iframe.src = "about:blank";
-
-            setTimeout(() => {
-                iframe.remove();
-            }, 100);
-        }
+        liveHub.classList.remove("viewer-active");
 
         selectedRoom = "";
-        selectedName = "";
 
-        console.log(
-            "◀️ Kembali ke LIVE Feed"
-        );
+        console.log("◀️ Kembali ke LIVE feed");
     }
 
+    /* -----------------------------------------------------
+       RENDER EMPTY
+       ----------------------------------------------------- */
 
-    /* =====================================================
-       EVENT KARTU LIVE
-    ===================================================== */
+    function renderEmpty() {
 
-    function attachCardEvents() {
-
-        const cards =
-            feed.querySelectorAll(
-                ".live-card"
-            );
-
-        cards.forEach(card => {
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    const room =
-                        card.dataset.room;
-
-                    const name =
-                        card.dataset.name ||
-                        "LIVE";
-
-                    showViewer(
-                        room,
-                        name
-                    );
-                }
-            );
-        });
-    }
-
-
-    /* =====================================================
-       TAMPILKAN LIVE KOSONG
-    ===================================================== */
-
-    function showEmpty(message) {
-
-        feed.innerHTML = `
+        liveFeed.innerHTML = `
             <div class="live-status">
-                ${escapeHTML(message)}
+                <div style="font-size:42px;margin-bottom:12px;">
+                    📺
+                </div>
+
+                <div>
+                    Belum ada yang LIVE
+                </div>
+
+                <small>
+                    Jadilah yang pertama untuk LIVE
+                </small>
             </div>
         `;
     }
 
+    /* -----------------------------------------------------
+       RENDER LIVE CARDS
+       ----------------------------------------------------- */
 
-    /* =====================================================
+    function renderLiveRooms() {
+
+        if (!liveFeed) return;
+
+        if (!liveRooms.length) {
+            renderEmpty();
+            return;
+        }
+
+        liveFeed.innerHTML = "";
+
+        liveRooms.forEach((room) => {
+
+            const roomId =
+                room.room_id || "";
+
+            if (!roomId) return;
+
+            const username =
+                room.username ||
+                room.display_name ||
+                "CHUK USER";
+
+            const displayName =
+                room.display_name ||
+                username;
+
+            const avatar =
+                room.avatar ||
+                "assets/logo.png";
+
+            const roomName =
+                room.room_name ||
+                "LIVE CHUK AN CHUKK";
+
+            const card =
+                document.createElement("article");
+
+            card.className = "live-card";
+
+            card.innerHTML = `
+                <div class="live-card-media">
+
+                    <img
+                        src="${escapeHTML(avatar)}"
+                        alt="${escapeHTML(displayName)}"
+                        loading="lazy"
+                        onerror="this.src='assets/logo.png'"
+                    >
+
+                    <div class="live-badge">
+                        LIVE
+                    </div>
+
+                    <div class="live-card-gradient"></div>
+
+                    <div class="live-card-info">
+
+                        <div class="live-room-name">
+                            ${escapeHTML(roomName)}
+                        </div>
+
+                        <div class="live-user-name">
+                            @${escapeHTML(username)}
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+            card.addEventListener("click", () => {
+
+                openViewer(
+                    roomId,
+                    roomName
+                );
+
+            });
+
+            liveFeed.appendChild(card);
+        });
+    }
+
+    /* -----------------------------------------------------
        ESCAPE HTML
-    ===================================================== */
+       ----------------------------------------------------- */
 
     function escapeHTML(value) {
 
-        return String(value || "")
+        return String(value ?? "")
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
@@ -298,28 +247,284 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/'/g, "&#039;");
     }
 
+    /* -----------------------------------------------------
+       LOAD LIVE ROOMS
+       ----------------------------------------------------- */
 
-    /* =====================================================
-       RENDER LIVE CARD
-    ===================================================== */
+    async function loadLiveRooms() {
 
-    function renderLiveCard(room) {
+        if (!supabaseClient) {
 
-        const roomId =
-            room.room_id ||
-            room.room ||
-            room.id;
+            console.error(
+                "❌ Supabase tidak tersedia"
+            );
 
-        if (!roomId) {
-            return "";
+            if (liveFeed) {
+                liveFeed.innerHTML = `
+                    <div class="live-status">
+                        ❌ Supabase tidak terhubung.
+                    </div>
+                `;
+            }
+
+            return;
         }
 
-        const name =
-            room.room_name ||
-            room.name ||
-            room.username ||
-            room.display_name ||
-            "CHUK LIVE";
+        if (liveFeed) {
 
-        const avatar =
-            room.avatar
+            liveFeed.innerHTML = `
+                <div id="liveLoading" class="live-status">
+                    🔄 Memuat LIVE...
+                </div>
+            `;
+        }
+
+        try {
+
+            const { data, error } =
+                await supabaseClient
+                    .from("live_rooms")
+                    .select(
+                        "id,room_id,username,display_name,avatar,room_name,is_live"
+                    )
+                    .eq("is_live", true);
+
+            if (error) {
+
+                console.error(
+                    "❌ Gagal mengambil LIVE:",
+                    error
+                );
+
+                if (liveFeed) {
+                    liveFeed.innerHTML = `
+                        <div class="live-status">
+                            ❌ Gagal memuat LIVE
+                            <small>
+                                ${escapeHTML(error.message)}
+                            </small>
+                        </div>
+                    `;
+                }
+
+                return;
+            }
+
+            liveRooms = Array.isArray(data)
+                ? data
+                : [];
+
+            console.log(
+                "📡 LIVE aktif:",
+                liveRooms.length
+            );
+
+            renderLiveRooms();
+
+        } catch (error) {
+
+            console.error(
+                "❌ LIVE HUB ERROR:",
+                error
+            );
+
+            if (liveFeed) {
+                liveFeed.innerHTML = `
+                    <div class="live-status">
+                        ❌ Terjadi kesalahan
+                    </div>
+                `;
+            }
+        }
+    }
+
+    /* -----------------------------------------------------
+       REALTIME UPDATE
+       ----------------------------------------------------- */
+
+    function subscribeLiveRooms() {
+
+        if (!supabaseClient) return;
+
+        const channel =
+            supabaseClient.channel(
+                "chuk-live-rooms-feed"
+            );
+
+        channel
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "live_rooms"
+                },
+                (payload) => {
+
+                    console.log(
+                        "🔄 LIVE ROOMS UPDATE",
+                        payload
+                    );
+
+                    loadLiveRooms();
+                }
+            )
+            .subscribe((status) => {
+
+                console.log(
+                    "📡 LIVE FEED:",
+                    status
+                );
+            });
+    }
+
+    /* -----------------------------------------------------
+       START LIVE
+       ----------------------------------------------------- */
+
+    if (startLiveButton) {
+
+        startLiveButton.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "live.html";
+
+            }
+        );
+    }
+
+    /* -----------------------------------------------------
+       OPEN SELECTED LIVE
+       ----------------------------------------------------- */
+
+    if (openViewerButton) {
+
+        openViewerButton.addEventListener(
+            "click",
+            openWatchPage
+        );
+    }
+
+    /* -----------------------------------------------------
+       BACK
+       ----------------------------------------------------- */
+
+    if (backToFeedButton) {
+
+        backToFeedButton.addEventListener(
+            "click",
+            backToFeed
+        );
+    }
+
+    /* -----------------------------------------------------
+       SWIPE
+       ----------------------------------------------------- */
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    liveHub.addEventListener(
+        "touchstart",
+        (event) => {
+
+            const touch =
+                event.touches[0];
+
+            touchStartX =
+                touch.clientX;
+
+            touchStartY =
+                touch.clientY;
+        },
+        { passive: true }
+    );
+
+    liveHub.addEventListener(
+        "touchend",
+        (event) => {
+
+            const touch =
+                event.changedTouches[0];
+
+            const endX =
+                touch.clientX;
+
+            const endY =
+                touch.clientY;
+
+            const diffX =
+                endX - touchStartX;
+
+            const diffY =
+                endY - touchStartY;
+
+            /* Abaikan swipe vertikal */
+
+            if (
+                Math.abs(diffX) < 70 ||
+                Math.abs(diffX) < Math.abs(diffY)
+            ) {
+                return;
+            }
+
+            /* Geser kiri */
+
+            if (diffX < 0) {
+
+                if (
+                    !liveHub.classList.contains(
+                        "viewer-active"
+                    )
+                ) {
+
+                    if (liveRooms.length) {
+
+                        const firstRoom =
+                            liveRooms[0];
+
+                        openViewer(
+                            firstRoom.room_id,
+                            firstRoom.room_name ||
+                            firstRoom.display_name ||
+                            "CHUK LIVE"
+                        );
+
+                    } else {
+
+                        console.log(
+                            "⚠️ Belum ada LIVE"
+                        );
+                    }
+                }
+            }
+
+            /* Geser kanan */
+
+            if (diffX > 0) {
+
+                if (
+                    liveHub.classList.contains(
+                        "viewer-active"
+                    )
+                ) {
+
+                    backToFeed();
+                }
+            }
+
+        },
+        { passive: true }
+    );
+
+    /* -----------------------------------------------------
+       START
+       ----------------------------------------------------- */
+
+    loadLiveRooms();
+
+    subscribeLiveRooms();
+
+});
