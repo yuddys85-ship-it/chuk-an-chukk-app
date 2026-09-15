@@ -193,60 +193,49 @@
          COMMENT PANEL
          ===================================================== -->
 
-    <section
-        class="live-comment-panel"
-        id="liveCommentPanel"
-        hidden
+        
+        <!-- =====================================================
+     CHUK AN CHUKK LIVE MESSAGE
+     INPUT PERMANEN BAWAH KIRI
+===================================================== -->
+
+<section
+    class="live-comment-panel"
+    id="liveCommentPanel"
+>
+
+    <!-- Pesan LIVE -->
+    <div
+        class="live-comments-list"
+        id="liveCommentsList"
+    ></div>
+
+    <!-- Kolom pesan permanen -->
+    <form
+        class="live-comment-form"
+        id="liveCommentForm"
     >
 
-        <div class="live-comment-header">
+        <textarea
+            id="liveCommentInput"
+            rows="1"
+            placeholder="Tulis pesan..."
+            autocomplete="off"
+            maxlength="300"
+        ></textarea>
 
-            <strong>
-                Komentar
-            </strong>
-
-            <button
-                id="closeLiveComments"
-                type="button"
-                aria-label="Tutup komentar"
-            >
-                ✕
-            </button>
-
-        </div>
-
-
-        <div
-            class="live-comments-list"
-            id="liveCommentsList"
-        ></div>
-
-
-        <form
-            class="live-comment-form"
-            id="liveCommentForm"
+        <button
+            type="submit"
+            aria-label="Kirim pesan"
         >
+            ➤
+        </button>
 
-            <!-- KOLOM KOMENTAR MULTI-BARIS -->
+    </form>
 
-            <textarea
-                id="liveCommentInput"
-                rows="1"
-                placeholder="Tulis komentar..."
-                autocomplete="off"
-                maxlength="300"
-            ></textarea>
+</section>
 
-            <button
-                type="submit"
-                aria-label="Kirim komentar"
-            >
-                ➤
-            </button>
-
-        </form>
-
-    </section>
+    
 
 </div>
 
