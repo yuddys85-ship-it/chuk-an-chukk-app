@@ -979,3 +979,171 @@ body {
 #closeLiveComments {
     display: none !important;
 }
+
+/* =========================================================
+   CHUK AN CHUKK - FINAL MESSAGE INPUT
+========================================================= */
+
+/* Hilangkan tombol/logo komentar */
+#liveCommentButton,
+.live-comment-button {
+    display: none !important;
+}
+
+/* Hilangkan header Komentar + tombol X */
+.live-comment-header {
+    display: none !important;
+}
+
+#closeLiveComments {
+    display: none !important;
+}
+
+/* Panel selalu terlihat sebagai overlay */
+#liveCommentPanel {
+    position: fixed !important;
+
+    left: 10px !important;
+    right: auto !important;
+    bottom: 14px !important;
+
+    width: min(72vw, 320px) !important;
+    height: auto !important;
+
+    max-height: 42vh !important;
+
+    background: transparent !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+
+    overflow: visible !important;
+
+    pointer-events: none !important;
+
+    z-index: 100000 !important;
+}
+
+/* Pesan */
+#liveCommentsList {
+    display: flex !important;
+    flex-direction: column !important;
+
+    gap: 7px !important;
+
+    width: 100% !important;
+
+    max-height: 30vh !important;
+
+    overflow: hidden !important;
+
+    padding: 0 !important;
+
+    margin-bottom: 8px !important;
+
+    background: transparent !important;
+}
+
+/* Bubble */
+#liveCommentsList .live-comment-item {
+    width: fit-content !important;
+
+    max-width: 95% !important;
+
+    padding: 7px 12px !important;
+
+    border-radius: 18px !important;
+
+    background: rgba(0,0,0,.60) !important;
+
+    border: 1px solid rgba(255,255,255,.15) !important;
+
+    color: #fff !important;
+
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+
+    pointer-events: auto !important;
+}
+
+/* Kolom pesan PERMANEN */
+#liveCommentForm {
+    display: flex !important;
+
+    width: 100% !important;
+    height: 46px !important;
+
+    margin: 0 !important;
+    padding: 4px 5px 4px 14px !important;
+
+    border-radius: 24px !important;
+
+    background: rgba(0,0,0,.65) !important;
+
+    border: 1px solid rgba(255,255,255,.18) !important;
+
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+
+    pointer-events: auto !important;
+}
+
+/* Input textarea */
+#liveCommentInput {
+    flex: 1 !important;
+
+    width: 100% !important;
+
+    height: 36px !important;
+
+    min-height: 36px !important;
+
+    padding: 0 8px !important;
+
+    border: none !important;
+    outline: none !important;
+
+    resize: none !important;
+
+    background: transparent !important;
+
+    color: #fff !important;
+
+    font-size: 14px !important;
+}
+
+/* Placeholder baru */
+#liveCommentInput::placeholder {
+    color: rgba(255,255,255,.65) !important;
+}
+
+/* Kirim */
+#liveCommentForm button {
+    width: 36px !important;
+    height: 36px !important;
+
+    min-width: 36px !important;
+
+    border: none !important;
+
+    border-radius: 50% !important;
+
+    background: rgba(255,255,255,.18) !important;
+
+    color: #fff !important;
+
+    font-size: 17px !important;
+}
+
+/* Mobile */
+@media (max-width:600px) {
+
+    #liveCommentPanel {
+        left: 10px !important;
+        bottom: 14px !important;
+
+        width: 72vw !important;
+        max-width: 310px !important;
+    }
+}
