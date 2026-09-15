@@ -11,11 +11,9 @@
  - Tidak membuka kamera kedua
  - Mengambil stream dari #camera
  - Membuat ROOM
+ - Mendaftarkan LIVE ke tabel live_rooms
  - Mengirim video Host melalui WebRTC
  - Supabase Realtime sebagai signaling
-
- Viewer:
- live-watch.html?room=ROOM_ID
 =========================================================
 */
 
@@ -27,9 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("camera");
 
     if (!camera) {
-        console.error(
-            "❌ Elemen #camera tidak ditemukan"
-        );
+        console.error("❌ Elemen #camera tidak ditemukan");
         return;
     }
 
@@ -49,11 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         typeof window.supabase === "undefined" ||
         !window.supabase.createClient
     ) {
-
-        console.error(
-            "❌ Supabase SDK belum tersedia"
-        );
-
+        console.error("❌ Supabase SDK belum tersedia");
         return;
     }
 
@@ -83,12 +75,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     let roomId =
         window.liveRoomId || null;
 
-    /*
-    -----------------------------------------------------
-    Jika URL sudah punya room
-    -----------------------------------------------------
-    */
-
     const params =
         new URLSearchParams(
             window.location.search
@@ -101,16 +87,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         roomId = urlRoom;
     }
 
-    /*
-    -----------------------------------------------------
-    Jika belum ada room → buat
-    -----------------------------------------------------
-    */
-
     if (!roomId) {
 
-        roomId =
-            createRoomId();
+        roomId = createRoomId();
 
         const newUrl =
             `${window.location.pathname}?room=${roomId}`;
@@ -132,7 +111,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    TAMPILKAN ROOM DI BAWAH PROFIL
+    TAMPILKAN ROOM
     =====================================================
     */
 
@@ -154,6 +133,55 @@ document.addEventListener("DOMContentLoaded", async () => {
             "🏷️ ROOM DITAMPILKAN:",
             roomId
         );
+    }
+
+    /*
+    =====================================================
+    PROFIL HOST
+    =====================================================
+    */
+
+    function getHostProfile() {
+
+        let profile = {};
+
+        try {
+
+            profile =
+                JSON.parse(
+                    localStorage.getItem(
+                        "chukUserProfile"
+                    )
+                ) || {};
+
+        } catch (error) {
+
+            console.warn(
+                "⚠️ Profil tidak dapat dibaca"
+            );
+
+        }
+
+        return {
+
+            username:
+                profile.piUsername ||
+                profile.username ||
+                "",
+
+            display_name:
+                profile.displayName ||
+                profile.display_name ||
+                profile.piUsername ||
+                profile.username ||
+                "CHUK USER",
+
+            avatar:
+                profile.avatar ||
+                profile.avatar_url ||
+                "assets/logo.png"
+
+        };
     }
 
     /*
@@ -209,9 +237,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             camera.srcObject &&
             camera.srcObject instanceof MediaStream
         ) {
-
             return camera.srcObject;
-
         }
 
         return null;
@@ -228,7 +254,190 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    BUAT PEER UNTUK VIEWER
+    DAFTARKAN HOST KE LIVE_ROOMS
+    =====================================================
+    */
+
+    async function registerLiveRoom() {
+
+        const profile =
+            getHostProfile();
+
+        const roomData = {
+
+            room_id:
+                roomId,
+
+            username:
+                profile.username,
+
+            display_name:
+                profile.display_name,
+
+            avatar:
+                profile.avatar,
+
+            room_name:
+                window.liveRoom?.name ||
+                window.liveRoomName ||
+                window.CHUK_LIVE_ROOM_NAME ||
+                "",
+
+            is_live:
+                true,
+
+            updated_at:
+                new Date().toISOString()
+
+        };
+
+        console.log(
+            "📡 Mendaftarkan LIVE:",
+            roomData
+        );
+
+        const { data, error } =
+            await supabaseClient
+                .from("live_rooms")
+                .upsert(
+                    roomData,
+                    {
+                        onConflict: "room_id"
+                    }
+                )
+                .select()
+                .single();
+
+        if (error) {
+
+            console.error(
+                "❌ Gagal mendaftarkan LIVE:",
+                error
+            );
+
+            console.error(
+                "ℹ️ Jika muncul 'permission denied', RLS INSERT perlu diperiksa."
+            );
+
+            return false;
+        }
+
+        console.log(
+            "✅ LIVE TERDAFTAR:",
+            data
+        );
+
+        return true;
+    }
+
+    /*
+    =====================================================
+    UPDATE ROOM NAME
+    =====================================================
+    */
+
+    async function updateLiveRoomName() {
+
+        const roomName =
+            window.liveRoom?.name ||
+            window.liveRoomName ||
+            window.CHUK_LIVE_ROOM_NAME ||
+            "";
+
+        const { error } =
+            await supabaseClient
+                .from("live_rooms")
+                .update({
+                    room_name:
+                        roomName,
+                    updated_at:
+                        new Date().toISOString()
+                })
+                .eq(
+                    "room_id",
+                    roomId
+                );
+
+        if (error) {
+
+            console.warn(
+                "⚠️ Gagal update nama room:",
+                error
+            );
+
+        }
+
+    }
+
+    /*
+    =====================================================
+    MATIKAN LIVE
+    =====================================================
+    */
+
+    async function stopLiveRoom() {
+
+        try {
+
+            const { error } =
+                await supabaseClient
+                    .from("live_rooms")
+                    .update({
+                        is_live: false,
+                        updated_at:
+                            new Date().toISOString()
+                    })
+                    .eq(
+                        "room_id",
+                        roomId
+                    );
+
+            if (error) {
+
+                console.warn(
+                    "⚠️ Gagal menutup LIVE:",
+                    error
+                );
+
+            } else {
+
+                console.log(
+                    "🔴 LIVE SELESAI:",
+                    roomId
+                );
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "⚠️ Cleanup LIVE gagal:",
+                error
+            );
+
+        }
+    }
+
+    /*
+    =====================================================
+    ROOM NAME BERUBAH
+    =====================================================
+    */
+
+    window.addEventListener(
+        "chuk-room-created",
+        () => {
+
+            if (roomId) {
+                updateLiveRoomName();
+            }
+
+        }
+    );
+
+    /*
+    =====================================================
+    BUAT PEER VIEWER
     =====================================================
     */
 
@@ -240,12 +449,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             "👀 Viewer masuk:",
             viewerId
         );
-
-        /*
-        -------------------------------------------------
-        STREAM HOST
-        -------------------------------------------------
-        */
 
         hostStream =
             getHostStream();
@@ -259,12 +462,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        /*
-        -------------------------------------------------
-        PEER CONNECTION
-        -------------------------------------------------
-        */
-
         const pc =
             new RTCPeerConnection(
                 rtcConfig
@@ -274,12 +471,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             viewerId,
             pc
         );
-
-        /*
-        -------------------------------------------------
-        TAMBAHKAN TRACK HOST
-        -------------------------------------------------
-        */
 
         hostStream
             .getTracks()
@@ -405,7 +596,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         /*
         -------------------------------------------------
-        BUAT OFFER
+        OFFER
         -------------------------------------------------
         */
 
@@ -508,7 +699,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    TERIMA ANSWER VIEWER
+    ANSWER VIEWER
     =====================================================
     */
 
@@ -589,7 +780,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    TERIMA ICE VIEWER
+    ICE VIEWER
     =====================================================
     */
 
@@ -680,12 +871,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     roomId
                 );
 
-                /*
-                -------------------------------------------------
-                TAMPILKAN ROOM
-                -------------------------------------------------
-                */
-
                 const roomDisplay =
                     document.getElementById(
                         "liveRoomDisplay"
@@ -729,7 +914,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    TUNGGU KAMERA DARI live.js
+    TUNGGU KAMERA
     =====================================================
     */
 
@@ -782,19 +967,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     /*
     =====================================================
-    ID VIEWER UNTUK HOST
+    DAFTARKAN LIVE
     =====================================================
     */
 
-    console.log(
-        "🏠 ROOM LIVE AKTIF:",
-        roomId
-    );
-
-    console.log(
-        "🔗 Viewer:",
-        `${window.location.origin}/live-watch.html?room=${encodeURIComponent(roomId)}`
-    );
+    await registerLiveRoom();
 
     /*
     =====================================================
@@ -812,12 +989,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         channel;
 
     console.log(
-        "🚀 LIVE STREAM HOST SIAP"
+        "🏠 ROOM LIVE AKTIF:",
+        roomId
     );
 
     console.log(
-        "👀 URL PENONTON:",
+        "🔗 Viewer:",
         window.CHUK_LIVE_VIEWER_URL
+    );
+
+    console.log(
+        "🚀 LIVE STREAM HOST SIAP"
     );
 
     /*
@@ -829,6 +1011,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.addEventListener(
         "beforeunload",
         () => {
+
+            stopLiveRoom();
 
             peers.forEach(
                 pc => {
