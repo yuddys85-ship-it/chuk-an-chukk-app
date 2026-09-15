@@ -2,17 +2,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const panel =
-        document.getElementById("liveCommentPanel");
-
-    const commentsList =
-        document.getElementById("liveCommentsList");
-
-    const form =
-        document.getElementById("liveCommentForm");
-
-    const input =
-        document.getElementById("liveCommentInput");
+    const panel = document.getElementById("liveCommentPanel");
+    const commentsList = document.getElementById("liveCommentsList");
+    const form = document.getElementById("liveCommentForm");
+    const input = document.getElementById("liveCommentInput");
 
     if (!panel || !commentsList || !form || !input) {
         console.error("❌ Sistem pesan Live tidak lengkap");
@@ -20,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* =====================================================
-       PANEL SELALU AKTIF
+       PANEL PESAN SELALU AKTIF
     ===================================================== */
 
     panel.hidden = false;
@@ -47,8 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function escapeHTML(text) {
 
-        const div =
-            document.createElement("div");
+        const div = document.createElement("div");
 
         div.textContent = text;
 
@@ -57,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       TAMPILKAN PESAN
+       RENDER PESAN
     ===================================================== */
 
     function renderComments() {
@@ -66,16 +58,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         comments.forEach((comment, index) => {
 
-            const item =
-                document.createElement("div");
+            const item = document.createElement("div");
 
-            item.className =
-                "live-comment-item";
+            item.className = "live-comment-item";
 
             item.dataset.index = index;
 
             item.innerHTML = `
-
                 <div class="live-comment-content">
 
                     <div class="live-comment-name">
@@ -87,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
 
                 </div>
-
             `;
 
             commentsList.appendChild(item);
@@ -106,30 +94,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let startX = 0;
         let startY = 0;
-
         let currentX = 0;
-
         let dragging = false;
 
         item.addEventListener(
             "touchstart",
             event => {
 
-                const touch =
-                    event.touches[0];
+                const touch = event.touches[0];
 
-                startX =
-                    touch.clientX;
-
-                startY =
-                    touch.clientY;
+                startX = touch.clientX;
+                startY = touch.clientY;
 
                 currentX = 0;
-
                 dragging = true;
 
-                item.style.transition =
-                    "none";
+                item.style.transition = "none";
 
             },
             {
@@ -146,8 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                const touch =
-                    event.touches[0];
+                const touch = event.touches[0];
 
                 const deltaX =
                     touch.clientX - startX;
@@ -156,14 +135,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     touch.clientY - startY;
 
 
-                /*
-                 * Hanya swipe ke kanan
-                 */
+                /* Hanya gerakan horizontal ke kanan */
 
                 if (
                     deltaX > 0 &&
-                    Math.abs(deltaX) >
-                    Math.abs(deltaY)
+                    Math.abs(deltaX) > Math.abs(deltaY)
                 ) {
 
                     currentX = deltaX;
@@ -190,40 +166,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 dragging = false;
 
-                /*
-                 * Kalau digeser cukup jauh
-                 * pesan langsung hilang
-                 */
 
-                if (currentX > 80) {
+                /* =========================================
+                   SWIPE CUKUP JAUH → HAPUS PESAN
+                ========================================= */
+
+                if (currentX >= 70) {
 
                     item.style.transition =
-                        "transform .22s ease, opacity .22s ease";
+                        "transform .20s ease, opacity .20s ease";
 
                     item.style.transform =
                         "translateX(120%)";
 
-                    item.style.opacity =
-                        "0";
+                    item.style.opacity = "0";
 
 
                     setTimeout(() => {
 
-                        comments.splice(index, 1);
+                        const currentIndex =
+                            comments.indexOf(
+                                comments[index]
+                            );
+
+                        if (currentIndex !== -1) {
+                            comments.splice(currentIndex, 1);
+                        }
 
                         renderComments();
 
-                    }, 220);
+                    }, 200);
 
-                } else {
+                }
 
-                    /*
-                     * Kalau gesernya sedikit,
-                     * kembali ke posisi awal
-                     */
+                /* =========================================
+                   SWIPE SEDIKIT → KEMBALI
+                ========================================= */
+
+                else {
 
                     item.style.transition =
-                        "transform .2s ease";
+                        "transform .18s ease";
 
                     item.style.transform =
                         "translateX(0)";
@@ -246,9 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             event.preventDefault();
 
-            const text =
-                input.value.trim();
-
+            const text = input.value.trim();
 
             if (!text) {
                 return;
@@ -266,13 +247,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             input.value = "";
 
+            input.style.height = "44px";
+
 
             renderComments();
 
 
-            /*
-             * Kembalikan fokus ke kolom
-             */
+            /* Tetap fokus ke kolom pesan */
 
             input.focus();
 
@@ -287,17 +268,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       ENTER UNTUK KIRIM
+       ENTER = KIRIM
+       SHIFT + ENTER = BARIS BARU
     ===================================================== */
 
     input.addEventListener(
         "keydown",
         event => {
-
-            /*
-             * Enter = kirim
-             * Shift + Enter = baris baru
-             */
 
             if (
                 event.key === "Enter" &&
@@ -315,15 +292,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       INPUT OTOMATIS MEMBESAR
+       TEXTAREA OTOMATIS MEMBESAR
     ===================================================== */
 
     input.addEventListener(
         "input",
         () => {
 
-            input.style.height =
-                "36px";
+            input.style.height = "44px";
 
             input.style.height =
                 Math.min(
@@ -336,13 +312,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       TIDAK ADA LAGI:
-       - OPEN PANEL
-       - CLOSE PANEL
-       - TOMBOL KOMENTAR
-       - TOMBOL X
-       - SWIPE PANEL
+       PESAN AWAL
     ===================================================== */
+
+    renderComments();
 
 
     console.log(
