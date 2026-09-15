@@ -1,0 +1,571 @@
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    touch-action: pan-y;
+}
+
+/* =========================================================
+   LIVE HUB
+========================================================= */
+
+.live-hub {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+/* =========================================================
+   2 HALAMAN
+========================================================= */
+
+.hub-page {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    transition:
+        transform .35s cubic-bezier(.22,.61,.36,1),
+        opacity .25s ease;
+}
+
+/* HALAMAN 1 AKTIF */
+.live-feed-page {
+    transform: translateX(0);
+    opacity: 1;
+    z-index: 2;
+}
+
+/* HALAMAN 2 DI KANAN */
+.live-viewer-page {
+    transform: translateX(100%);
+    opacity: 0;
+    z-index: 1;
+}
+
+/* =========================================================
+   SAAT HALAMAN 2 AKTIF
+========================================================= */
+
+.live-hub.viewer-active .live-feed-page {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.live-hub.viewer-active .live-viewer-page {
+    transform: translateX(0);
+    opacity: 1;
+    z-index: 3;
+    pointer-events: auto;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.live-feed-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding:
+        env(safe-area-inset-top)
+        16px
+        0
+        16px;
+
+    z-index: 20;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.75),
+            rgba(0,0,0,0)
+        );
+}
+
+.brand-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.brand-subtitle {
+    margin-top: 2px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: .7;
+}
+
+/* =========================================================
+   TOMBOL MULAI LIVE
+========================================================= */
+
+.start-live-button {
+    border: 0;
+    outline: 0;
+
+    min-width: 62px;
+    height: 38px;
+
+    padding: 0 15px;
+
+    border-radius: 20px;
+
+    background: #fff;
+    color: #000;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.start-live-button:active {
+    transform: scale(.92);
+}
+
+/* =========================================================
+   FEED LIVE
+========================================================= */
+
+.live-feed {
+    position: absolute;
+
+    top: 72px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding: 10px 10px 60px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    scrollbar-width: none;
+}
+
+.live-feed::-webkit-scrollbar {
+    display: none;
+}
+
+/* =========================================================
+   KARTU LIVE
+========================================================= */
+
+.live-card {
+    position: relative;
+
+    width: 100%;
+    aspect-ratio: 9 / 13;
+
+    overflow: hidden;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #191919,
+            #050505
+        );
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,.45);
+
+    touch-action: manipulation;
+}
+
+.live-card:active {
+    transform: scale(.98);
+}
+
+/* =========================================================
+   PREVIEW LIVE
+========================================================= */
+
+.live-card-preview {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    background: #111;
+}
+
+/* =========================================================
+   GRADIENT KARTU
+========================================================= */
+
+.live-card::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.85),
+            rgba(0,0,0,0) 55%
+        );
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   INFO LIVE
+========================================================= */
+
+.live-card-info {
+    position: absolute;
+
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+
+    z-index: 3;
+
+    color: #fff;
+}
+
+.live-card-name {
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    text-shadow:
+        0 2px 5px rgba(0,0,0,.9);
+}
+
+.live-card-room {
+    margin-top: 3px;
+
+    font-size: 11px;
+
+    opacity: .75;
+
+    text-shadow:
+        0 2px 5px rgba(0,0,0,.9);
+}
+
+/* =========================================================
+   LABEL LIVE
+========================================================= */
+
+.live-badge {
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    z-index: 4;
+
+    padding: 5px 8px;
+
+    border-radius: 7px;
+
+    background: rgba(0,0,0,.65);
+
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: .5px;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.live-status {
+    grid-column: 1 / -1;
+
+    min-height: 160px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(255,255,255,.65);
+
+    font-size: 14px;
+
+    text-align: center;
+}
+
+/* =========================================================
+   PETUNJUK SWIPE
+========================================================= */
+
+.swipe-hint {
+    position: absolute;
+
+    left: 50%;
+    bottom: 16px;
+
+    transform: translateX(-50%);
+
+    z-index: 30;
+
+    color: rgba(255,255,255,.55);
+
+    font-size: 11px;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   VIEWER
+========================================================= */
+
+.viewer-container {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: #000;
+
+    overflow: hidden;
+}
+
+.viewer-container iframe {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+
+    background: #000;
+}
+
+/* =========================================================
+   VIEWER PLACEHOLDER
+========================================================= */
+
+.viewer-placeholder {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    text-align: center;
+
+    color: #fff;
+}
+
+.viewer-icon {
+    width: 74px;
+    height: 74px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 18px;
+
+    background: rgba(255,255,255,.1);
+
+    color: #fff;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.viewer-title {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.viewer-room {
+    margin-top: 7px;
+
+    color: rgba(255,255,255,.55);
+
+    font-size: 12px;
+}
+
+.open-viewer-button {
+    margin-top: 20px;
+
+    height: 44px;
+
+    padding: 0 22px;
+
+    border: 0;
+    border-radius: 22px;
+
+    background: #fff;
+    color: #000;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   TOMBOL KEMBALI
+========================================================= */
+
+.back-to-feed-button {
+    position: fixed;
+
+    top: 18px;
+    left: 16px;
+
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.35);
+
+    color: #fff;
+
+    font-size: 34px;
+    line-height: 1;
+
+    z-index: 99999;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.back-to-feed-button:active {
+    transform: scale(.88);
+}
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 700px) {
+
+    .live-feed {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .live-card {
+        aspect-ratio: 9 / 14;
+    }
+}
+
+/* =========================================================
+   HP KECIL
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .live-feed {
+        top: 66px;
+
+        padding:
+            8px
+            8px
+            50px;
+
+        gap: 8px;
+    }
+
+    .live-card {
+        border-radius: 11px;
+    }
+
+    .live-card-info {
+        left: 9px;
+        right: 9px;
+        bottom: 9px;
+    }
+
+    .live-card-name {
+        font-size: 12px;
+    }
+
+    .live-card-room {
+        font-size: 10px;
+    }
+
+    .live-feed-header {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .brand-title {
+        font-size: 16px;
+    }
+}
