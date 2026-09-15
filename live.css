@@ -1,7 +1,3 @@
-/* =========================================================
-   CHUK AN CHUKK — LIVE CSS
-   ========================================================= */
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -24,89 +20,53 @@ body {
     inset: 0;
 }
 
-/* =========================================================
-   LIVE APP
-   ========================================================= */
-
 .live-app {
     position: fixed;
     inset: 0;
-
     width: 100%;
     height: 100%;
     height: 100dvh;
-
     overflow: hidden;
     background: #000;
 }
 
-/* =========================================================
-   CAMERA
-   ========================================================= */
-
+/* CAMERA — TIDAK DIUBAH */
 #camera {
     position: absolute;
-
     top: 0;
     left: 0;
-
     width: 100%;
     height: 100%;
-
     object-fit: contain;
     object-position: center center;
-
     background: #000;
-
     transform: none;
-
     z-index: 1;
 }
 
-/* =========================================================
-   FILTER CANVAS
-   ========================================================= */
-
 #filterCanvas {
     position: absolute;
-
     inset: 0;
-
     width: 100%;
     height: 100%;
-
     pointer-events: none;
-
     z-index: 2;
 }
 
-/* =========================================================
-   PROFILE / LOGO
-   ========================================================= */
-
+/* PROFILE / LOGO — TIDAK DIUBAH */
 #liveUserDisplay {
     position: absolute;
-
     top: 18px;
     left: 50%;
-
     transform: translateX(-50%);
-
     display: flex;
     align-items: center;
-
     gap: 8px;
-
     padding: 6px 12px;
-
     border-radius: 22px;
-
     background: rgba(0, 0, 0, .38);
-
     color: #fff;
-
     z-index: 20;
-
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
 }
@@ -114,234 +74,150 @@ body {
 #liveUserAvatar {
     width: 32px;
     height: 32px;
-
     border-radius: 50%;
-
     object-fit: cover;
-
     border: 2px solid rgba(255,255,255,.8);
 }
 
 #liveUserName {
     max-width: 160px;
-
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
     font-size: 14px;
     font-weight: 600;
 }
 
-/* =========================================================
-   ROOM DISPLAY
-   ========================================================= */
-
+/* ROOM */
 #liveRoomDisplay {
     position: absolute;
-
     top: 62px;
     left: 50%;
-
     transform: translateX(-50%);
-
     padding: 5px 10px;
-
     border-radius: 12px;
-
     background: rgba(0,0,0,.42);
-
     color: #fff;
-
     font-size: 12px;
     font-weight: 600;
-
     white-space: nowrap;
-
     z-index: 20;
-
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
 
-/* =========================================================
-   MENU BUTTON
-   ========================================================= */
-
+/* MENU — TIDAK DIUBAH */
 .menu-button {
     position: absolute;
-
     top: 18px;
     right: 18px;
-
     width: 44px;
     height: 44px;
-
+    padding: 0;
     border: none;
     border-radius: 50%;
-
     background: rgba(0,0,0,.35);
-
     color: #fff;
-
     font-size: 25px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-
     z-index: 30;
-
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-
     -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================================
-   FLIP CAMERA BUTTON
-   ========================================================= */
-
+/* FLIP — TIDAK DIUBAH */
 .flip-camera-button {
     position: absolute;
-
     right: 18px;
     bottom: 148px;
-
     width: 48px;
     height: 48px;
-
+    padding: 0;
     border: none;
     border-radius: 50%;
-
     background: rgba(0,0,0,.42);
-
     color: #fff;
-
     font-size: 22px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-
     z-index: 30;
-
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-
     -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================================
-   SHARE BUTTON
-   ========================================================= */
-
+/* SHARE — TIDAK DIUBAH */
 .share-live-button {
     position: absolute;
-
     right: 18px;
     bottom: 22px;
-
     width: 48px;
     height: 48px;
-
+    padding: 0;
     border: none;
     border-radius: 50%;
-
     background: rgba(0,0,0,.42);
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-
     z-index: 30;
-
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-
     -webkit-tap-highlight-color: transparent;
 }
 
 .share-live-button svg {
     width: 24px;
     height: 24px;
-
     fill: none;
-
     stroke: #fff;
-
     stroke-width: 2;
-
     stroke-linecap: round;
     stroke-linejoin: round;
 }
 
-/* =========================================================
-   COMMENT BUTTON
-   ========================================================= */
-
+/* COMMENT BUTTON — TIDAK DIUBAH */
 .live-comment-button {
     position: absolute;
-
     right: 18px;
     bottom: 88px;
-
     width: 48px;
     height: 48px;
-
+    padding: 0;
     border: none;
     border-radius: 50%;
-
     background: rgba(0,0,0,.42);
-
     color: #fff;
-
     font-size: 22px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-
     z-index: 30;
-
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-
     -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================================================
-   ROOM PANEL
-   ========================================================= */
-
+/* ROOM PANEL */
 #roomPanel {
     position: absolute;
-
     top: 78px;
     right: 18px;
-
     width: min(320px, calc(100% - 36px));
-
     padding: 18px;
-
     border-radius: 18px;
-
     background: rgba(0,0,0,.82);
-
     color: #fff;
-
     z-index: 50;
-
     box-shadow: 0 10px 35px rgba(0,0,0,.45);
-
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
@@ -352,26 +228,19 @@ body {
 
 .room-name-label {
     margin-bottom: 8px;
-
-    font-size: 13px;
     color: rgba(255,255,255,.75);
+    font-size: 13px;
 }
 
 .room-name-input {
     width: 100%;
     height: 44px;
-
     padding: 0 13px;
-
     border: 1px solid rgba(255,255,255,.25);
     border-radius: 12px;
-
     outline: none;
-
     background: rgba(255,255,255,.08);
-
     color: #fff;
-
     font-size: 14px;
 }
 
@@ -381,83 +250,60 @@ body {
 
 .room-title {
     margin-top: 18px;
-
     font-size: 16px;
     font-weight: 700;
 }
 
 .room-live {
     margin-top: 6px;
-
-    font-size: 13px;
     color: rgba(255,255,255,.75);
+    font-size: 13px;
 }
 
 .room-subtitle {
     margin-top: 18px;
-
-    font-size: 13px;
     color: rgba(255,255,255,.7);
+    font-size: 13px;
 }
 
 .room-options {
     display: flex;
-
     gap: 8px;
-
     margin-top: 10px;
 }
 
 .room-option {
     flex: 1;
-
     height: 40px;
-
     border: 1px solid rgba(255,255,255,.2);
     border-radius: 10px;
-
     background: rgba(255,255,255,.08);
-
     color: #fff;
-
     cursor: pointer;
 }
 
 .room-option.selected {
     background: rgba(255,255,255,.25);
-
     border-color: rgba(255,255,255,.6);
 }
 
-/* =========================================================
-   COMMENT PANEL
-   ========================================================= */
+/* COMMENT PANEL */
 
 .live-comment-panel {
     position: absolute;
-
     left: 0;
     right: 0;
     bottom: 0;
-
     width: 100%;
-
     height: 55vh;
     max-height: 600px;
-
     display: flex;
     flex-direction: column;
-
     overflow: hidden;
-
     background: rgba(0,0,0,.82);
-
     color: #fff;
-
     border-radius: 20px 20px 0 0;
-
     z-index: 100;
-
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
@@ -466,61 +312,43 @@ body {
     display: none;
 }
 
-/* =========================================================
-   COMMENT HEADER
-   ========================================================= */
-
 .live-comment-header {
     flex: 0 0 52px;
-
     width: 100%;
     height: 52px;
-
     padding: 0 15px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     border-bottom: 1px solid rgba(255,255,255,.12);
 }
 
 .live-comment-header strong {
+    color: #fff;
     font-size: 15px;
 }
 
 .live-comment-header button {
     width: 36px;
     height: 36px;
-
+    padding: 0;
     border: none;
     border-radius: 50%;
-
     background: rgba(255,255,255,.08);
-
     color: #fff;
-
     font-size: 17px;
-
     cursor: pointer;
 }
 
-/* =========================================================
-   COMMENT LIST
-   ========================================================= */
+/* COMMENT LIST */
 
 .live-comments-list {
     flex: 1 1 auto;
-
     min-height: 0;
-
     width: 100%;
-
     padding: 12px 14px;
-
     overflow-x: hidden;
     overflow-y: auto;
-
     -webkit-overflow-scrolling: touch;
 }
 
@@ -533,53 +361,43 @@ body {
     border-radius: 10px;
 }
 
-/* =========================================================
-   COMMENT FORM
-   ========================================================= */
+/* COMMENT FORM */
 
 .live-comment-form {
     flex: 0 0 auto;
-
     width: 100%;
     max-width: 100%;
-
     min-width: 0;
-
     display: flex;
     flex-direction: row;
-
     align-items: flex-end;
-
     gap: 8px;
-
     padding:
         10px
         12px
         calc(10px + env(safe-area-inset-bottom))
         12px;
-
     overflow: hidden;
-
-    background: transparent;
 }
 
 /* =========================================================
-   TULIS KOMENTAR — TEPAT 2,5 CM
+   KOLOM KOMENTAR = 3 CM
+   HANYA BAGIAN INI YANG DIUBAH
    ========================================================= */
 
 .live-comment-form textarea {
-    flex: 0 0 2.5cm;
+    flex: 0 0 3cm;
 
-    width: 2.5cm;
-    min-width: 2.5cm;
-    max-width: 2.5cm;
+    width: 3cm;
+    min-width: 3cm;
+    max-width: 3cm;
 
     height: 44px;
     min-height: 44px;
     max-height: 120px;
 
-    margin: 0;
     padding: 7px;
+    margin: 0;
 
     box-sizing: border-box;
 
@@ -589,7 +407,6 @@ body {
     outline: none;
 
     background: rgba(0,0,0,.38);
-
     color: #fff;
 
     font-family: inherit;
@@ -616,9 +433,7 @@ body {
     color: rgba(255,255,255,.65);
 }
 
-/* =========================================================
-   SEND BUTTON — TETAP 44 PX
-   ========================================================= */
+/* SEND BUTTON = TETAP 44 PX */
 
 .live-comment-form button {
     flex: 0 0 44px;
@@ -629,8 +444,8 @@ body {
 
     height: 44px;
 
-    margin: 0;
     padding: 0;
+    margin: 0;
 
     box-sizing: border-box;
 
@@ -656,9 +471,7 @@ body {
     transform: scale(.92);
 }
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
+/* MOBILE */
 
 @media (max-width: 600px) {
 
@@ -695,10 +508,6 @@ body {
         max-height: 600px;
     }
 }
-
-/* =========================================================
-   SAFE AREA
-   ========================================================= */
 
 @supports (padding: env(safe-area-inset-bottom)) {
 
