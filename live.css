@@ -1,106 +1,709 @@
 /* =========================================================
-   KOLOM TULIS KOMENTAR — LEBAR 2,5 CM
+   CHUK AN CHUKK — LIVE CSS
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    position: fixed;
+    inset: 0;
+}
+
+/* =========================================================
+   LIVE APP
+   ========================================================= */
+
+.live-app {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+
+    overflow: hidden;
+    background: #000;
+}
+
+/* =========================================================
+   CAMERA
+   ========================================================= */
+
+#camera {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+    object-position: center center;
+
+    background: #000;
+
+    transform: none;
+
+    z-index: 1;
+}
+
+/* =========================================================
+   FILTER CANVAS
+   ========================================================= */
+
+#filterCanvas {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    z-index: 2;
+}
+
+/* =========================================================
+   PROFILE / LOGO
+   ========================================================= */
+
+#liveUserDisplay {
+    position: absolute;
+
+    top: 18px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 6px 12px;
+
+    border-radius: 22px;
+
+    background: rgba(0, 0, 0, .38);
+
+    color: #fff;
+
+    z-index: 20;
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+#liveUserAvatar {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+
+    border: 2px solid rgba(255,255,255,.8);
+}
+
+#liveUserName {
+    max-width: 160px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   ROOM DISPLAY
+   ========================================================= */
+
+#liveRoomDisplay {
+    position: absolute;
+
+    top: 62px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    padding: 5px 10px;
+
+    border-radius: 12px;
+
+    background: rgba(0,0,0,.42);
+
+    color: #fff;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    z-index: 20;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* =========================================================
+   MENU BUTTON
+   ========================================================= */
+
+.menu-button {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    width: 44px;
+    height: 44px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.35);
+
+    color: #fff;
+
+    font-size: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    z-index: 30;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   FLIP CAMERA BUTTON
+   ========================================================= */
+
+.flip-camera-button {
+    position: absolute;
+
+    right: 18px;
+    bottom: 148px;
+
+    width: 48px;
+    height: 48px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.42);
+
+    color: #fff;
+
+    font-size: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    z-index: 30;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   SHARE BUTTON
+   ========================================================= */
+
+.share-live-button {
+    position: absolute;
+
+    right: 18px;
+    bottom: 22px;
+
+    width: 48px;
+    height: 48px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.42);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    z-index: 30;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.share-live-button svg {
+    width: 24px;
+    height: 24px;
+
+    fill: none;
+
+    stroke: #fff;
+
+    stroke-width: 2;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* =========================================================
+   COMMENT BUTTON
+   ========================================================= */
+
+.live-comment-button {
+    position: absolute;
+
+    right: 18px;
+    bottom: 88px;
+
+    width: 48px;
+    height: 48px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.42);
+
+    color: #fff;
+
+    font-size: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    z-index: 30;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   ROOM PANEL
+   ========================================================= */
+
+#roomPanel {
+    position: absolute;
+
+    top: 78px;
+    right: 18px;
+
+    width: min(320px, calc(100% - 36px));
+
+    padding: 18px;
+
+    border-radius: 18px;
+
+    background: rgba(0,0,0,.82);
+
+    color: #fff;
+
+    z-index: 50;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,.45);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+#roomPanel[hidden] {
+    display: none;
+}
+
+.room-name-label {
+    margin-bottom: 8px;
+
+    font-size: 13px;
+    color: rgba(255,255,255,.75);
+}
+
+.room-name-input {
+    width: 100%;
+    height: 44px;
+
+    padding: 0 13px;
+
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 12px;
+
+    outline: none;
+
+    background: rgba(255,255,255,.08);
+
+    color: #fff;
+
+    font-size: 14px;
+}
+
+.room-name-input::placeholder {
+    color: rgba(255,255,255,.5);
+}
+
+.room-title {
+    margin-top: 18px;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.room-live {
+    margin-top: 6px;
+
+    font-size: 13px;
+    color: rgba(255,255,255,.75);
+}
+
+.room-subtitle {
+    margin-top: 18px;
+
+    font-size: 13px;
+    color: rgba(255,255,255,.7);
+}
+
+.room-options {
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+.room-option {
+    flex: 1;
+
+    height: 40px;
+
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 10px;
+
+    background: rgba(255,255,255,.08);
+
+    color: #fff;
+
+    cursor: pointer;
+}
+
+.room-option.selected {
+    background: rgba(255,255,255,.25);
+
+    border-color: rgba(255,255,255,.6);
+}
+
+/* =========================================================
+   COMMENT PANEL
+   ========================================================= */
+
+.live-comment-panel {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+
+    height: 55vh;
+    max-height: 600px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background: rgba(0,0,0,.82);
+
+    color: #fff;
+
+    border-radius: 20px 20px 0 0;
+
+    z-index: 100;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.live-comment-panel[hidden] {
+    display: none;
+}
+
+/* =========================================================
+   COMMENT HEADER
+   ========================================================= */
+
+.live-comment-header {
+    flex: 0 0 52px;
+
+    width: 100%;
+    height: 52px;
+
+    padding: 0 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.live-comment-header strong {
+    font-size: 15px;
+}
+
+.live-comment-header button {
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.08);
+
+    color: #fff;
+
+    font-size: 17px;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   COMMENT LIST
+   ========================================================= */
+
+.live-comments-list {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.live-comments-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.live-comments-list::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.25);
+    border-radius: 10px;
+}
+
+/* =========================================================
+   COMMENT FORM
    ========================================================= */
 
 .live-comment-form {
-    display: flex !important;
-    align-items: flex-end !important;
-    gap: 8px !important;
+    flex: 0 0 auto;
+
+    width: 100%;
+    max-width: 100%;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: row;
+
+    align-items: flex-end;
+
+    gap: 8px;
 
     padding:
         10px
         12px
         calc(10px + env(safe-area-inset-bottom))
-        12px !important;
+        12px;
 
-    background: transparent !important;
+    overflow: hidden;
+
+    background: transparent;
 }
 
-
 /* =========================================================
-   TEXTAREA KOMENTAR
+   TULIS KOMENTAR — TEPAT 2,5 CM
    ========================================================= */
 
 .live-comment-form textarea {
-    flex: 0 0 2.5cm !important;
+    flex: 0 0 2.5cm;
 
-    width: 2.5cm !important;
-    min-width: 2.5cm !important;
-    max-width: 2.5cm !important;
+    width: 2.5cm;
+    min-width: 2.5cm;
+    max-width: 2.5cm;
 
-    height: 44px !important;
-    min-height: 44px !important;
-    max-height: 120px !important;
+    height: 44px;
+    min-height: 44px;
+    max-height: 120px;
 
-    padding: 8px !important;
+    margin: 0;
+    padding: 7px;
 
-    border: 1px solid rgba(255,255,255,.35) !important;
-    border-radius: 14px !important;
+    box-sizing: border-box;
 
-    outline: none !important;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 14px;
 
-    background: rgba(0,0,0,.38) !important;
+    outline: none;
 
-    color: #fff !important;
+    background: rgba(0,0,0,.38);
 
-    font-family: inherit !important;
-    font-size: 12px !important;
-    line-height: 17px !important;
+    color: #fff;
 
-    resize: none !important;
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 16px;
 
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    resize: none;
 
-    box-sizing: border-box !important;
+    overflow-x: hidden;
+    overflow-y: auto;
 
-    /* TEKS OTOMATIS TURUN BARIS */
-    white-space: pre-wrap !important;
-    overflow-wrap: anywhere !important;
-    word-break: break-word !important;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 
-    backdrop-filter: blur(5px) !important;
-    -webkit-backdrop-filter: blur(5px) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    -webkit-appearance: none;
+    appearance: none;
 }
-
-
-/* =========================================================
-   PLACEHOLDER
-   ========================================================= */
 
 .live-comment-form textarea::placeholder {
-    color: rgba(255,255,255,.65) !important;
+    color: rgba(255,255,255,.65);
 }
 
-
 /* =========================================================
-   TOMBOL KIRIM
+   SEND BUTTON — TETAP 44 PX
    ========================================================= */
 
 .live-comment-form button {
-    flex: 0 0 44px !important;
+    flex: 0 0 44px;
 
-    width: 44px !important;
-    height: 44px !important;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
 
-    border: none !important;
-    border-radius: 50% !important;
+    height: 44px;
 
-    background: rgba(255,255,255,.15) !important;
+    margin: 0;
+    padding: 0;
 
-    color: #fff !important;
+    box-sizing: border-box;
 
-    font-size: 20px !important;
+    border: none;
+    border-radius: 50%;
 
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    background: rgba(255,255,255,.15);
 
-    cursor: pointer !important;
+    color: #fff;
 
-    -webkit-tap-highlight-color: transparent !important;
+    font-size: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 .live-comment-form button:active {
     transform: scale(.92);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    #liveUserDisplay {
+        top: 14px;
+    }
+
+    #liveRoomDisplay {
+        top: 56px;
+    }
+
+    .menu-button {
+        top: 14px;
+        right: 14px;
+    }
+
+    .flip-camera-button {
+        right: 16px;
+        bottom: 148px;
+    }
+
+    .live-comment-button {
+        right: 16px;
+        bottom: 88px;
+    }
+
+    .share-live-button {
+        right: 16px;
+        bottom: 22px;
+    }
+
+    .live-comment-panel {
+        height: 55vh;
+        max-height: 600px;
+    }
+}
+
+/* =========================================================
+   SAFE AREA
+   ========================================================= */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+
+    .live-comment-form {
+        padding-bottom:
+            calc(10px + env(safe-area-inset-bottom));
+    }
 }
