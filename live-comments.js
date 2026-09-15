@@ -21,31 +21,25 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("liveCommentInput");
 
 
-    if (!commentButton || !panel || !closeButton || !commentsList || !form || !input) {
-
+    if (
+        !commentButton ||
+        !panel ||
+        !closeButton ||
+        !commentsList ||
+        !form ||
+        !input
+    ) {
         console.error("❌ Elemen komentar Live tidak lengkap");
-
         return;
     }
 
 
     /* =====================================================
        DATA KOMENTAR LOKAL
+       KOSONG — TIDAK ADA KOMENTAR CONTOH
     ===================================================== */
 
-    let comments = [
-
-        {
-            name: "ChukOfficial",
-            text: "Selamat datang di Live Chuk an Chukk 👋"
-        },
-
-        {
-            name: "Chuk User",
-            text: "Halo semuanya 🔥"
-        }
-
-    ];
+    let comments = [];
 
 
     /* =====================================================
@@ -54,7 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function escapeHTML(text) {
 
-        const div = document.createElement("div");
+        const div =
+            document.createElement("div");
 
         div.textContent = text;
 
@@ -115,11 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         panel.hidden = false;
 
-        /*
-         * CSS menggunakan display:flex !important.
-         * Karena itu gunakan !important juga dari JS.
-         */
-
         panel.style.setProperty(
             "display",
             "flex",
@@ -173,19 +163,22 @@ document.addEventListener("DOMContentLoaded", () => {
        TOMBOL KOMENTAR
     ===================================================== */
 
-    commentButton.addEventListener("click", () => {
+    commentButton.addEventListener(
+        "click",
+        () => {
 
-        if (panel.hidden) {
+            if (panel.hidden) {
 
-            openComments();
+                openComments();
 
-        } else {
+            } else {
 
-            closeComments();
+                closeComments();
+
+            }
 
         }
-
-    });
+    );
 
 
     /* =====================================================
@@ -202,43 +195,45 @@ document.addEventListener("DOMContentLoaded", () => {
        KIRIM KOMENTAR
     ===================================================== */
 
-    form.addEventListener("submit", event => {
+    form.addEventListener(
+        "submit",
+        event => {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        const text =
-            input.value.trim();
+            const text =
+                input.value.trim();
 
-        if (!text) {
-            return;
+            if (!text) {
+                return;
+            }
+
+
+            comments.push({
+
+                name: "Anda",
+
+                text: text
+
+            });
+
+
+            input.value = "";
+
+            renderComments();
+
+            console.log(
+                "💬 Komentar dikirim:",
+                text
+            );
+
         }
-
-
-        comments.push({
-
-            name: "Anda",
-
-            text: text
-
-        });
-
-
-        input.value = "";
-
-        renderComments();
-
-        console.log(
-            "💬 Komentar dikirim:",
-            text
-        );
-
-    });
+    );
 
 
     /* =====================================================
        SWIPE PANEL KE KANAN
-       HANYA PANEL KOMENTAR
-    ===================================================== */
+       ===================================================== */
 
     let startX = 0;
     let startY = 0;
@@ -305,10 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 touch.clientY - startY;
 
 
-            /*
-             * Tentukan apakah gerakan horizontal.
-             */
-
             if (!horizontalSwipe) {
 
                 if (
@@ -322,10 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
-            /*
-             * Hanya geser ke kanan.
-             */
 
             if (
                 horizontalSwipe &&
@@ -360,11 +347,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentX - startX;
 
 
-            /*
-             * Jika digeser cukup jauh ke kanan,
-             * panel benar-benar ditutup.
-             */
-
             const threshold =
                 Math.max(
                     80,
@@ -382,11 +364,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-
-            /*
-             * Kalau belum cukup jauh,
-             * kembali ke posisi awal.
-             */
 
             panel.style.transition =
                 "transform 0.22s ease";
@@ -433,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     console.log(
-        "✅ LIVE COMMENTS AKTIF"
+        "✅ LIVE COMMENTS AKTIF — TANPA KOMENTAR CONTOH"
     );
 
 });
