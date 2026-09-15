@@ -757,9 +757,19 @@ body {
         bottom: 22px;
     }
 
+    /* =========================================
+       PAPAN KOMENTAR = 1/4 LAYAR
+       ========================================= */
+
     .live-comment-panel {
-        height: 55vh;
-        max-height: 600px;
+        height: 25vh !important;
+        min-height: 25vh !important;
+        max-height: 25vh !important;
+
+        width: 100% !important;
+
+        bottom: 0 !important;
+        top: auto !important;
     }
 }
 
