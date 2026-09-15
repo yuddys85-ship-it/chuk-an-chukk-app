@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
 
@@ -29,12 +30,12 @@
         webkit-playsinline
     ></video>
 
-    <!-- Canvas untuk filter/efek kamera -->
+    <!-- Canvas untuk filter / efek kamera -->
     <canvas id="filterCanvas"></canvas>
 
 
     <!-- =====================================================
-         PROFILE — ATAS TENGAH
+         PROFILE HOST
          ===================================================== -->
 
     <div id="liveUserDisplay">
@@ -53,7 +54,7 @@
 
 
     <!-- =====================================================
-         ROOM — DI BAWAH PROFILE
+         ROOM
          ===================================================== -->
 
     <div id="liveRoomDisplay">
@@ -156,6 +157,8 @@
 
     <!-- =====================================================
          COMMENT BUTTON
+         DISIMPAN UNTUK KOMPATIBILITAS JAVASCRIPT
+         TAPI TIDAK DITAMPILKAN
          ===================================================== -->
 
     <button
@@ -163,13 +166,14 @@
         id="liveCommentButton"
         type="button"
         aria-label="Komentar"
+        hidden
     >
         💬
     </button>
 
 
     <!-- =====================================================
-         SHARE
+         SHARE LIVE
          ===================================================== -->
 
     <button
@@ -178,61 +182,83 @@
         type="button"
         aria-label="Bagikan Live"
     >
+
         <svg
             viewBox="0 0 24 24"
             aria-hidden="true"
         >
+
             <path d="M12 16V3"></path>
+
             <path d="M7 8l5-5 5 5"></path>
-            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path>
+
+            <path
+                d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"
+            ></path>
+
         </svg>
-    
-<!-- =====================================================
-     CHUK AN CHUKK LIVE MESSAGE
-     INPUT PERMANEN BAWAH KIRI
-===================================================== -->
 
-<section
-    class="live-comment-panel"
-    id="liveCommentPanel"
->
+    </button>
 
-    <!-- Pesan LIVE -->
-    <div
-        class="live-comments-list"
-        id="liveCommentsList"
-    ></div>
 
-    <!-- Kolom pesan permanen -->
-    <form
-        class="live-comment-form"
-        id="liveCommentForm"
+    <!-- =====================================================
+         LIVE MESSAGE
+         TANPA HEADER KOMENTAR
+         TANPA PANEL POPUP
+         ===================================================== -->
+
+    <section
+        class="live-comment-panel"
+        id="liveCommentPanel"
     >
 
-        <textarea
-            id="liveCommentInput"
-            rows="1"
-            placeholder="Tulis pesan..."
-            autocomplete="off"
-            maxlength="300"
-        ></textarea>
+        <!-- =================================================
+             MESSAGE LIST
+             ================================================= -->
 
-        <button
-            type="submit"
-            aria-label="Kirim pesan"
+        <div
+            class="live-comments-list"
+            id="liveCommentsList"
+        ></div>
+
+
+        <!-- =================================================
+             MESSAGE INPUT
+             ================================================= -->
+
+        <form
+            class="live-comment-form"
+            id="liveCommentForm"
         >
-            ➤
-        </button>
 
-    </form>
+            <textarea
+                id="liveCommentInput"
+                rows="1"
+                placeholder="Tulis pesan..."
+                autocomplete="off"
+                maxlength="300"
+            ></textarea>
 
-</section>
+            <button
+                type="submit"
+                aria-label="Kirim pesan"
+            >
+                ➤
+            </button>
+
+        </form>
+
+    </section>
+
+</div>
+
 
 <!-- =========================================================
      SUPABASE
      ========================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
 <!-- =========================================================
      CHUK AN CHUKK LIVE SCRIPTS
@@ -247,6 +273,7 @@
 <script src="live-share.js"></script>
 
 <script src="live-comments.js"></script>
+
 
 </body>
 </html>
