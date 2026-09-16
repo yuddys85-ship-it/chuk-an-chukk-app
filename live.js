@@ -923,9 +923,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* =====================================================
    CHUK AN CHUKK LIVE
-   SWIPE KIRI = KEMBALI KE HALAMAN SEBELUMNYA
+   GESTURE FINAL
 
-   Kolom pesan tetap bisa digunakan.
+   👈 Swipe kiri  = Kembali
+   👉 Swipe kanan = Tidak melakukan apa-apa
+
+   💬 Area komentar memiliki gesture sendiri.
 ===================================================== */
 
 (() => {
@@ -948,7 +951,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     app.addEventListener("touchstart", (event) => {
 
-        /* Abaikan multi-touch */
         if (event.touches.length !== 1) {
             tracking = false;
             return;
@@ -956,17 +958,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const target = event.target;
 
-        /*
-         * Kalau sedang menyentuh kolom pesan,
-         * jangan dianggap sebagai gesture Back.
-         */
+
+        /* =================================================
+           KOMENTAR PUNYA GESTURE SENDIRI
+        ================================================= */
+
         if (
-    target.closest("#liveCommentPanel")
-) {
-      
+            target.closest("#liveCommentPanel")
+        ) {
             tracking = false;
             return;
         }
+
 
         startX = event.touches[0].clientX;
         startY = event.touches[0].clientY;
@@ -988,9 +991,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         tracking = false;
 
+
         if (event.changedTouches.length !== 1) {
             return;
         }
+
 
         const endX = event.changedTouches[0].clientX;
         const endY = event.changedTouches[0].clientY;
@@ -1000,11 +1005,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* =================================================
-           VALIDASI SWIPE KIRI
-
-           - minimal 80px
-           - gerakan horizontal harus lebih besar
-             daripada gerakan vertikal
+           HANYA SWIPE KIRI YANG MENJADI BACK
         ================================================= */
 
         const swipeLeft =
@@ -1018,7 +1019,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* =================================================
-           JANGAN BACK KETIKA INPUT SEDANG FOKUS
+           INPUT / TEXTAREA TETAP AMAN
         ================================================= */
 
         const activeElement = document.activeElement;
@@ -1035,8 +1036,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* =================================================
-           KEMBALI
+           BACK
         ================================================= */
+
+        console.log("👈 Swipe kiri → BACK");
+
 
         if (window.history.length > 1) {
 
@@ -1044,14 +1048,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } else {
 
-            /*
-             * Fallback jika halaman LIVE dibuka
-             * langsung tanpa history.
-             */
             window.location.href = "live-hub.html";
 
         }
 
     }, { passive: true });
+
+
+    console.log("✅ CHUK AN CHUKK LIVE SWIPE READY");
 
 })();
