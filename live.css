@@ -1246,3 +1246,89 @@ body {
     border: none !important;
 }
 https://github.com/yuddys85-ship-it/chuk-an-chukk-app
+
+/* =====================================================
+   CHUK AN CHUKK — CHAT LIVE BENAR-BENAR TRANSPARAN
+   Letakkan PALING BAWAH live.css
+===================================================== */
+
+/* Panel utama */
+#liveCommentPanel,
+.live-comment-panel {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Daftar komentar */
+#liveCommentsList,
+.live-comments-list {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Bubble komentar */
+#liveCommentsList .live-comment-item,
+#liveCommentsList .live-comment-content,
+.live-comment-item,
+.live-comment-content {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Hilangkan pseudo-element yang mungkin membuat background */
+#liveCommentsList .live-comment-item::before,
+#liveCommentsList .live-comment-item::after,
+#liveCommentsList .live-comment-content::before,
+#liveCommentsList .live-comment-content::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Nama dan teks */
+#liveCommentsList .live-comment-name,
+#liveCommentsList .live-comment-text {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Jarak komentar */
+#liveCommentsList {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Isi bubble sangat rapat */
+#liveCommentsList .live-comment-content {
+    padding: 2px 0 !important;
+    margin: 0 !important;
+}
+
+/* Form input tetap tanpa panel */
+#liveCommentForm,
+.live-comment-form {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Tombol komentar lama benar-benar hilang */
+#liveCommentButton,
+.live-comment-button {
+    display: none !important;
+}
