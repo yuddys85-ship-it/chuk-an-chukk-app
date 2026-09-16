@@ -961,9 +961,9 @@ document.addEventListener("DOMContentLoaded", () => {
          * jangan dianggap sebagai gesture Back.
          */
         if (
-            target.closest("#liveCommentInput") ||
-            target.closest("#liveCommentForm")
-        ) {
+    target.closest("#liveCommentPanel")
+) {
+      
             tracking = false;
             return;
         }
