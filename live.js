@@ -1055,3 +1055,77 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { passive: true });
 
 })();
+
+/* =========================================================
+   SWIPE KANAN = BACK
+   Swipe kiri = tidak melakukan apa-apa
+   Kolom komentar tidak memicu swipe Back
+   ========================================================= */
+
+(() => {
+  let startX = 0;
+  let startY = 0;
+  let trackingSwipe = false;
+
+  const liveApp = document.getElementById("liveApp");
+
+  if (!liveApp) return;
+
+  liveApp.addEventListener(
+    "touchstart",
+    (event) => {
+      if (event.touches.length !== 1) {
+        trackingSwipe = false;
+        return;
+      }
+
+      const target = event.target;
+
+      // Jangan aktifkan swipe Back ketika mengetik pesan
+      if (
+        target.closest("#liveCommentInput") ||
+        target.closest("#liveCommentForm")
+      ) {
+        trackingSwipe = false;
+        return;
+      }
+
+      startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
+      trackingSwipe = true;
+    },
+    { passive: true }
+  );
+
+  liveApp.addEventListener(
+    "touchend",
+    (event) => {
+      if (!trackingSwipe) return;
+
+      trackingSwipe = false;
+
+      if (event.changedTouches.length !== 1) return;
+
+      const endX = event.changedTouches[0].clientX;
+      const endY = event.changedTouches[0].clientY;
+
+      const deltaX = endX - startX;
+      const deltaY = endY - startY;
+
+      // Harus geser ke KANAN minimal 80px
+      const swipeRight =
+        deltaX >= 80 &&
+        Math.abs(deltaX) > Math.abs(deltaY);
+
+      if (!swipeRight) return;
+
+      // Kembali ke halaman sebelumnya
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "live-hub.html";
+      }
+    },
+    { passive: true }
+  );
+})();
