@@ -1055,3 +1055,128 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { passive: true });
 
 })();
+
+/* =====================================================
+   CHUK AN CHUKK
+   SWIPE KANAN = BACK
+   Berlaku di seluruh layar LIVE
+===================================================== */
+
+(() => {
+
+    let startX = 0;
+    let startY = 0;
+    let trackingSwipe = false;
+
+    const liveApp = document.getElementById("liveApp");
+
+    if (!liveApp) {
+        console.warn("⚠️ liveApp tidak ditemukan");
+        return;
+    }
+
+
+    /* =================================================
+       TOUCH START
+    ================================================= */
+
+    liveApp.addEventListener("touchstart", (event) => {
+
+        if (event.touches.length !== 1) {
+            trackingSwipe = false;
+            return;
+        }
+
+        const target = event.target;
+
+
+        /*
+         * Jangan jalankan Back ketika pengguna
+         * sedang mengetik pesan.
+         */
+
+        if (
+            target.closest("#liveCommentInput") ||
+            target.closest("#liveCommentForm")
+        ) {
+            trackingSwipe = false;
+            return;
+        }
+
+
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
+
+        trackingSwipe = true;
+
+    }, { passive: true });
+
+
+    /* =================================================
+       TOUCH END
+    ================================================= */
+
+    liveApp.addEventListener("touchend", (event) => {
+
+        if (!trackingSwipe) {
+            return;
+        }
+
+        trackingSwipe = false;
+
+
+        if (event.changedTouches.length !== 1) {
+            return;
+        }
+
+
+        const endX = event.changedTouches[0].clientX;
+        const endY = event.changedTouches[0].clientY;
+
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+
+
+        /* =================================================
+           SWIPE KANAN
+
+           deltaX positif = bergerak ke kanan
+        ================================================= */
+
+        const swipeRight =
+            deltaX >= 80 &&
+            Math.abs(deltaX) > Math.abs(deltaY);
+
+
+        if (!swipeRight) {
+            return;
+        }
+
+
+        /* =================================================
+           BACK
+        ================================================= */
+
+        if (window.history.length > 1) {
+
+            window.history.back();
+
+        } else {
+
+            /*
+             * Jika LIVE dibuka langsung,
+             * kembali ke halaman LIVE sebelumnya.
+             */
+
+            window.location.href = "live-hub.html";
+
+        }
+
+    }, { passive: true });
+
+
+    console.log(
+        "👈➡️ LIVE SWIPE RIGHT = BACK AKTIF"
+    );
+
+})();
