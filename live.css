@@ -1512,3 +1512,14 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
 #liveCommentForm button[type="submit"]:active {
   transform: scale(0.92);
 }
+
+.follow-host-button {
+    margin-left: 8px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: red;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
