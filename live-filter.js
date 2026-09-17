@@ -1,10 +1,5 @@
 "use strict";
 
-/* =====================================================
-   CHUK AN CHUKK
-   LIVE CAMERA FILTER
-===================================================== */
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const video = document.getElementById("camera");
@@ -15,6 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    /* =========================================
+       DAFTAR FILTER
+    ========================================= */
 
     const filters = {
         none: "none",
@@ -36,9 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
-    /* =================================================
-       PILIH FILTER
-    ================================================= */
+    /* =========================================
+       FILTER BUTTON
+    ========================================= */
 
     const buttons =
         filterPanel.querySelectorAll(".filter-option");
@@ -55,12 +53,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 filters[filterName] || "none";
 
 
-            /* Terapkan filter */
+            /* =====================================
+               TERAPKAN FILTER KE KAMERA
+
+               Filter TIDAK dihapus ketika
+               panel ditutup.
+            ===================================== */
 
             video.style.filter = filter;
 
 
-            /* Tandai filter aktif */
+            /* =====================================
+               SIMPAN FILTER AKTIF
+            ===================================== */
+
+            window.chukActiveLiveFilter =
+                filterName;
+
+
+            /* =====================================
+               UPDATE TOMBOL AKTIF
+            ===================================== */
 
             buttons.forEach(item => {
                 item.classList.remove("active");
@@ -77,6 +90,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     });
+
+
+    /* =========================================
+       FILTER DEFAULT
+    ========================================= */
+
+    video.style.filter = "none";
+
+    window.chukActiveLiveFilter = "none";
 
 
     console.log(
