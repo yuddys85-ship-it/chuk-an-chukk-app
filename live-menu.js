@@ -175,35 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* =====================================================
-       SENTUH MENU
-    ===================================================== */
-
-    menuButton.addEventListener(
-        "touchend",
-        (event) => {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            if (
-                roomPanel.hidden ||
-                roomPanel.style.display === "none"
-            ) {
-
-                openMenu();
-
-            } else {
-
-                closeMenu();
-
-            }
-
-        },
-        {
-            passive: false
-        }
-    );
 
 
     /* =====================================================
