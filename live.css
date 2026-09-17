@@ -2108,3 +2108,102 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
     }
 
 }
+
+/* =====================================================
+   CHUK AN CHUKK
+   LIVE CONTROL — MULAI / STOP
+===================================================== */
+
+#liveControl {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 999999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: auto;
+}
+
+/* TOMBOL */
+.live-control-button {
+    min-width: 150px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 0 20px;
+
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 28px;
+
+    color: #fff;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+    touch-action: manipulation;
+
+    box-shadow:
+        0 8px 30px rgba(0,0,0,.45);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    transition:
+        transform .15s ease,
+        opacity .15s ease;
+}
+
+/* MULAI */
+.start-live {
+    background: rgba(220, 30, 45, .92);
+}
+
+/* STOP */
+.stop-live {
+    background: rgba(25, 25, 30, .90);
+}
+
+/* ICON */
+.live-control-icon {
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* TEXT */
+.live-control-text {
+    white-space: nowrap;
+}
+
+/* TEKAN */
+.live-control-button:active {
+    transform: scale(.94);
+}
+
+/* HIDDEN */
+.live-control-button[hidden] {
+    display: none !important;
+}
+
+/* HP */
+@media (max-width: 600px) {
+
+    #liveControl {
+        bottom: 22px;
+    }
+
+    .live-control-button {
+        min-width: 140px;
+        height: 50px;
+        font-size: 14px;
+    }
+
+}
