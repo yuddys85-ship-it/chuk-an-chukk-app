@@ -216,23 +216,10 @@
 💎 Skin Smooth — menghaluskan kulit.
 🌸 Youth/Youthful — memberi tampilan lebih muda.
 
-
-    <!-- =====================================================
-         COMMENT BUTTON
-         HIDDEN — UNTUK KOMPATIBILITAS JS
-    ====================================================== -->
-
-    <button
-        class="live-comment-button"
-        id="liveCommentButton"
-        type="button"
-        aria-label="Komentar"
-        hidden
-    >
-        💬
-    </button>
-
-    <!-- COMMENT BUTTON HIDDEN -->
+<!-- =====================================================
+     COMMENT BUTTON — HIDDEN
+     Disimpan untuk kompatibilitas JavaScript
+===================================================== -->
 <button
     class="live-comment-button"
     id="liveCommentButton"
@@ -243,7 +230,11 @@
     💬
 </button>
 
-<!-- LIVE CONTROL -->
+
+<!-- =====================================================
+     LIVE CONTROL
+     MULAI LIVE / STOP LIVE
+===================================================== -->
 <div id="liveControl">
 
     <!-- MULAI LIVE -->
@@ -256,6 +247,7 @@
         <span class="live-control-icon">🔴</span>
         <span class="live-control-text">Mulai Live</span>
     </button>
+
 
     <!-- STOP LIVE -->
     <button
@@ -271,15 +263,27 @@
 
 </div>
 
-<!-- SHARE LIVE -->
+
+<!-- =====================================================
+     SHARE LIVE
+===================================================== -->
 <button
     id="shareLiveButton"
     class="share-live-button"
     type="button"
     aria-label="Bagikan Live"
 >
-
-
+    <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+    >
+        <path d="M12 16V3"></path>
+        <path d="M7 8l5-5 5 5"></path>
+        <path d="M5 12v7a2 2 0 0 0 2 2v-7"></path>
+        <path d="M7 21h10a2 2 0 0 0 2-2v-7"></path>
+    </svg>
+</button>
+    
     <!-- =====================================================
          SHARE LIVE
     ====================================================== -->
