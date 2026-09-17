@@ -275,15 +275,45 @@
          Disimpan untuk kompatibilitas JavaScript
     ====================================================== -->
 
+    <!-- =====================================================
+     KOLOM KOMENTAR + STOP LIVE
+===================================================== -->
+
+<div class="live-bottom-controls">
+
+    <!-- Kolom pesan -->
+    <form
+        class="live-comment-form"
+        id="liveCommentForm"
+    >
+        <textarea
+            id="liveCommentInput"
+            rows="1"
+            placeholder="Tulis pesan..."
+            autocomplete="off"
+            maxlength="300"
+        ></textarea>
+
+        <button
+            type="submit"
+            aria-label="Kirim pesan"
+        >
+            ➤
+        </button>
+    </form>
+
+    <!-- STOP LIVE -->
     <button
-        class="live-comment-button"
-        id="liveCommentButton"
+        id="stopLiveButton"
+        class="live-control-button stop-live"
         type="button"
-        aria-label="Komentar"
+        aria-label="Stop Live"
         hidden
     >
-        💬
+        ⏹️
     </button>
+
+</div>
 
 
     <!-- =====================================================
