@@ -1988,3 +1988,123 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
     opacity: 1 !important;
     pointer-events: auto !important;
 }
+
+/* =========================================
+   CHUK AN CHUKK
+   LIVE MENU — VERTIKAL
+========================================= */
+
+#roomPanel {
+    position: fixed !important;
+    top: 66px !important;
+    right: 14px !important;
+
+    width: 190px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    gap: 4px !important;
+
+    padding: 8px !important;
+    margin: 0 !important;
+
+    background: rgba(20, 20, 24, 0.90) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 16px !important;
+
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45) !important;
+
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+
+    z-index: 999999 !important;
+
+    overflow: hidden !important;
+}
+
+
+/* =========================================
+   SETIAP ITEM MENU
+========================================= */
+
+#roomPanel .live-menu-item {
+    width: 100% !important;
+    height: 46px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+
+    align-items: center !important;
+
+    gap: 12px !important;
+
+    padding: 0 12px !important;
+    margin: 0 !important;
+
+    border: none !important;
+    border-radius: 11px !important;
+
+    background: transparent !important;
+
+    color: #fff !important;
+
+    font-size: 14px !important;
+    font-weight: 600 !important;
+
+    text-align: left !important;
+
+    cursor: pointer !important;
+
+    touch-action: manipulation !important;
+}
+
+
+/* =========================================
+   ICON
+========================================= */
+
+#roomPanel .live-menu-item span:first-child {
+    width: 24px !important;
+
+    flex: 0 0 24px !important;
+
+    font-size: 19px !important;
+
+    text-align: center !important;
+}
+
+
+/* =========================================
+   EFEK TEKAN
+========================================= */
+
+#roomPanel .live-menu-item:active {
+    background: rgba(255, 255, 255, 0.12) !important;
+
+    transform: scale(0.98) !important;
+}
+
+
+/* =========================================
+   HIDDEN
+========================================= */
+
+#roomPanel[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================
+   HP
+========================================= */
+
+@media (max-width: 600px) {
+
+    #roomPanel {
+        top: 60px !important;
+        right: 10px !important;
+        width: 180px !important;
+    }
+
+}
