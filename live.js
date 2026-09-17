@@ -5,7 +5,6 @@
    LIVE
    KAMERA STABIL + PROFILE USER + ROOM MENU
    ========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const video =
@@ -13,9 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const flipButton =
         document.getElementById("flipCameraButton");
-
-    const menuButton =
-        document.getElementById("menuButton");
 
     const liveApp =
         document.getElementById("liveApp");
