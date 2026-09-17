@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -12,6 +13,7 @@
     <title>Chuk an Chukk — Live</title>
 
     <link rel="stylesheet" href="live.css">
+
 </head>
 
 <body>
@@ -20,7 +22,7 @@
 
     <!-- =====================================================
          CAMERA
-         ===================================================== -->
+    ====================================================== -->
 
     <video
         id="camera"
@@ -30,41 +32,57 @@
         webkit-playsinline
     ></video>
 
-    <!-- Canvas untuk filter / efek kamera -->
     <canvas id="filterCanvas"></canvas>
 
 
     <!-- =====================================================
          PROFILE HOST
-         ===================================================== -->
+    ====================================================== -->
 
-<div id="liveUserDisplay">
-    <img id="liveUserAvatar" src="assets/logo.png" alt="Profile">
-    <span id="liveUserName">Chuk User</span>
+    <div id="liveUserDisplay">
 
-    <button
-        id="followHostButton"
-        class="follow-host-button"
-        type="button"
-    >
-        + Ikuti
-    </button>
-</div>
-    
-<!-- JUMLAH PENONTON LIVE -->
-    
-<div
-    id="liveViewerCount"
-    class="live-viewer-count"
->
-    <span class="viewer-icon">👁</span>
-    <span id="viewerCountNumber">0</span>
-</div>
-    
+        <img
+            id="liveUserAvatar"
+            src="assets/logo.png"
+            alt="Profile"
+        >
+
+        <span id="liveUserName">
+            Chuk User
+        </span>
+
+        <button
+            id="followHostButton"
+            class="follow-host-button"
+            type="button"
+        >
+            + Ikuti
+        </button>
+
+    </div>
+
 
     <!-- =====================================================
-         ROOM
-         ===================================================== -->
+         JUMLAH PENONTON
+    ====================================================== -->
+
+    <div
+        id="liveViewerCount"
+        class="live-viewer-count"
+    >
+
+        <span class="viewer-icon">👁</span>
+
+        <span id="viewerCountNumber">
+            0
+        </span>
+
+    </div>
+
+
+    <!-- =====================================================
+         ROOM ID
+    ====================================================== -->
 
     <div id="liveRoomDisplay">
         CHUK-XXXXXX
@@ -73,7 +91,7 @@
 
     <!-- =====================================================
          FLIP CAMERA
-         ===================================================== -->
+    ====================================================== -->
 
     <button
         class="flip-camera-button"
@@ -87,23 +105,27 @@
 
     <!-- =====================================================
          MENU
-         ===================================================== -->
+    ====================================================== -->
 
     <button
         class="menu-button"
         id="menuButton"
         type="button"
         aria-label="Menu"
+        aria-expanded="false"
     >
         ☰
     </button>
 
 
     <!-- =====================================================
-         ROOM PANEL
-         ===================================================== -->
+         ROOM / LIVE MENU PANEL
+    ====================================================== -->
 
-    <div id="roomPanel" hidden>
+    <div
+        id="roomPanel"
+        hidden
+    >
 
         <div class="room-name-label">
             Nama Room
@@ -165,10 +187,75 @@
 
 
     <!-- =====================================================
+         FILTER KAMERA
+    ====================================================== -->
+
+    <div
+        id="liveFilterPanel"
+        class="live-filter-panel"
+    >
+
+        <button
+            type="button"
+            class="filter-option active"
+            data-filter="none"
+        >
+            <span class="filter-preview normal"></span>
+            <span>Normal</span>
+        </button>
+
+        <button
+            type="button"
+            class="filter-option"
+            data-filter="warm"
+        >
+            <span class="filter-preview warm"></span>
+            <span>Warm</span>
+        </button>
+
+        <button
+            type="button"
+            class="filter-option"
+            data-filter="cool"
+        >
+            <span class="filter-preview cool"></span>
+            <span>Cool</span>
+        </button>
+
+        <button
+            type="button"
+            class="filter-option"
+            data-filter="gray"
+        >
+            <span class="filter-preview gray"></span>
+            <span>Classic</span>
+        </button>
+
+        <button
+            type="button"
+            class="filter-option"
+            data-filter="bright"
+        >
+            <span class="filter-preview bright"></span>
+            <span>Bright</span>
+        </button>
+
+        <button
+            type="button"
+            class="filter-option"
+            data-filter="soft"
+        >
+            <span class="filter-preview soft"></span>
+            <span>Soft</span>
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
          COMMENT BUTTON
-         DISIMPAN UNTUK KOMPATIBILITAS JAVASCRIPT
-         TAPI TIDAK DITAMPILKAN
-         ===================================================== -->
+         HIDDEN — UNTUK KOMPATIBILITAS JS
+    ====================================================== -->
 
     <button
         class="live-comment-button"
@@ -183,7 +270,7 @@
 
     <!-- =====================================================
          SHARE LIVE
-         ===================================================== -->
+    ====================================================== -->
 
     <button
         class="share-live-button"
@@ -212,28 +299,18 @@
 
     <!-- =====================================================
          LIVE MESSAGE
-         TANPA HEADER KOMENTAR
-         TANPA PANEL POPUP
-         ===================================================== -->
+    ====================================================== -->
 
     <section
         class="live-comment-panel"
         id="liveCommentPanel"
     >
 
-        <!-- =================================================
-             MESSAGE LIST
-             ================================================= -->
-
         <div
             class="live-comments-list"
             id="liveCommentsList"
         ></div>
 
-
-        <!-- =================================================
-             MESSAGE INPUT
-             ================================================= -->
 
         <form
             class="live-comment-form"
@@ -264,16 +341,14 @@
 
 <!-- =========================================================
      SUPABASE
-     ========================================================= -->
+========================================================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
 <!-- =========================================================
      CHUK AN CHUKK LIVE SCRIPTS
-     ========================================================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+========================================================= -->
 
 <script src="live.js"></script>
 <script src="live-filter.js"></script>
@@ -282,67 +357,6 @@
 <script src="live-share.js"></script>
 <script src="live-comments.js"></script>
 
+
 </body>
 </html>
-
-<scri<!-- =====================================================
-     FILTER KAMERA
-===================================================== -->
-
-<div id="liveFilterPanel" class="live-filter-panel">
-
-    <button
-        type="button"
-        class="filter-option active"
-        data-filter="none"
-    >
-        <span class="filter-preview normal"></span>
-        <span>Normal</span>
-    </button>
-
-    <button
-        type="button"
-        class="filter-option"
-        data-filter="warm"
-    >
-        <span class="filter-preview warm"></span>
-        <span>Warm</span>
-    </button>
-
-    <button
-        type="button"
-        class="filter-option"
-        data-filter="cool"
-    >
-        <span class="filter-preview cool"></span>
-        <span>Cool</span>
-    </button>
-
-    <button
-        type="button"
-        class="filter-option"
-        data-filter="gray"
-    >
-        <span class="filter-preview gray"></span>
-        <span>Classic</span>
-    </button>
-
-    <button
-        type="button"
-        class="filter-option"
-        data-filter="bright"
-    >
-        <span class="filter-preview bright"></span>
-        <span>Bright</span>
-    </button>
-
-    <button
-        type="button"
-        class="filter-option"
-        data-filter="soft"
-    >
-        <span class="filter-preview soft"></span>
-        <span>Soft</span>
-    </button>
-
-</div>
