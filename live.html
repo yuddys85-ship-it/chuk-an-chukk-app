@@ -304,18 +304,90 @@
          LIVE MESSAGE
          KOMENTAR + STOP LIVE
     ====================================================== -->
+<!-- =====================================================
+     LIVE MESSAGE + LIVE CONTROL
+====================================================== -->
 
-    <section
-        class="live-comment-panel"
-        id="liveCommentPanel"
-    >
+<section
+    class="live-comment-panel"
+    id="liveCommentPanel"
+>
 
-        <!-- DAFTAR KOMENTAR -->
+    <!-- DAFTAR KOMENTAR -->
 
-        <div
-            class="live-comments-list"
-            id="liveCommentsList"
-        ></div>
+    <div
+        class="live-comments-list"
+        id="liveCommentsList"
+    ></div>
+
+
+    <!-- =================================================
+         KOMENTAR + MULAI/STOP LIVE
+    ================================================== -->
+
+    <div class="live-bottom-controls">
+
+
+        <!-- FORM KOMENTAR -->
+
+        <form
+            class="live-comment-form"
+            id="liveCommentForm"
+        >
+
+            <textarea
+                id="liveCommentInput"
+                rows="1"
+                placeholder="Tulis pesan..."
+                autocomplete="off"
+                maxlength="300"
+            ></textarea>
+
+
+            <!-- KIRIM KOMENTAR -->
+
+            <button
+                type="submit"
+                aria-label="Kirim pesan"
+            >
+                ➤
+            </button>
+
+        </form>
+
+
+        <!-- =================================================
+             MULAI LIVE
+        ================================================== -->
+
+        <button
+            id="startLiveButton"
+            class="live-control-button start-live"
+            type="button"
+            aria-label="Mulai Live"
+        >
+            <span class="live-video-icon">▶</span>
+        </button>
+
+
+        <!-- =================================================
+             STOP LIVE
+        ================================================== -->
+
+        <button
+            id="stopLiveButton"
+            class="live-control-button stop-live"
+            type="button"
+            aria-label="Stop Live"
+            hidden
+        >
+            ⏹️
+        </button>
+
+
+    </div>
+
+</section>
 
 
         <!-- =================================================
