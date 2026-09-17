@@ -236,7 +236,7 @@
         </button>
 
 
-        <!-- BEAUTY FILTER -->
+        <!-- BEAUTY -->
 
         <button
             type="button"
@@ -270,134 +270,65 @@
     </div>
 
 
+    <!-- =====================================================
+         SHARE LIVE
+    ====================================================== -->
 
-<!-- =====================================================
-     SHARE LIVE
-====================================================== -->
-
-<button
-    class="share-live-button"
-    id="shareLiveButton"
-    type="button"
-    aria-label="Bagikan Live"
->
-
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
+    <button
+        class="share-live-button"
+        id="shareLiveButton"
+        type="button"
+        aria-label="Bagikan Live"
     >
 
-        <path d="M12 16V3"></path>
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+        >
 
-        <path d="M7 8l5-5 5 5"></path>
+            <path d="M12 16V3"></path>
 
-        <path
-            d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"
-        ></path>
+            <path d="M7 8l5-5 5 5"></path>
 
-    </svg>
+            <path
+                d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"
+            ></path>
 
-</button>
+        </svg>
+
+    </button>
 
 
     <!-- =====================================================
-         LIVE MESSAGE
-         KOMENTAR + STOP LIVE
+         LIVE MESSAGE + LIVE CONTROL
     ====================================================== -->
-<!-- =====================================================
-     LIVE MESSAGE + LIVE CONTROL
-====================================================== -->
 
-<section
-    class="live-comment-panel"
-    id="liveCommentPanel"
->
-
-    <!-- DAFTAR KOMENTAR -->
-
-    <div
-        class="live-comments-list"
-        id="liveCommentsList"
-    ></div>
-
-
-    <!-- =================================================
-         KOMENTAR + MULAI/STOP LIVE
-    ================================================== -->
-
-    <div class="live-bottom-controls">
-
-
-        <!-- FORM KOMENTAR -->
-
-        <form
-            class="live-comment-form"
-            id="liveCommentForm"
-        >
-
-            <textarea
-                id="liveCommentInput"
-                rows="1"
-                placeholder="Tulis pesan..."
-                autocomplete="off"
-                maxlength="300"
-            ></textarea>
-
-
-            <!-- KIRIM KOMENTAR -->
-
-            <button
-                type="submit"
-                aria-label="Kirim pesan"
-            >
-                ➤
-            </button>
-
-        </form>
+    <section
+        class="live-comment-panel"
+        id="liveCommentPanel"
+    >
 
 
         <!-- =================================================
-             MULAI LIVE
+             DAFTAR KOMENTAR
         ================================================== -->
 
-        <button
-            id="startLiveButton"
-            class="live-control-button start-live"
-            type="button"
-            aria-label="Mulai Live"
-        >
-            <span class="live-video-icon">▶</span>
-        </button>
+        <div
+            class="live-comments-list"
+            id="liveCommentsList"
+        ></div>
 
 
         <!-- =================================================
-             STOP LIVE
-        ================================================== -->
-
-        <button
-            id="stopLiveButton"
-            class="live-control-button stop-live"
-            type="button"
-            aria-label="Stop Live"
-            hidden
-        >
-            ⏹️
-        </button>
-
-
-    </div>
-
-</section>
-
-
-        <!-- =================================================
-             KOLOM KOMENTAR + STOP LIVE
+             BOTTOM CONTROLS
         ================================================== -->
 
         <div class="live-bottom-controls">
 
 
-            <!-- KOLOM PESAN -->
+            <!-- =================================================
+                 FORM KOMENTAR
+            ================================================== -->
 
             <form
                 class="live-comment-form"
@@ -413,6 +344,8 @@
                 ></textarea>
 
 
+                <!-- KIRIM -->
+
                 <button
                     type="submit"
                     aria-label="Kirim pesan"
@@ -421,6 +354,20 @@
                 </button>
 
             </form>
+
+
+            <!-- =================================================
+                 MULAI LIVE
+            ================================================== -->
+
+            <button
+                id="startLiveButton"
+                class="live-control-button start-live"
+                type="button"
+                aria-label="Mulai Live"
+            >
+                <span class="live-video-icon">▶</span>
+            </button>
 
 
             <!-- =================================================
@@ -465,13 +412,14 @@
 
 <script src="live-menu.js"></script>
 <script src="live-room-name.js"></script>
+
 <script src="live-public.js"></script>
 <script src="live-private.js"></script>
 
 <script src="live-share.js"></script>
+
 <script src="live-comments.js"></script>
 
-<!-- LIVE CONTROL -->
 <script src="live-control.js"></script>
 
 
