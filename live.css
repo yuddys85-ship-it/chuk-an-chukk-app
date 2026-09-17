@@ -1877,4 +1877,71 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
     }
 }
 
+/* =====================================================
+   CHUK AN CHUKK — ROOM MENU
+===================================================== */
 
+#roomPanel {
+    position: fixed !important;
+
+    top: 70px !important;
+    right: 14px !important;
+
+    width: 220px !important;
+    padding: 14px !important;
+
+    background: rgba(15, 15, 18, 0.92) !important;
+    border: 1px solid rgba(255,255,255,.18) !important;
+    border-radius: 18px !important;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,.45) !important;
+
+    color: #fff !important;
+
+    z-index: 999999 !important;
+
+    overflow: hidden !important;
+
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+}
+
+#roomPanel[hidden] {
+    display: none !important;
+}
+
+#roomPanel .room-name-label,
+#roomPanel .room-title,
+#roomPanel .room-subtitle {
+    color: rgba(255,255,255,.7) !important;
+}
+
+#roomPanel .room-title {
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    margin-bottom: 10px !important;
+}
+
+#roomPanel .room-name-input {
+    width: 100% !important;
+    height: 40px !important;
+
+    padding: 0 12px !important;
+
+    border: 1px solid rgba(255,255,255,.2) !important;
+    border-radius: 10px !important;
+
+    background: rgba(255,255,255,.08) !important;
+    color: #fff !important;
+
+    outline: none !important;
+}
+
+#roomPanel .room-live {
+    margin: 8px 0 14px !important;
+
+    font-size: 13px !important;
+    font-weight: 600 !important;
+
+    color: #fff !important;
+}
