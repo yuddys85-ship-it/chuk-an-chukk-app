@@ -1612,3 +1612,269 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
 .filter-option:active {
     transform: scale(.94);
 }
+
+/* =========================================================
+   CHUK AN CHUKK — HEADER LIVE BARU
+   HANYA HEADER — POSISI FUNGSI LAIN TETAP
+========================================================= */
+
+/* ================= PROFILE HEADER ================= */
+
+#liveUserDisplay {
+    position: fixed !important;
+
+    top: 14px !important;
+    left: 14px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    z-index: 99998 !important;
+
+    pointer-events: none !important;
+}
+
+/* Avatar */
+
+#liveUserAvatar {
+    width: 42px !important;
+    height: 42px !important;
+
+    border-radius: 50% !important;
+
+    object-fit: cover !important;
+
+    border: 2px solid rgba(255,255,255,.95) !important;
+
+    background: transparent !important;
+
+    box-shadow:
+        0 2px 10px rgba(0,0,0,.45) !important;
+}
+
+/* Nama user */
+
+#liveUserName {
+    max-width: 38vw !important;
+
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+
+    color: #fff !important;
+
+    font-size: 15px !important;
+    font-weight: 700 !important;
+
+    text-shadow:
+        0 2px 6px rgba(0,0,0,.95) !important;
+}
+
+/* ================= FOLLOW ================= */
+
+.follow-host-button {
+    margin-left: 5px !important;
+
+    padding: 0 !important;
+
+    border: none !important;
+
+    background: transparent !important;
+
+    color: #ff2b55 !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    cursor: pointer !important;
+
+    text-shadow:
+        0 2px 5px rgba(0,0,0,.8) !important;
+
+    pointer-events: auto !important;
+}
+
+.follow-host-button:active {
+    opacity: .65 !important;
+    transform: scale(.94) !important;
+}
+
+/* ================= ROOM INFO ================= */
+
+#liveRoomDisplay {
+    position: fixed !important;
+
+    top: 38px !important;
+    left: 64px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    color: rgba(255,255,255,.82) !important;
+
+    font-size: 11px !important;
+    font-weight: 600 !important;
+
+    line-height: 17px !important;
+
+    text-shadow:
+        0 2px 5px rgba(0,0,0,.95) !important;
+
+    z-index: 99999 !important;
+}
+
+/* Nama room */
+
+#liveRoomNameDisplay {
+    color: #fff !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    line-height: 18px !important;
+
+    text-shadow:
+        0 2px 6px rgba(0,0,0,.95) !important;
+
+    z-index: 99999 !important;
+}
+
+/* ================= VIEWER ================= */
+
+.live-viewer-count {
+    position: fixed !important;
+
+    top: 20px !important;
+    right: 76px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+
+    padding: 0 !important;
+
+    background: transparent !important;
+
+    color: #fff !important;
+
+    font-size: 12px !important;
+    font-weight: 700 !important;
+
+    text-shadow:
+        0 2px 5px rgba(0,0,0,.95) !important;
+
+    z-index: 99998 !important;
+}
+
+.viewer-icon {
+    font-size: 14px !important;
+}
+
+/* ================= MENU ================= */
+
+#menuButton,
+.menu-button {
+    position: fixed !important;
+
+    top: 12px !important;
+    right: 12px !important;
+
+    width: 48px !important;
+    height: 48px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: transparent !important;
+
+    color: #fff !important;
+
+    font-size: 26px !important;
+    line-height: 1 !important;
+
+    box-shadow: none !important;
+
+    z-index: 999999 !important;
+
+    cursor: pointer !important;
+
+    touch-action: manipulation !important;
+
+    text-shadow:
+        0 2px 7px rgba(0,0,0,.95) !important;
+}
+
+/* Menu saat disentuh */
+
+#menuButton:active,
+.menu-button:active {
+    background: transparent !important;
+    transform: scale(.90) !important;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
+
+    #liveUserDisplay {
+        top: 10px !important;
+        left: 10px !important;
+    }
+
+    #liveUserAvatar {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    #liveUserName {
+        max-width: 34vw !important;
+        font-size: 14px !important;
+    }
+
+    .follow-host-button {
+        font-size: 12px !important;
+    }
+
+    #liveRoomDisplay {
+        top: 35px !important;
+        left: 58px !important;
+        font-size: 10px !important;
+    }
+
+    .live-viewer-count {
+        top: 17px !important;
+        right: 65px !important;
+    }
+
+    #menuButton,
+    .menu-button {
+        top: 8px !important;
+        right: 8px !important;
+
+        width: 46px !important;
+        height: 46px !important;
+
+        font-size: 25px !important;
+    }
+}
+
+
