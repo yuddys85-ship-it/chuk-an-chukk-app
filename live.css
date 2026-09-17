@@ -2277,3 +2277,66 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
 #stopLiveButton[hidden] {
     display: none !important;
 }
+
+/* =====================================================
+   START LIVE — LOGO MERAH
+===================================================== */
+
+#liveControl {
+    position: fixed !important;
+
+    left: 50% !important;
+    bottom: 18px !important;
+
+    top: auto !important;
+    right: auto !important;
+
+    transform: translateX(-50%) !important;
+
+    width: 48px !important;
+    height: 48px !important;
+
+    z-index: 999999 !important;
+}
+
+#startLiveButton {
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: #ff0000 !important;
+    color: #ffffff !important;
+
+    font-size: 21px !important;
+    line-height: 1 !important;
+
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    box-shadow: 0 4px 16px rgba(0,0,0,.45) !important;
+
+    cursor: pointer !important;
+}
+
+#startLiveButton .live-video-icon {
+    display: block !important;
+    color: #ffffff !important;
+    font-size: 21px !important;
+    line-height: 1 !important;
+}
+
+#startLiveButton:active {
+    transform: scale(.90) !important;
+}
