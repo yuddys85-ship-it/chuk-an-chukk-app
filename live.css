@@ -1964,3 +1964,27 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
     opacity: 1 !important;
     pointer-events: auto !important;
 }
+
+/* =========================================
+   FILTER PANEL
+   TERSEMBUNYI SAAT LIVE DIMULAI
+========================================= */
+
+#liveFilterPanel {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+
+/* =========================================
+   FILTER PANEL AKTIF
+========================================= */
+
+#liveFilterPanel.active {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
