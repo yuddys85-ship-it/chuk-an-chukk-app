@@ -191,9 +191,7 @@ body {
 }
 
 /* =====================================================
-   FLIP CAMERA
-   SEBELAH TOMBOL BAGIKAN
-   TANPA BACKGROUND
+   FLIP CAMERA — TANPA BACKGROUND
 ===================================================== */
 
 #flipCameraButton,
@@ -213,20 +211,23 @@ body {
     align-items: center !important;
     justify-content: center !important;
 
-    border: none !important;
-    border-radius: 50% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
 
-    background: transparent !important;
+    background: none !important;
     background-color: transparent !important;
 
     color: #fff !important;
     font-size: 27px !important;
 
     box-shadow: none !important;
-    outline: none !important;
+    outline: 0 !important;
 
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
 
     z-index: 99999 !important;
 
@@ -235,6 +236,24 @@ body {
 }
 
 
+/* =====================================================
+   SEMUA STATE TETAP TRANSPARAN
+===================================================== */
+
+#flipCameraButton:hover,
+#flipCameraButton:focus,
+#flipCameraButton:focus-visible,
+#flipCameraButton:active,
+.flip-camera-button:hover,
+.flip-camera-button:focus,
+.flip-camera-button:focus-visible,
+.flip-camera-button:active {
+    background: none !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+}
 /* =====================================================
    SAAT DISENTUH / FOCUS / HOVER
 ===================================================== */
