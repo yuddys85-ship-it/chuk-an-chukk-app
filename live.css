@@ -2207,3 +2207,73 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
     }
 
 }
+
+/* =====================================================
+   BOTTOM CONTROLS
+===================================================== */
+
+.live-bottom-controls {
+    position: fixed !important;
+
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 18px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 8px !important;
+
+    z-index: 999999 !important;
+}
+
+/* KOLOM KOMENTAR */
+
+.live-bottom-controls .live-comment-form {
+    position: relative !important;
+
+    flex: 1 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    margin: 0 !important;
+}
+
+/* STOP LIVE */
+
+#stopLiveButton {
+    position: relative !important;
+
+    flex: 0 0 46px !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: red !important;
+    color: white !important;
+
+    font-size: 18px !important;
+    line-height: 1 !important;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,.4) !important;
+
+    cursor: pointer !important;
+}
+
+#stopLiveButton:active {
+    transform: scale(.9) !important;
+}
+
+#stopLiveButton[hidden] {
+    display: none !important;
+}
