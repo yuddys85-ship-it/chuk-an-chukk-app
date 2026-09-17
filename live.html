@@ -20,6 +20,7 @@
 
 <div class="live-app" id="liveApp">
 
+
     <!-- =====================================================
          CAMERA
     ====================================================== -->
@@ -124,27 +125,46 @@
 
     <div id="roomPanel" hidden>
 
-    <button type="button" class="live-menu-item" id="openFilterMenu">
-        <span>🎨</span>
-        <span>Filter</span>
-    </button>
+        <button
+            type="button"
+            class="live-menu-item"
+            id="openFilterMenu"
+        >
+            <span>🎨</span>
+            <span>Filter</span>
+        </button>
 
-    <button type="button" class="live-menu-item" id="openRoomNameMenu">
-        <span>✏️</span>
-        <span>Nama Room</span>
-    </button>
 
-    <button type="button" class="live-menu-item" id="publicRoomMenu">
-        <span>🌐</span>
-        <span>Publik</span>
-    </button>
+        <button
+            type="button"
+            class="live-menu-item"
+            id="openRoomNameMenu"
+        >
+            <span>✏️</span>
+            <span>Nama Room</span>
+        </button>
 
-    <button type="button" class="live-menu-item" id="privateRoomMenu">
-        <span>🔒</span>
-        <span>Privat</span>
-    </button>
 
-</div>
+        <button
+            type="button"
+            class="live-menu-item"
+            id="publicRoomMenu"
+        >
+            <span>🌐</span>
+            <span>Publik</span>
+        </button>
+
+
+        <button
+            type="button"
+            class="live-menu-item"
+            id="privateRoomMenu"
+        >
+            <span>🔒</span>
+            <span>Privat</span>
+        </button>
+
+    </div>
 
 
     <!-- =====================================================
@@ -165,6 +185,7 @@
             <span>Normal</span>
         </button>
 
+
         <button
             type="button"
             class="filter-option"
@@ -173,6 +194,7 @@
             <span class="filter-preview warm"></span>
             <span>Warm</span>
         </button>
+
 
         <button
             type="button"
@@ -183,6 +205,7 @@
             <span>Cool</span>
         </button>
 
+
         <button
             type="button"
             class="filter-option"
@@ -191,6 +214,7 @@
             <span class="filter-preview gray"></span>
             <span>Classic</span>
         </button>
+
 
         <button
             type="button"
@@ -201,6 +225,7 @@
             <span>Bright</span>
         </button>
 
+
         <button
             type="button"
             class="filter-option"
@@ -210,80 +235,107 @@
             <span>Soft</span>
         </button>
 
+
+        <!-- BEAUTY FILTER -->
+
+        <button
+            type="button"
+            class="filter-option"
+            data-filter="beauty"
+        >
+            <span class="filter-preview beauty"></span>
+            <span>✨ Beauty</span>
+        </button>
+
+
+        <button
+            type="button"
+            class="filter-option"
+            data-filter="smooth"
+        >
+            <span class="filter-preview smooth"></span>
+            <span>💎 Skin Smooth</span>
+        </button>
+
+
+        <button
+            type="button"
+            class="filter-option"
+            data-filter="youthful"
+        >
+            <span class="filter-preview youthful"></span>
+            <span>🌸 Youthful</span>
+        </button>
+
     </div>
 
-    ✨ Beauty Filter — istilah umum.
-💎 Skin Smooth — menghaluskan kulit.
-🌸 Youth/Youthful — memberi tampilan lebih muda.
 
-<!-- =====================================================
-     COMMENT BUTTON — HIDDEN
-     Disimpan untuk kompatibilitas JavaScript
-===================================================== -->
-<button
-    class="live-comment-button"
-    id="liveCommentButton"
-    type="button"
-    aria-label="Komentar"
-    hidden
->
-    💬
-</button>
+    <!-- =====================================================
+         COMMENT BUTTON — HIDDEN
+         Disimpan untuk kompatibilitas JavaScript
+    ====================================================== -->
 
-
-<!-- =====================================================
-     LIVE CONTROL
-     MULAI LIVE / STOP LIVE
-===================================================== -->
-<div id="liveControl">
-
-    <!-- MULAI LIVE -->
     <button
-        id="startLiveButton"
-        class="live-control-button start-live"
+        class="live-comment-button"
+        id="liveCommentButton"
         type="button"
-        aria-label="Mulai Live"
-    >
-        <span class="live-control-icon">🔴</span>
-        <span class="live-control-text">Mulai Live</span>
-    </button>
-
-
-    <!-- STOP LIVE -->
-    <button
-        id="stopLiveButton"
-        class="live-control-button stop-live"
-        type="button"
-        aria-label="Stop Live"
+        aria-label="Komentar"
         hidden
     >
-        <span class="live-control-icon">⏹️</span>
-        <span class="live-control-text">Stop Live</span>
+        💬
     </button>
 
-</div>
+
+    <!-- =====================================================
+         LIVE CONTROL
+         MULAI LIVE / STOP LIVE
+    ====================================================== -->
+
+    <div id="liveControl">
+
+        <!-- MULAI LIVE -->
+
+        <button
+            id="startLiveButton"
+            class="live-control-button start-live"
+            type="button"
+            aria-label="Mulai Live"
+        >
+
+            <span class="live-control-icon">
+                🔴
+            </span>
+
+            <span class="live-control-text">
+                Mulai Live
+            </span>
+
+        </button>
 
 
-<!-- =====================================================
-     SHARE LIVE
-===================================================== -->
-<button
-    id="shareLiveButton"
-    class="share-live-button"
-    type="button"
-    aria-label="Bagikan Live"
->
-    <svg
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-    >
-        <path d="M12 16V3"></path>
-        <path d="M7 8l5-5 5 5"></path>
-        <path d="M5 12v7a2 2 0 0 0 2 2v-7"></path>
-        <path d="M7 21h10a2 2 0 0 0 2-2v-7"></path>
-    </svg>
-</button>
-    
+        <!-- STOP LIVE -->
+
+        <button
+            id="stopLiveButton"
+            class="live-control-button stop-live"
+            type="button"
+            aria-label="Stop Live"
+            hidden
+        >
+
+            <span class="live-control-icon">
+                ⏹️
+            </span>
+
+            <span class="live-control-text">
+                Stop Live
+            </span>
+
+        </button>
+
+    </div>
+
+
     <!-- =====================================================
          SHARE LIVE
     ====================================================== -->
@@ -341,6 +393,7 @@
                 maxlength="300"
             ></textarea>
 
+
             <button
                 type="submit"
                 aria-label="Kirim pesan"
@@ -354,7 +407,8 @@
 
 </div>
 
-    <!-- =========================================================
+
+<!-- =========================================================
      SUPABASE
 ========================================================= -->
 
@@ -380,6 +434,9 @@
 <script src="live-share.js"></script>
 <script src="live-comments.js"></script>
 
+<!-- LIVE CONTROL -->
+<script src="live-control.js"></script>
+
+
 </body>
 </html>
-
