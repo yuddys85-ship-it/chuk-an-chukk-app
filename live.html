@@ -271,55 +271,117 @@
 
 
     <!-- =====================================================
-         LIVE CONTROL
-         MULAI LIVE
-    ====================================================== -->
+     LIVE CONTROL + KOMENTAR
+====================================================== -->
 
-    <!-- =====================================================
-     LIVE CONTROL
-     MULAI LIVE
-===================================================== -->
+<section
+    class="live-comment-panel"
+    id="liveCommentPanel"
+>
 
-<div id="liveControl">
+    <!-- DAFTAR KOMENTAR -->
+    <div
+        class="live-comments-list"
+        id="liveCommentsList"
+    ></div>
 
-    <button
-        id="startLiveButton"
-        class="live-control-button start-live"
-        type="button"
-        aria-label="Mulai Live"
-    >
-        <span class="live-video-icon">▶</span>
-    </button>
 
-</div>
-    
-    <!-- =====================================================
-         SHARE LIVE
-    ====================================================== -->
+    <!-- =================================================
+         KOLOM KOMENTAR + TOMBOL LIVE
+    ================================================== -->
 
-    <button
-        class="share-live-button"
-        id="shareLiveButton"
-        type="button"
-        aria-label="Bagikan Live"
-    >
+    <div class="live-bottom-controls">
 
-        <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
+
+        <!-- KOLOM PESAN -->
+
+        <form
+            class="live-comment-form"
+            id="liveCommentForm"
         >
 
-            <path d="M12 16V3"></path>
+            <textarea
+                id="liveCommentInput"
+                rows="1"
+                placeholder="Tulis pesan..."
+                autocomplete="off"
+                maxlength="300"
+            ></textarea>
 
-            <path d="M7 8l5-5 5 5"></path>
 
-            <path
-                d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"
-            ></path>
+            <!-- KIRIM -->
 
-        </svg>
+            <button
+                type="submit"
+                aria-label="Kirim pesan"
+            >
+                ➤
+            </button>
 
-    </button>
+        </form>
+
+
+        <!-- =================================================
+             MULAI LIVE
+        ================================================== -->
+
+        <button
+            id="startLiveButton"
+            class="live-control-button start-live"
+            type="button"
+            aria-label="Mulai Live"
+        >
+            <span class="live-video-icon">▶</span>
+        </button>
+
+
+        <!-- =================================================
+             STOP LIVE
+        ================================================== -->
+
+        <button
+            id="stopLiveButton"
+            class="live-control-button stop-live"
+            type="button"
+            aria-label="Stop Live"
+            hidden
+        >
+            ⏹️
+        </button>
+
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SHARE LIVE
+====================================================== -->
+
+<button
+    class="share-live-button"
+    id="shareLiveButton"
+    type="button"
+    aria-label="Bagikan Live"
+>
+
+    <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+    >
+
+        <path d="M12 16V3"></path>
+
+        <path d="M7 8l5-5 5 5"></path>
+
+        <path
+            d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"
+        ></path>
+
+    </svg>
+
+</button>
 
 
     <!-- =====================================================
