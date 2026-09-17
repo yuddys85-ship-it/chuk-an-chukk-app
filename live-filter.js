@@ -2,107 +2,141 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const video = document.getElementById("camera");
-    const filterPanel = document.getElementById("liveFilterPanel");
+    const button =
+        document.getElementById("openFilterMenu");
 
-    if (!video || !filterPanel) {
-        console.warn("⚠️ Sistem filter kamera tidak ditemukan");
+    const panel =
+        document.getElementById("liveFilterPanel");
+
+    const roomPanel =
+        document.getElementById("roomPanel");
+
+
+    if (!button || !panel) {
+
+        console.warn(
+            "⚠️ Filter menu tidak ditemukan"
+        );
+
         return;
     }
 
+
     /* =========================================
-       DAFTAR FILTER
+       TUTUP FILTER
+       
+       PENTING:
+       Jangan mengubah video.style.filter
+       supaya efek tetap aktif.
     ========================================= */
 
-    const filters = {
-        none: "none",
+    function closeFilter() {
 
-        warm:
-            "sepia(0.18) saturate(1.15) brightness(1.04)",
+        panel.classList.remove("active");
 
-        cool:
-            "saturate(0.85) hue-rotate(8deg) brightness(1.03)",
-
-        gray:
-            "grayscale(1)",
-
-        bright:
-            "brightness(1.15) contrast(1.04)",
-
-        soft:
-            "brightness(1.05) saturate(0.85) contrast(0.92)"
-    };
+        console.log(
+            "🎨 PANEL FILTER DITUTUP"
+        );
+    }
 
 
     /* =========================================
-       FILTER BUTTON
+       BUKA / TUTUP FILTER
     ========================================= */
 
-    const buttons =
-        filterPanel.querySelectorAll(".filter-option");
+    button.addEventListener(
+        "click",
+        (event) => {
+
+            event.preventDefault();
+            event.stopPropagation();
 
 
-    buttons.forEach(button => {
+            /* Jika sedang terbuka → tutup */
 
-        button.addEventListener("click", () => {
+            if (
+                panel.classList.contains("active")
+            ) {
 
-            const filterName =
-                button.dataset.filter;
+                closeFilter();
 
-            const filter =
-                filters[filterName] || "none";
-
-
-            /* =====================================
-               TERAPKAN FILTER KE KAMERA
-
-               Filter TIDAK dihapus ketika
-               panel ditutup.
-            ===================================== */
-
-            video.style.filter = filter;
+                return;
+            }
 
 
-            /* =====================================
-               SIMPAN FILTER AKTIF
-            ===================================== */
+            /* Tutup menu utama */
 
-            window.chukActiveLiveFilter =
-                filterName;
+            if (roomPanel) {
+
+                roomPanel.hidden = true;
+
+                roomPanel.style.setProperty(
+                    "display",
+                    "none",
+                    "important"
+                );
+            }
 
 
-            /* =====================================
-               UPDATE TOMBOL AKTIF
-            ===================================== */
+            /* Buka panel filter */
 
-            buttons.forEach(item => {
-                item.classList.remove("active");
-            });
-
-            button.classList.add("active");
+            panel.classList.add("active");
 
 
             console.log(
-                "🎨 Filter LIVE:",
-                filterName
+                "🎨 PANEL FILTER DIBUKA"
             );
 
-        });
-
-    });
+        }
+    );
 
 
     /* =========================================
-       FILTER DEFAULT
+       KLIK DI LUAR PANEL
     ========================================= */
 
-    video.style.filter = "none";
+    document.addEventListener(
+        "click",
+        (event) => {
 
-    window.chukActiveLiveFilter = "none";
+            if (
+                !panel.classList.contains("active")
+            ) {
+                return;
+            }
+
+
+            if (
+                event.target.closest(
+                    "#liveFilterPanel"
+                ) ||
+                event.target.closest(
+                    "#openFilterMenu"
+                )
+            ) {
+
+                return;
+            }
+
+
+            closeFilter();
+
+        }
+    );
+
+
+    /* =========================================
+       AWAL LIVE
+       
+       Panel tersembunyi.
+       Filter kamera tetap Normal.
+    ========================================= */
+
+    panel.classList.remove("active");
 
 
     console.log(
-        "✅ CHUK AN CHUKK LIVE FILTER READY"
+        "✅ CHUK AN CHUKK FILTER MENU READY"
     );
 
 });
