@@ -2,17 +2,12 @@
 
 /* =========================================================
    CHUK AN CHUKK
-   LIVE MENU
+   LIVE MENU — STABLE VERSION
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     console.log("📋 CHUK AN CHUKK LIVE MENU START");
-
-
-    /* =====================================================
-       ELEMENT
-    ===================================================== */
 
     const menuButton =
         document.getElementById("menuButton");
@@ -23,100 +18,70 @@ document.addEventListener("DOMContentLoaded", () => {
     const liveApp =
         document.getElementById("liveApp");
 
-    const profile =
-        document.getElementById("liveUserDisplay");
-
-    const avatar =
-        document.getElementById("liveUserAvatar");
-
-    const username =
-        document.getElementById("liveUserName");
-
     const roomId =
         document.getElementById("liveRoomDisplay");
 
 
     /* =====================================================
-       CEK ELEMENT
+       CEK
     ===================================================== */
 
     if (!menuButton) {
-
-        console.error(
-            "❌ menuButton tidak ditemukan di live.html"
-        );
-
+        console.error("❌ menuButton tidak ditemukan");
         return;
     }
 
     if (!roomPanel) {
-
-        console.error(
-            "❌ roomPanel tidak ditemukan di live.html"
-        );
-
+        console.error("❌ roomPanel tidak ditemukan");
         return;
     }
 
     if (!liveApp) {
-
-        console.error(
-            "❌ liveApp tidak ditemukan di live.html"
-        );
-
+        console.error("❌ liveApp tidak ditemukan");
         return;
     }
 
 
     /* =====================================================
-       PROFIL
+       MENU STATE
     ===================================================== */
 
-    if (profile) {
-
-        profile.style.display = "flex";
-        profile.style.alignItems = "center";
-        profile.style.gap = "8px";
-
-    }
-
-    if (avatar) {
-
-        avatar.style.display = "block";
-        avatar.style.objectFit = "cover";
-
-    }
-
-    if (username) {
-
-        username.style.display = "block";
-        username.style.whiteSpace = "nowrap";
-
-    }
+    let menuOpen = false;
 
 
     /* =====================================================
-       ROOM ID
-    ===================================================== */
-
-    if (roomId) {
-
-        roomId.style.background = "transparent";
-        roomId.style.border = "none";
-        roomId.style.boxShadow = "none";
-
-    }
-
-
-    /* =====================================================
-       FUNGSI MENU
+       BUKA MENU
     ===================================================== */
 
     function openMenu() {
 
+        menuOpen = true;
+
         roomPanel.hidden = false;
 
-        roomPanel.style.display = "block";
+        roomPanel.style.setProperty(
+            "display",
+            "block",
+            "important"
+        );
+
+        roomPanel.style.setProperty(
+            "visibility",
+            "visible",
+            "important"
+        );
+
+        roomPanel.style.setProperty(
+            "opacity",
+            "1",
+            "important"
+        );
+
+        roomPanel.style.setProperty(
+            "pointer-events",
+            "auto",
+            "important"
+        );
 
         menuButton.setAttribute(
             "aria-expanded",
@@ -124,15 +89,42 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         console.log("📖 MENU DIBUKA");
-
     }
 
 
+    /* =====================================================
+       TUTUP MENU
+    ===================================================== */
+
     function closeMenu() {
+
+        menuOpen = false;
 
         roomPanel.hidden = true;
 
-        roomPanel.style.display = "none";
+        roomPanel.style.setProperty(
+            "display",
+            "none",
+            "important"
+        );
+
+        roomPanel.style.setProperty(
+            "visibility",
+            "hidden",
+            "important"
+        );
+
+        roomPanel.style.setProperty(
+            "opacity",
+            "0",
+            "important"
+        );
+
+        roomPanel.style.setProperty(
+            "pointer-events",
+            "none",
+            "important"
+        );
 
         menuButton.setAttribute(
             "aria-expanded",
@@ -140,28 +132,25 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         console.log("📕 MENU DITUTUP");
-
     }
 
 
+    /* =====================================================
+       TOGGLE
+    ===================================================== */
+
     function toggleMenu(event) {
 
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (
-            roomPanel.hidden ||
-            roomPanel.style.display === "none"
-        ) {
-
-            openMenu();
-
-        } else {
-
-            closeMenu();
-
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
         }
 
+        if (menuOpen) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
     }
 
 
@@ -175,35 +164,26 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-
-
     /* =====================================================
-       KLIK DI LUAR MENU
+       KLIK DI LUAR
     ===================================================== */
 
     document.addEventListener(
         "click",
         (event) => {
 
-            if (roomPanel.hidden) {
+            if (!menuOpen) {
                 return;
             }
 
-            const insidePanel =
-                event.target.closest("#roomPanel");
-
-            const clickedButton =
-                event.target.closest("#menuButton");
-
             if (
-                insidePanel ||
-                clickedButton
+                event.target.closest("#roomPanel") ||
+                event.target.closest("#menuButton")
             ) {
                 return;
             }
 
             closeMenu();
-
         }
     );
 
@@ -226,10 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
         roomName.id =
             "liveRoomNameDisplay";
 
-        liveApp.appendChild(
-            roomName
-        );
-
+        liveApp.appendChild(roomName);
     }
 
 
@@ -237,41 +214,19 @@ document.addEventListener("DOMContentLoaded", () => {
        STYLE NAMA ROOM
     ===================================================== */
 
-    roomName.style.position =
-        "fixed";
-
-    roomName.style.background =
-        "transparent";
-
-    roomName.style.border =
-        "none";
-
-    roomName.style.boxShadow =
-        "none";
-
-    roomName.style.color =
-        "#fff";
-
-    roomName.style.fontSize =
-        "12px";
-
-    roomName.style.fontWeight =
-        "600";
-
-    roomName.style.lineHeight =
-        "18px";
-
-    roomName.style.padding =
-        "0";
-
-    roomName.style.margin =
-        "0";
-
+    roomName.style.position = "fixed";
+    roomName.style.background = "transparent";
+    roomName.style.border = "none";
+    roomName.style.boxShadow = "none";
+    roomName.style.color = "#fff";
+    roomName.style.fontSize = "13px";
+    roomName.style.fontWeight = "700";
+    roomName.style.lineHeight = "18px";
+    roomName.style.padding = "0";
+    roomName.style.margin = "0";
     roomName.style.textShadow =
-        "0 2px 5px rgba(0,0,0,.9)";
-
-    roomName.style.zIndex =
-        "99999";
+        "0 2px 6px rgba(0,0,0,.95)";
+    roomName.style.zIndex = "99999";
 
 
     /* =====================================================
@@ -292,7 +247,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         roomName.style.top =
             `${rect.bottom + 2}px`;
-
     }
 
 
@@ -322,11 +276,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             roomName.style.display =
                 "none";
-
         }
 
         positionRoomName();
-
     }
 
 
@@ -348,11 +300,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 window.CHUK_LIVE_ROOM_NAME =
                     data.name;
-
             }
 
             updateRoomName();
-
         }
     );
 
@@ -365,9 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const observer =
             new MutationObserver(() => {
-
                 updateRoomName();
-
             });
 
         observer.observe(
@@ -378,7 +326,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 subtree: true
             }
         );
-
     }
 
 
@@ -399,7 +346,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 positionRoomName,
                 100
             );
-
         }
     );
 
@@ -411,7 +357,6 @@ document.addEventListener("DOMContentLoaded", () => {
     closeMenu();
 
     updateRoomName();
-
 
     console.log(
         "✅ CHUK AN CHUKK LIVE MENU READY"
