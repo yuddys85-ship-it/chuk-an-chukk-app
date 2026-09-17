@@ -2340,3 +2340,310 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
 #startLiveButton:active {
     transform: scale(.90) !important;
 }
+
+/* =========================================================
+   CHUK AN CHUKK — FINAL LIVE CONTROL
+   START + COMMENT + STOP
+========================================================= */
+
+/* ===============================
+   AREA TOMBOL MULAI LIVE
+================================ */
+
+#liveControl {
+    position: fixed !important;
+
+    left: 50% !important;
+    bottom: 18px !important;
+
+    top: auto !important;
+    right: auto !important;
+
+    width: 48px !important;
+    height: 48px !important;
+
+    transform: translateX(-50%) !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    z-index: 100001 !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* ===============================
+   START LIVE
+================================ */
+
+#startLiveButton {
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    max-width: 48px !important;
+    max-height: 48px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: #ff0000 !important;
+    color: #ffffff !important;
+
+    font-size: 20px !important;
+    line-height: 1 !important;
+
+    box-shadow: 0 4px 16px rgba(0,0,0,.45) !important;
+
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+
+/* ICON START */
+
+#startLiveButton .live-video-icon {
+    display: block !important;
+
+    color: #ffffff !important;
+
+    font-size: 20px !important;
+    line-height: 1 !important;
+
+    width: auto !important;
+    height: auto !important;
+}
+
+
+/* ===============================
+   HILANGKAN STYLE LAMA
+================================ */
+
+#startLiveButton .live-control-icon,
+#startLiveButton .live-control-text {
+    display: none !important;
+}
+
+
+/* ===============================
+   STOP LIVE
+================================ */
+
+#stopLiveButton {
+    position: static !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    min-width: 46px !important;
+    min-height: 46px !important;
+
+    max-width: 46px !important;
+    max-height: 46px !important;
+
+    flex: 0 0 46px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: #ff0000 !important;
+    color: #ffffff !important;
+
+    font-size: 18px !important;
+    line-height: 1 !important;
+
+    box-shadow: 0 4px 16px rgba(0,0,0,.45) !important;
+
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+
+/* Hilangkan tulisan Stop Live lama */
+
+#stopLiveButton .live-control-icon,
+#stopLiveButton .live-control-text {
+    display: none !important;
+}
+
+
+/* ===============================
+   BOTTOM CONTROL
+================================ */
+
+.live-bottom-controls {
+    position: fixed !important;
+
+    left: 14px !important;
+    right: 14px !important;
+    bottom: 18px !important;
+
+    width: auto !important;
+    height: 46px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 8px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    z-index: 100000 !important;
+
+    pointer-events: none !important;
+}
+
+
+/* ===============================
+   FORM KOMENTAR
+================================ */
+
+.live-bottom-controls .live-comment-form {
+    position: static !important;
+
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+
+    height: 46px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 8px !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* INPUT */
+
+.live-bottom-controls #liveCommentInput {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+
+    height: 44px !important;
+
+    margin: 0 !important;
+
+    padding: 0 15px !important;
+
+    border-radius: 22px !important;
+
+    border: 1px solid rgba(255,255,255,.35) !important;
+
+    background: rgba(0,0,0,.40) !important;
+
+    color: #fff !important;
+
+    outline: none !important;
+}
+
+
+/* TOMBOL KIRIM */
+
+.live-bottom-controls #liveCommentForm button[type="submit"] {
+    width: 44px !important;
+    height: 44px !important;
+
+    min-width: 44px !important;
+
+    flex: 0 0 44px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: rgba(0,0,0,.45) !important;
+
+    color: #fff !important;
+
+    font-size: 18px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* ===============================
+   STOP DI KANAN TOMBOL KIRIM
+================================ */
+
+.live-bottom-controls #stopLiveButton {
+    pointer-events: auto !important;
+}
+
+
+/* ===============================
+   HIDDEN
+================================ */
+
+#startLiveButton[hidden],
+#stopLiveButton[hidden] {
+    display: none !important;
+}
+
+
+/* ===============================
+   EFEK TEKAN
+================================ */
+
+#startLiveButton:active,
+#stopLiveButton:active,
+#liveCommentForm button[type="submit"]:active {
+    transform: scale(.90) !important;
+}
+
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media (max-width: 600px) {
+
+    #liveControl {
+        bottom: 18px !important;
+    }
+
+    .live-bottom-controls {
+        left: 10px !important;
+        right: 10px !important;
+        bottom: 18px !important;
+    }
+
+}
