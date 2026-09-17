@@ -1,31 +1,23 @@
 "use strict";
 
-/*
-=========================================================
- CHUK AN CHUKK
- LIVE MENU
-=========================================================
-
- Fungsi:
- - Menata tampilan profil
- - Nama user sejajar dengan foto
- - ID room di bawah nama user
- - Nama room di bawah ID room
- - Tidak membuat kamera
- - Tidak membuat room baru
- - Tidak mengganggu WebRTC / Supabase
-=========================================================
-*/
+/* =========================================================
+   CHUK AN CHUKK
+   LIVE MENU FINAL
+========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     console.log("📋 CHUK AN CHUKK LIVE MENU START");
 
-    /*
-    =====================================================
-    ELEMENT
-    =====================================================
-    */
+    /* =====================================================
+       ELEMENT
+    ===================================================== */
+
+    const menuButton =
+        document.getElementById("menuButton");
+
+    const roomPanel =
+        document.getElementById("roomPanel");
 
     const profile =
         document.getElementById("liveUserDisplay");
@@ -39,11 +31,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const roomId =
         document.getElementById("liveRoomDisplay");
 
-    /*
-    =====================================================
-    PROFIL
-    =====================================================
-    */
+
+    /* =====================================================
+       CEK MENU
+    ===================================================== */
+
+    if (!menuButton) {
+
+        console.error(
+            "❌ menuButton tidak ditemukan"
+        );
+
+        return;
+    }
+
+    if (!roomPanel) {
+
+        console.error(
+            "❌ roomPanel tidak ditemukan"
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       PROFIL
+    ===================================================== */
 
     if (profile) {
 
@@ -67,11 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    /*
-    =====================================================
-    ROOM ID
-    =====================================================
-    */
+
+    /* =====================================================
+       ROOM ID
+    ===================================================== */
 
     if (roomId) {
 
@@ -81,16 +94,75 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    /*
-    =====================================================
-    BUAT TEMPAT NAMA ROOM
-    =====================================================
-    */
+
+    /* =====================================================
+       BUKA / TUTUP MENU
+    ===================================================== */
+
+    menuButton.addEventListener(
+        "click",
+        (event) => {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            roomPanel.hidden =
+                !roomPanel.hidden;
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                String(!roomPanel.hidden)
+            );
+
+            console.log(
+                roomPanel.hidden
+                    ? "📕 MENU DITUTUP"
+                    : "📖 MENU DIBUKA"
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       KLIK DI LUAR MENU
+    ===================================================== */
+
+    document.addEventListener(
+        "click",
+        (event) => {
+
+            if (roomPanel.hidden) {
+                return;
+            }
+
+            if (
+                event.target.closest("#roomPanel") ||
+                event.target.closest("#menuButton")
+            ) {
+                return;
+            }
+
+            roomPanel.hidden = true;
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       NAMA ROOM
+    ===================================================== */
 
     let roomName =
         document.getElementById(
             "liveRoomNameDisplay"
         );
+
 
     if (!roomName) {
 
@@ -100,43 +172,53 @@ document.addEventListener("DOMContentLoaded", () => {
         roomName.id =
             "liveRoomNameDisplay";
 
-        roomName.textContent = "";
-
-        document.body.appendChild(
+        liveApp.appendChild(
             roomName
         );
+
     }
 
-    /*
-    =====================================================
-    STYLE NAMA ROOM
-    =====================================================
-    */
 
-    roomName.style.position = "fixed";
-    roomName.style.background = "transparent";
-    roomName.style.border = "none";
-    roomName.style.boxShadow = "none";
+    roomName.style.position =
+        "fixed";
 
-    roomName.style.color = "#fff";
-    roomName.style.fontSize = "12px";
-    roomName.style.fontWeight = "600";
+    roomName.style.background =
+        "transparent";
 
-    roomName.style.lineHeight = "18px";
-    roomName.style.padding = "0";
-    roomName.style.margin = "0";
+    roomName.style.border =
+        "none";
+
+    roomName.style.boxShadow =
+        "none";
+
+    roomName.style.color =
+        "#fff";
+
+    roomName.style.fontSize =
+        "12px";
+
+    roomName.style.fontWeight =
+        "600";
+
+    roomName.style.lineHeight =
+        "18px";
+
+    roomName.style.padding =
+        "0";
+
+    roomName.style.margin =
+        "0";
 
     roomName.style.textShadow =
         "0 2px 5px rgba(0,0,0,.9)";
 
-    roomName.style.zIndex = "99999";
+    roomName.style.zIndex =
+        "99999";
 
-    /*
-    =====================================================
-    POSISI NAMA ROOM
-    DI BAWAH ID ROOM
-    =====================================================
-    */
+
+    /* =====================================================
+       POSISI NAMA ROOM
+    ===================================================== */
 
     function positionRoomName() {
 
@@ -155,11 +237,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    /*
-    =====================================================
-    AMBIL NAMA ROOM
-    =====================================================
-    */
+
+    /* =====================================================
+       UPDATE NAMA ROOM
+    ===================================================== */
 
     function updateRoomName() {
 
@@ -178,7 +259,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } else {
 
-            roomName.textContent = "";
+            roomName.textContent =
+                "";
 
             roomName.style.display =
                 "none";
@@ -186,17 +268,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         positionRoomName();
+
     }
 
-    /*
-    =====================================================
-    UPDATE ROOM
-    =====================================================
-    */
+
+    /* =====================================================
+       EVENT ROOM
+    ===================================================== */
 
     window.addEventListener(
         "chuk-room-created",
-        event => {
+        (event) => {
 
             const data =
                 event.detail || {};
@@ -206,6 +288,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.liveRoomName =
                     data.name;
 
+                window.CHUK_LIVE_ROOM_NAME =
+                    data.name;
+
             }
 
             updateRoomName();
@@ -213,20 +298,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-    /*
-    =====================================================
-    PANTAU PERUBAHAN ROOM
-    =====================================================
-    */
 
-    const observer =
-        new MutationObserver(() => {
-
-            updateRoomName();
-
-        });
+    /* =====================================================
+       PANTAU ID ROOM
+    ===================================================== */
 
     if (roomId) {
+
+        const observer =
+            new MutationObserver(() => {
+
+                updateRoomName();
+
+            });
 
         observer.observe(
             roomId,
@@ -239,11 +323,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    /*
-    =====================================================
-    RESPONSIVE
-    =====================================================
-    */
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
 
     window.addEventListener(
         "resize",
@@ -262,16 +345,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-    /*
-    =====================================================
-    START
-    =====================================================
-    */
+
+    /* =====================================================
+       START
+    ===================================================== */
+
+    roomPanel.hidden = true;
+
+    menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+    );
 
     updateRoomName();
 
     console.log(
-        "✅ LIVE MENU SIAP"
+        "✅ CHUK AN CHUKK LIVE MENU READY"
     );
 
 });
