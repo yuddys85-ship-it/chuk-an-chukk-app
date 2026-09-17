@@ -1945,3 +1945,22 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
 
     color: #fff !important;
 }
+/* =========================================
+   FILTER HIDDEN BY DEFAULT
+   MUNCUL HANYA SAAT MENU FILTER DIPILIH
+========================================= */
+
+#liveFilterPanel {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Filter aktif setelah tombol 🎨 Filter ditekan */
+#liveFilterPanel.active {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
