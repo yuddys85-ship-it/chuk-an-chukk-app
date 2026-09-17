@@ -1311,3 +1311,48 @@ body {
         padding-right: 8px !important;
     }
 }
+
+/* =========================================================
+   FLIP CAMERA — TANPA BACKGROUND / LAYAR
+========================================================= */
+
+#flipCameraButton {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    width: 46px !important;
+    height: 46px !important;
+    border-radius: 50% !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    color: #ffffff !important;
+    font-size: 22px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Hilangkan efek kotak/panel pembungkus jika ada */
+#flipCameraButton::before,
+#flipCameraButton::after {
+    display: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Efek saat disentuh */
+#flipCameraButton:active {
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: scale(.90) !important;
+}
