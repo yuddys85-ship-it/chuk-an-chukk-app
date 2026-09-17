@@ -1496,3 +1496,119 @@ https://github.com/yuddys85-ship-it/chuk-an-chukk-app
 .viewer-icon {
     font-size: 14px;
 }
+
+/* =====================================================
+   CHUK AN CHUKK
+   LIVE CAMERA FILTER
+===================================================== */
+
+.live-filter-panel {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 78px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 8px 14px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    z-index: 40;
+
+    scrollbar-width: none;
+
+    touch-action: pan-x;
+}
+
+.live-filter-panel::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* FILTER BUTTON */
+
+.filter-option {
+    flex: 0 0 auto;
+
+    width: 62px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* PREVIEW */
+
+.filter-preview {
+    width: 48px;
+    height: 48px;
+
+    display: block;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(255,255,255,.8);
+
+    background: #777;
+}
+
+
+/* FILTER PREVIEW */
+
+.filter-preview.normal {
+    background: #888;
+}
+
+.filter-preview.warm {
+    background: #c88b5a;
+}
+
+.filter-preview.cool {
+    background: #6289ad;
+}
+
+.filter-preview.gray {
+    background: #777;
+}
+
+.filter-preview.bright {
+    background: #d8d8d8;
+}
+
+.filter-preview.soft {
+    background: #b89ca0;
+}
+
+
+/* FILTER AKTIF */
+
+.filter-option.active .filter-preview {
+    border: 3px solid #fff;
+
+    transform: scale(1.05);
+}
+
+.filter-option:active {
+    transform: scale(.94);
+}
