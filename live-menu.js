@@ -2,12 +2,13 @@
 
 /* =========================================================
    CHUK AN CHUKK
-   LIVE MENU FINAL
+   LIVE MENU
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     console.log("📋 CHUK AN CHUKK LIVE MENU START");
+
 
     /* =====================================================
        ELEMENT
@@ -18,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const roomPanel =
         document.getElementById("roomPanel");
+
+    const liveApp =
+        document.getElementById("liveApp");
 
     const profile =
         document.getElementById("liveUserDisplay");
@@ -33,13 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       CEK MENU
+       CEK ELEMENT
     ===================================================== */
 
     if (!menuButton) {
 
         console.error(
-            "❌ menuButton tidak ditemukan"
+            "❌ menuButton tidak ditemukan di live.html"
         );
 
         return;
@@ -48,7 +52,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!roomPanel) {
 
         console.error(
-            "❌ roomPanel tidak ditemukan"
+            "❌ roomPanel tidak ditemukan di live.html"
+        );
+
+        return;
+    }
+
+    if (!liveApp) {
+
+        console.error(
+            "❌ liveApp tidak ditemukan di live.html"
         );
 
         return;
@@ -96,30 +109,99 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       BUKA / TUTUP MENU
+       FUNGSI MENU
+    ===================================================== */
+
+    function openMenu() {
+
+        roomPanel.hidden = false;
+
+        roomPanel.style.display = "block";
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+        console.log("📖 MENU DIBUKA");
+
+    }
+
+
+    function closeMenu() {
+
+        roomPanel.hidden = true;
+
+        roomPanel.style.display = "none";
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        console.log("📕 MENU DITUTUP");
+
+    }
+
+
+    function toggleMenu(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (
+            roomPanel.hidden ||
+            roomPanel.style.display === "none"
+        ) {
+
+            openMenu();
+
+        } else {
+
+            closeMenu();
+
+        }
+
+    }
+
+
+    /* =====================================================
+       TOMBOL MENU
     ===================================================== */
 
     menuButton.addEventListener(
         "click",
+        toggleMenu
+    );
+
+
+    /* =====================================================
+       SENTUH MENU
+    ===================================================== */
+
+    menuButton.addEventListener(
+        "touchend",
         (event) => {
 
             event.preventDefault();
             event.stopPropagation();
 
-            roomPanel.hidden =
-                !roomPanel.hidden;
+            if (
+                roomPanel.hidden ||
+                roomPanel.style.display === "none"
+            ) {
 
-            menuButton.setAttribute(
-                "aria-expanded",
-                String(!roomPanel.hidden)
-            );
+                openMenu();
 
-            console.log(
-                roomPanel.hidden
-                    ? "📕 MENU DITUTUP"
-                    : "📖 MENU DIBUKA"
-            );
+            } else {
 
+                closeMenu();
+
+            }
+
+        },
+        {
+            passive: false
         }
     );
 
@@ -136,19 +218,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            const insidePanel =
+                event.target.closest("#roomPanel");
+
+            const clickedButton =
+                event.target.closest("#menuButton");
+
             if (
-                event.target.closest("#roomPanel") ||
-                event.target.closest("#menuButton")
+                insidePanel ||
+                clickedButton
             ) {
                 return;
             }
 
-            roomPanel.hidden = true;
-
-            menuButton.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+            closeMenu();
 
         }
     );
@@ -178,6 +261,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
+    /* =====================================================
+       STYLE NAMA ROOM
+    ===================================================== */
 
     roomName.style.position =
         "fixed";
@@ -300,7 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       PANTAU ID ROOM
+       PANTAU ROOM ID
     ===================================================== */
 
     if (roomId) {
@@ -350,14 +437,10 @@ document.addEventListener("DOMContentLoaded", () => {
        START
     ===================================================== */
 
-    roomPanel.hidden = true;
-
-    menuButton.setAttribute(
-        "aria-expanded",
-        "false"
-    );
+    closeMenu();
 
     updateRoomName();
+
 
     console.log(
         "✅ CHUK AN CHUKK LIVE MENU READY"
