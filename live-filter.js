@@ -140,3 +140,33 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
+
+const filters = {
+
+    none:
+        "none",
+
+    warm:
+        "sepia(0.32) saturate(1.38) contrast(1.08) brightness(1.06)",
+
+    cool:
+        "saturate(0.78) hue-rotate(14deg) contrast(1.14) brightness(1.05)",
+
+    gray:
+        "grayscale(1) contrast(1.28) brightness(1.04)",
+
+    bright:
+        "brightness(1.24) contrast(1.12) saturate(1.14)",
+
+    soft:
+        "brightness(1.08) saturate(0.88) contrast(0.82)",
+
+    beauty:
+        "brightness(1.10) saturate(1.05) contrast(0.88) blur(0.25px)",
+
+    smooth:
+        "brightness(1.08) saturate(0.96) contrast(0.84) blur(0.45px)",
+
+    youthful:
+        "brightness(1.14) saturate(1.08) contrast(0.86) sepia(0.04) blur(0.30px)"
+};
