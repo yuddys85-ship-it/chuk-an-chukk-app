@@ -2,22 +2,37 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const button = document.getElementById("openFilterMenu");
+    const button =
+        document.getElementById("openFilterMenu");
 
-    if (!button) return;
+    const panel =
+        document.getElementById("liveFilterPanel");
 
-    button.addEventListener("click", () => {
+    if (!button || !panel) {
+        console.warn("⚠️ Filter menu tidak ditemukan");
+        return;
+    }
 
-        const panel = document.getElementById("liveFilterPanel");
+    /* Pastikan filter tersembunyi saat LIVE dibuka */
+    panel.classList.remove("active");
 
-        if (!panel) {
-            console.warn("⚠️ Filter panel tidak ditemukan");
-            return;
+    button.addEventListener("click", (event) => {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        /* Tutup menu utama */
+        const roomPanel =
+            document.getElementById("roomPanel");
+
+        if (roomPanel) {
+            roomPanel.hidden = true;
         }
 
+        /* Tampilkan filter */
         panel.classList.add("active");
 
-        console.log("🎨 FILTER MENU DIBUKA");
+        console.log("🎨 FILTER DIBUKA");
 
     });
 
