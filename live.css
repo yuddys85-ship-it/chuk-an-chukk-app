@@ -1447,5 +1447,68 @@ body {
 
     #flipCameraButton .flip-camera-icon {
         font-size: 30px !important;
+
+       /* =========================================================
+   CHUK AN CHUKK — SHARE BUTTON
+   TANPA BACKGROUND
+========================================================= */
+
+#shareLiveButton {
+    background: transparent !important;
+    background-color: transparent !important;
+
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    color: #ffffff !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* SVG SHARE tetap putih */
+#shareLiveButton svg {
+    width: 25px !important;
+    height: 25px !important;
+
+    fill: none !important;
+    stroke: #ffffff !important;
+
+    background: transparent !important;
+}
+
+#shareLiveButton svg path,
+#shareLiveButton svg line,
+#shareLiveButton svg polyline,
+#shareLiveButton svg circle {
+    stroke: #ffffff !important;
+}
+
+/* HILANGKAN EFEK SAAT DITEKAN */
+#shareLiveButton:hover,
+#shareLiveButton:focus,
+#shareLiveButton:active {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Efek tekan hanya pada ikon */
+#shareLiveButton:active svg {
+    transform: scale(.88);
+}
     }
 }
