@@ -1356,3 +1356,96 @@ body {
     box-shadow: none !important;
     transform: scale(.90) !important;
 }
+
+/* =========================================================
+   CHUK AN CHUKK — FLIP CAMERA
+   PUTIH / TRANSPARAN / TANPA BACKGROUND
+========================================================= */
+
+#flipCameraButton {
+    position: fixed !important;
+
+    /* Posisi tombol */
+    right: 14px !important;
+    bottom: 125px !important;
+
+    width: 46px !important;
+    height: 46px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: transparent !important;
+    background-color: transparent !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    box-shadow: none !important;
+    outline: none !important;
+
+    color: #ffffff !important;
+
+    cursor: pointer !important;
+    z-index: 10000 !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* IKON FLIP */
+#flipCameraButton .flip-camera-icon {
+    display: block !important;
+
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif !important;
+
+    font-size: 32px !important;
+    font-weight: 400 !important;
+
+    line-height: 1 !important;
+
+    text-decoration: none !important;
+
+    background: transparent !important;
+}
+
+/* HOVER / FOCUS */
+#flipCameraButton:hover,
+#flipCameraButton:focus {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* SAAT DITEKAN */
+#flipCameraButton:active {
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: scale(0.88) !important;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+
+    #flipCameraButton {
+        right: 12px !important;
+        bottom: 125px !important;
+        width: 44px !important;
+        height: 44px !important;
+    }
+
+    #flipCameraButton .flip-camera-icon {
+        font-size: 30px !important;
+    }
+}
