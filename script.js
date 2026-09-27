@@ -2120,6 +2120,94 @@ function goProfile() {
 }
 
 /* =========================================================
+   CHUK PROFILE — HOME
+   ========================================================= */
+
+async function loadCurrentChukProfile() {
+
+    try {
+
+        const piUser =
+            window.currentUser ||
+            JSON.parse(
+                localStorage.getItem("currentUser") || "null"
+            );
+
+        if (!piUser) {
+
+            console.log(
+                "ℹ️ User Pi belum login"
+            );
+
+            return null;
+        }
+
+        const piUserId =
+            piUser.uid ||
+            piUser.userId ||
+            piUser.id;
+
+        if (!piUserId) {
+
+            console.warn(
+                "⚠️ Pi User ID tidak ditemukan"
+            );
+
+            return null;
+        }
+
+        const {
+            data,
+            error
+        } = await supabase
+            .from("profiles")
+            .select(
+                "id, pi_user_id, public_username, display_name, avatar_url, bio"
+            )
+            .eq(
+                "pi_user_id",
+                String(piUserId)
+            )
+            .maybeSingle();
+
+        if (error) {
+
+            console.error(
+                "❌ PROFILE LOAD ERROR:",
+                error
+            );
+
+            return null;
+        }
+
+        if (!data) {
+
+            console.log(
+                "ℹ️ Profil CHUK belum dibuat"
+            );
+
+            return null;
+        }
+
+        console.log(
+            "✅ PROFIL CHUK DITEMUKAN:",
+            data
+        );
+
+        return data;
+
+    } catch (error) {
+
+        console.error(
+            "❌ PROFILE SYSTEM ERROR:",
+            error
+        );
+
+        return null;
+    }
+}
+
+/* =========================================================
    CLOSE COMMENTS
    ========================================================= */
 
