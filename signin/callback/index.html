@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Pi Sign-In - CHUK AN CHUKK</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0b0b0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .box {
+            width: min(90%, 420px);
+            padding: 30px 20px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            opacity: 0.75;
+            line-height: 1.5;
+        }
+
+        .error {
+            color: #ff6b6b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <img
+        class="logo"
+        src="/assets/logo.png"
+        alt="CHUK AN CHUKK"
+    >
+
+    <h2 id="title">
+        Memproses Pi Sign-In...
+    </h2>
+
+    <p id="message">
+        Mohon tunggu sebentar.
+    </p>
+
+</div>
+
+<script>
+
+(function () {
+
+    try {
+
+        const params =
+            new URLSearchParams(
+                window.location.hash.slice(1)
+            );
+
+        const accessToken =
+            params.get("access_token");
+
+        const returnedState =
+            params.get("state");
+
+        const expectedState =
+            sessionStorage.getItem(
+                "pi_oauth_state"
+            );
+
+        const error =
+            params.get("error");
+
+
+        if (error) {
+            throw new Error(
+                "Pi Sign-In gagal: " + error
+            );
+        }
+
+
+        if (
+            expectedState &&
+            returnedState !== expectedState
+        ) {
+            throw new Error(
+                "State Pi Sign-In tidak cocok."
+            );
+        }
+
+
+        if (accessToken) {
+
+            sessionStorage.setItem(
+                "piAccessToken",
+                accessToken
+            );
+
+            sessionStorage.removeItem(
+                "pi_oauth_state"
+            );
+
+            document.getElementById("title")
+                .textContent =
+                "Pi Sign-In berhasil!";
+
+            document.getElementById("message")
+                .textContent =
+                "Membuka CHUK AN CHUKK...";
+
+
+            history.replaceState(
+                null,
+                "",
+                window.location.pathname
+            );
+
+
+            setTimeout(function () {
+
+                window.location.href =
+                    "/index.html";
+
+            }, 800);
+
+        } else {
+
+            throw new Error(
+                "Access token Pi tidak ditemukan."
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Pi Sign-In Error:",
+            error
+        );
+
+        document.getElementById("title")
+            .textContent =
+            "Pi Sign-In gagal";
+
+        document.getElementById("message")
+            .className = "error";
+
+        document.getElementById("message")
+            .textContent =
+            error.message;
+
+    }
+
+})();
+
+</script>
+
+</body>
+</html>
