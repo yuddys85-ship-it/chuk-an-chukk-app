@@ -2311,3 +2311,432 @@ console.log(
 console.log(
     "🔊 VIDEO SOUND: ON"
 );
+
+/* =====================================================
+   CHUK AN CHUKK
+   PI LOGIN GATE
+===================================================== */
+
+let piLoginUser = null;
+
+
+/* -----------------------------------------------------
+   INIT PI SDK
+----------------------------------------------------- */
+
+function initChukPi() {
+
+    if (typeof Pi === "undefined") {
+
+        console.error(
+            "❌ Pi SDK tidak ditemukan"
+        );
+
+        setPiLoginStatus(
+            "Login Pi hanya dapat digunakan di Pi Browser."
+        );
+
+        return false;
+    }
+
+    try {
+
+        Pi.init({
+            version: "2.0",
+            sandbox: true
+        });
+
+        console.log(
+            "✅ Pi SDK Ready"
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "❌ Pi SDK Init Error:",
+            error
+        );
+
+        return false;
+    }
+}
+
+
+/* -----------------------------------------------------
+   STATUS LOGIN
+----------------------------------------------------- */
+
+function setPiLoginStatus(message) {
+
+    const status =
+        document.getElementById("piLoginStatus");
+
+    if (status) {
+        status.textContent = message;
+    }
+}
+
+
+/* -----------------------------------------------------
+   LOGIN WITH PI
+----------------------------------------------------- */
+
+async function loginWithPi() {
+
+    const button =
+        document.getElementById("piLoginButton");
+
+    if (typeof Pi === "undefined") {
+
+        setPiLoginStatus(
+            "Buka CHUK AN CHUKK melalui Pi Browser."
+        );
+
+        return;
+    }
+
+    try {
+
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Menghubungkan...";
+        }
+
+        setPiLoginStatus(
+            "Menunggu konfirmasi Pi..."
+        );
+
+
+        const auth =
+            await Pi.authenticate(
+                ["username"],
+                function (incompletePayment) {
+
+                    console.log(
+                        "⚠️ Incomplete payment:",
+                        incompletePayment
+                    );
+
+                }
+            );
+
+
+        if (!auth || !auth.user) {
+
+            throw new Error(
+                "Data pengguna Pi tidak ditemukan."
+            );
+        }
+
+
+        piLoginUser = auth.user;
+
+
+        /* -----------------------------------------
+           SIMPAN SESSION
+        ----------------------------------------- */
+
+        localStorage.setItem(
+            "currentUser",
+            JSON.stringify(piLoginUser)
+        );
+
+
+        /* -----------------------------------------
+           GLOBAL USER
+        ----------------------------------------- */
+
+        window.currentUser =
+            piLoginUser;
+
+
+        console.log(
+            "✅ Pi Login:",
+            piLoginUser.username
+        );
+
+
+        /* -----------------------------------------
+           TAMPILKAN APP
+        ----------------------------------------- */
+
+        showChukApp();
+
+
+        setPiLoginStatus(
+            "Login berhasil."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Pi Login Error:",
+            error
+        );
+
+        setPiLoginStatus(
+            "Login gagal. Silakan coba lagi."
+        );
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.textContent =
+                "Login with Pi";
+        }
+    }
+}
+
+
+/* -----------------------------------------------------
+   TAMPILKAN APP
+----------------------------------------------------- */
+
+function showChukApp() {
+
+    const loginGate =
+        document.getElementById("piLoginGate");
+
+    const app =
+        document.getElementById("chukApp");
+
+    if (loginGate) {
+        loginGate.style.display = "none";
+    }
+
+    if (app) {
+        app.style.display = "block";
+    }
+
+
+    const username =
+        document.getElementById("loggedUsername");
+
+    const userBox =
+        document.getElementById("loggedUser");
+
+
+    if (
+        username &&
+        piLoginUser &&
+        piLoginUser.username
+    ) {
+
+        username.textContent =
+            "@" + piLoginUser.username;
+
+    }
+
+
+    if (userBox) {
+        userBox.classList.add("visible");
+    }
+
+
+    /*
+       Feed tetap dijalankan.
+       Kalau fungsi loadPosts tersedia,
+       kita panggil lagi setelah login.
+    */
+
+    if (
+        typeof loadPosts === "function" &&
+        window.supabase
+    ) {
+
+        loadPosts();
+
+    }
+}
+
+
+/* -----------------------------------------------------
+   LOGOUT
+----------------------------------------------------- */
+
+function logoutChuk() {
+
+    piLoginUser = null;
+
+    window.currentUser = null;
+
+    localStorage.removeItem(
+        "currentUser"
+    );
+
+
+    const app =
+        document.getElementById("chukApp");
+
+    const loginGate =
+        document.getElementById("piLoginGate");
+
+    const userBox =
+        document.getElementById("loggedUser");
+
+    const button =
+        document.getElementById("piLoginButton");
+
+
+    if (app) {
+        app.style.display = "none";
+    }
+
+    if (loginGate) {
+        loginGate.style.display = "flex";
+    }
+
+    if (userBox) {
+        userBox.classList.remove("visible");
+    }
+
+    if (button) {
+
+        button.disabled = false;
+
+        button.textContent =
+            "Login with Pi";
+    }
+
+
+    setPiLoginStatus(
+        "Silakan login kembali dengan Pi."
+    );
+
+
+    console.log(
+        "✅ CHUK logout"
+    );
+}
+
+
+/* -----------------------------------------------------
+   CEK SESSION
+----------------------------------------------------- */
+
+function restoreChukPiSession() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                "currentUser"
+            );
+
+        if (!saved) {
+
+            console.log(
+                "ℹ️ Belum ada session Pi."
+            );
+
+            return false;
+        }
+
+
+        const user =
+            JSON.parse(saved);
+
+
+        if (!user || !user.username) {
+
+            localStorage.removeItem(
+                "currentUser"
+            );
+
+            return false;
+        }
+
+
+        piLoginUser = user;
+
+        window.currentUser = user;
+
+
+        console.log(
+            "✅ Session Pi dipulihkan:",
+            user.username
+        );
+
+
+        showChukApp();
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Session error:",
+            error
+        );
+
+        localStorage.removeItem(
+            "currentUser"
+        );
+
+        return false;
+    }
+}
+
+
+/* =====================================================
+   START PI LOGIN
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        console.log(
+            "🔐 CHUK Pi Login System"
+        );
+
+
+        initChukPi();
+
+
+        const loginButton =
+            document.getElementById(
+                "piLoginButton"
+            );
+
+
+        if (loginButton) {
+
+            loginButton.addEventListener(
+                "click",
+                loginWithPi
+            );
+
+        }
+
+
+        const logoutButton =
+            document.getElementById(
+                "logoutButton"
+            );
+
+
+        if (logoutButton) {
+
+            logoutButton.addEventListener(
+                "click",
+                logoutChuk
+            );
+
+        }
+
+
+        /*
+           Pulihkan session kalau sebelumnya
+           sudah login.
+        */
+
+        restoreChukPiSession();
+
+    }
+);
