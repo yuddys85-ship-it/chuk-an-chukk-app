@@ -2115,8 +2115,105 @@ function goChat() {
    PROFILE
    ========================================================= */
 
-function goProfile() {
-    window.location.href = "profile.html";
+async function loginWithPi() {
+  const status = document.getElementById("piLoginStatus");
+  const button = document.getElementById("piLoginButton");
+
+  try {
+    status.textContent = "Menghubungkan ke Pi...";
+    button.disabled = true;
+
+    // Pastikan Pi SDK tersedia
+    if (!window.Pi) {
+      throw new Error("Pi SDK tidak tersedia");
+    }
+
+    // Login melalui Pi
+    const auth = await Pi.authenticate(
+      ["username"],
+      function (incompletePayment) {
+        console.log(
+          "Incomplete payment:",
+          incompletePayment
+        );
+      }
+    );
+
+    console.log("Pi authentication berhasil");
+
+    // accessToken dari Pi
+    const accessToken = auth.accessToken;
+
+    if (!accessToken) {
+      throw new Error(
+        "Pi tidak memberikan accessToken"
+      );
+    }
+
+    status.textContent = "Memverifikasi akun Pi...";
+
+    // Kirim token ke backend Chuk an Chukk
+    const verifyResponse = await fetch(
+      "/api/verify",
+      {
+        method: "POST",
+
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const verified = await verifyResponse.json();
+
+    if (!verifyResponse.ok || !verified.success) {
+      throw new Error(
+        verified.error ||
+        "Verifikasi akun Pi gagal"
+      );
+    }
+
+    console.log(
+      "Pi user terverifikasi:",
+      verified.user
+    );
+
+    // Simpan USER YANG SUDAH DIVERIFIKASI
+    piLoginUser = verified.user;
+
+    window.currentUser = verified.user;
+
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify(verified.user)
+    );
+
+    // Jangan simpan accessToken di localStorage
+    sessionStorage.setItem(
+      "piAuthenticated",
+      "true"
+    );
+
+    status.textContent =
+      `Login berhasil sebagai @${verified.user.username}`;
+
+    // Masuk ke aplikasi
+    showChukApp();
+
+  } catch (error) {
+
+    console.error(
+      "❌ Pi login error:",
+      error
+    );
+
+    status.textContent =
+      error.message ||
+      "Login Pi gagal. Coba lagi.";
+
+    button.disabled = false;
+  }
 }
 
 /* =========================================================
