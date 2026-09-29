@@ -2475,10 +2475,6 @@ function setPiLoginStatus(message) {
     }
 }
 
-        console.log(
-            "✅ Pi.authenticate selesai:",
-            auth
-        );
 
 
         /* =========================================
