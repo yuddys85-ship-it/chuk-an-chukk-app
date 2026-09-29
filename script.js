@@ -2475,11 +2475,6 @@ function setPiLoginStatus(message) {
     }
 }
 
-
-/* -----------------------------------------------------
-   LOGIN WITH PI
------------------------------------------------------ */
-
 async function loginWithPi() {
 
     const button =
@@ -2505,7 +2500,9 @@ async function loginWithPi() {
             "Menunggu konfirmasi Pi..."
         );
 
-        console.log("🚀 Pi.authenticate mulai...");
+        console.log(
+            "🚀 Pi.authenticate mulai..."
+        );
 
         const auth =
             await Pi.authenticate(
@@ -2525,49 +2522,129 @@ async function loginWithPi() {
             auth
         );
 
+
+        /* =========================================
+           CEK HASIL LOGIN
+        ========================================= */
+
         if (!auth || !auth.user) {
 
             throw new Error(
                 "Data pengguna Pi tidak ditemukan."
             );
+
         }
 
-        piLoginUser = auth.user;
 
-        /* -----------------------------------------
-           SIMPAN SESSION
-        ----------------------------------------- */
+        /* =========================================
+           AMBIL ACCESS TOKEN
+        ========================================= */
 
-        localStorage.setItem(
-            "currentUser",
-            JSON.stringify(piLoginUser)
+        const accessToken =
+            auth.accessToken;
+
+        if (!accessToken) {
+
+            throw new Error(
+                "Access Token Pi tidak ditemukan."
+            );
+
+        }
+
+
+        setPiLoginStatus(
+            "Memverifikasi akun Pi..."
         );
 
 
-        /* -----------------------------------------
-           GLOBAL USER
-        ----------------------------------------- */
+        /* =========================================
+           VERIFIKASI KE BACKEND CHUK AN CHUKK
+        ========================================= */
 
-        window.currentUser =
-            piLoginUser;
+        const verifyResponse =
+            await fetch(
+                "/api/verify",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Authorization":
+                            `Bearer ${accessToken}`,
+
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        const verified =
+            await verifyResponse.json();
 
 
         console.log(
-            "✅ Pi Login:",
-            piLoginUser.username
+            "🔐 Hasil verifikasi Pi:",
+            verified
         );
 
 
-        /* -----------------------------------------
-           TAMPILKAN APP
-        ----------------------------------------- */
+        if (
+            !verifyResponse.ok ||
+            !verified.success
+        ) {
 
-        showChukApp();
+            throw new Error(
+                verified.error ||
+                "Verifikasi akun Pi gagal."
+            );
 
+        }
+
+
+        /* =========================================
+           USER PI YANG SUDAH DIVERIFIKASI
+        ========================================= */
+
+        piLoginUser =
+            verified.user;
+
+        window.currentUser =
+            verified.user;
+
+
+        /* =========================================
+           SIMPAN SESSION
+        ========================================= */
+
+        localStorage.setItem(
+            "currentUser",
+            JSON.stringify(
+                verified.user
+            )
+        );
+
+
+        sessionStorage.setItem(
+            "piAuthenticated",
+            "true"
+        );
+
+
+        console.log(
+            "✅ PI USER TERVERIFIKASI:",
+            verified.user
+        );
+
+
+        /* =========================================
+           MASUK KE APLIKASI
+        ========================================= */
 
         setPiLoginStatus(
             "Login berhasil."
         );
+
+        showChukApp();
 
 
     } catch (error) {
@@ -2578,8 +2655,10 @@ async function loginWithPi() {
         );
 
         setPiLoginStatus(
+            error.message ||
             "Login gagal. Silakan coba lagi."
         );
+
 
         if (button) {
 
@@ -2587,8 +2666,11 @@ async function loginWithPi() {
 
             button.textContent =
                 "Login with Pi";
+
         }
+
     }
+
 }
 
 
