@@ -2475,48 +2475,6 @@ function setPiLoginStatus(message) {
     }
 }
 
-async function loginWithPi() {
-
-    const button =
-        document.getElementById("piLoginButton");
-
-    if (typeof Pi === "undefined") {
-
-        setPiLoginStatus(
-            "Buka CHUK AN CHUKK melalui Pi Browser."
-        );
-
-        return;
-    }
-
-    try {
-
-        if (button) {
-            button.disabled = true;
-            button.textContent = "Menghubungkan...";
-        }
-
-        setPiLoginStatus(
-            "Menunggu konfirmasi Pi..."
-        );
-
-        console.log(
-            "🚀 Pi.authenticate mulai..."
-        );
-
-        const auth =
-            await Pi.authenticate(
-                ["username"],
-                function (incompletePayment) {
-
-                    console.log(
-                        "⚠️ Incomplete payment:",
-                        incompletePayment
-                    );
-
-                }
-            );
-
         console.log(
             "✅ Pi.authenticate selesai:",
             auth
