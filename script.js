@@ -2505,6 +2505,7 @@ async function loginWithPi() {
             "Menunggu konfirmasi Pi..."
         );
 
+        console.log("🚀 Pi.authenticate mulai...");
 
         const auth =
             await Pi.authenticate(
@@ -2519,6 +2520,10 @@ async function loginWithPi() {
                 }
             );
 
+        console.log(
+            "✅ Pi.authenticate selesai:",
+            auth
+        );
 
         if (!auth || !auth.user) {
 
@@ -2527,9 +2532,7 @@ async function loginWithPi() {
             );
         }
 
-
         piLoginUser = auth.user;
-
 
         /* -----------------------------------------
            SIMPAN SESSION
