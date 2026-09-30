@@ -2481,14 +2481,6 @@ function setPiLoginStatus(message) {
            CEK HASIL LOGIN
         ========================================= */
 
-        if (!auth || !auth.user) {
-
-            throw new Error(
-                "Data pengguna Pi tidak ditemukan."
-            );
-
-        }
-
 
         /* =========================================
            AMBIL ACCESS TOKEN
