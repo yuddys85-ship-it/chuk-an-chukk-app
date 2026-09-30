@@ -2116,133 +2116,253 @@ function goChat() {
    ========================================================= */
 
 async function loginWithPi() {
-  const status = document.getElementById("piLoginStatus");
-  const button = document.getElementById("piLoginButton");
 
-  try {
-    status.textContent = "Menghubungkan ke Pi...";
-    button.disabled = true;
+    const status =
+        document.getElementById("piLoginStatus");
 
-    // Pastikan Pi SDK tersedia
-    if (!window.Pi) {
-      throw new Error("Pi SDK tidak tersedia");
-    }
+    const button =
+        document.getElementById("piLoginButton");
 
-    // Login melalui Pi
-    console.log("🟡 PI AUTHENTICATE: mulai...");
+    try {
 
-const authPromise = Pi.authenticate(
-    ["username"],
-    function (incompletePayment) {
+        if (!status || !button) {
+
+            throw new Error(
+                "Elemen tombol login tidak ditemukan."
+            );
+
+        }
+
+        status.textContent =
+            "Menghubungkan ke Pi...";
+
+        button.disabled = true;
+
+        /* =========================================
+           CEK PI SDK
+        ========================================= */
 
         console.log(
-            "⚠️ INCOMPLETE PAYMENT:",
-            incompletePayment
+            "🔵 LOGIN: cek window.Pi..."
         );
 
-    }
-);
+        if (
+            typeof window.Pi === "undefined"
+        ) {
 
-console.log("🟡 PI AUTHENTICATE: menunggu respons Pi...");
+            throw new Error(
+                "Pi SDK tidak tersedia."
+            );
 
-const authTimeout = new Promise((_, reject) => {
+        }
 
-    setTimeout(() => {
+        console.log(
+            "🟢 LOGIN: window.Pi tersedia"
+        );
 
-        reject(
-            new Error(
-                "⏱️ Timeout: Pi.authenticate() tidak memberikan respons dalam 30 detik."
+        console.log(
+            "Pi object:",
+            window.Pi
+        );
+
+
+        /* =========================================
+           PI AUTHENTICATE
+        ========================================= */
+
+        console.log(
+            "🟡 PI AUTHENTICATE: mulai..."
+        );
+
+        const authPromise =
+            window.Pi.authenticate(
+                ["username"],
+                function (incompletePayment) {
+
+                    console.log(
+                        "⚠️ INCOMPLETE PAYMENT:",
+                        incompletePayment
+                    );
+
+                }
+            );
+
+
+        console.log(
+            "🟡 PI AUTHENTICATE: menunggu respons Pi..."
+        );
+
+
+        /* =========================================
+           TIMEOUT DIAGNOSTIK
+        ========================================= */
+
+        const authTimeout =
+            new Promise(
+                (_, reject) => {
+
+                    setTimeout(
+                        () => {
+
+                            reject(
+                                new Error(
+                                    "⏱️ Timeout: Pi.authenticate() tidak memberikan respons dalam 30 detik."
+                                )
+                            );
+
+                        },
+                        30000
+                    );
+
+                }
+            );
+
+
+        const auth =
+            await Promise.race([
+                authPromise,
+                authTimeout
+            ]);
+
+
+        /* =========================================
+           AUTH BERHASIL
+        ========================================= */
+
+        console.log(
+            "🟢 PI AUTHENTICATE: berhasil!",
+            auth
+        );
+
+
+        if (!auth) {
+
+            throw new Error(
+                "Pi tidak mengembalikan data login."
+            );
+
+        }
+
+
+        const accessToken =
+            auth.accessToken;
+
+
+        if (!accessToken) {
+
+            throw new Error(
+                "Pi tidak memberikan accessToken."
+            );
+
+        }
+
+
+        console.log(
+            "🟢 Access token Pi diterima."
+        );
+
+
+        /* =========================================
+           VERIFIKASI BACKEND
+        ========================================= */
+
+        status.textContent =
+            "Memverifikasi akun Pi...";
+
+
+        const verifyResponse =
+            await fetch(
+                "/api/verify",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Authorization":
+                            `Bearer ${accessToken}`,
+
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        const verified =
+            await verifyResponse.json();
+
+
+        if (
+            !verifyResponse.ok ||
+            !verified.success
+        ) {
+
+            throw new Error(
+                verified.error ||
+                "Verifikasi akun Pi gagal."
+            );
+
+        }
+
+
+        console.log(
+            "🟢 Pi user terverifikasi:",
+            verified.user
+        );
+
+
+        /* =========================================
+           SIMPAN USER
+        ========================================= */
+
+        piLoginUser =
+            verified.user;
+
+        window.currentUser =
+            verified.user;
+
+
+        localStorage.setItem(
+            "currentUser",
+            JSON.stringify(
+                verified.user
             )
         );
 
-    }, 30000);
 
-});
-
-const auth = await Promise.race([
-    authPromise,
-    authTimeout
-]);
-
-console.log(
-    "🟢 PI AUTHENTICATE: berhasil!",
-    auth
-);
+        sessionStorage.setItem(
+            "piAuthenticated",
+            "true"
+        );
 
 
-    // accessToken dari Pi
-    const accessToken = auth.accessToken;
+        status.textContent =
+            `Login berhasil sebagai @${verified.user.username}`;
 
-    if (!accessToken) {
-      throw new Error(
-        "Pi tidak memberikan accessToken"
-      );
+
+        /* =========================================
+           MASUK APLIKASI
+        ========================================= */
+
+        showChukApp();
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Pi login error:",
+            error
+        );
+
+
+        status.textContent =
+            error.message ||
+            "Login Pi gagal. Coba lagi.";
+
+
+        button.disabled = false;
+
     }
 
-    status.textContent = "Memverifikasi akun Pi...";
-
-    // Kirim token ke backend Chuk an Chukk
-    const verifyResponse = await fetch(
-      "/api/verify",
-      {
-        method: "POST",
-
-        headers: {
-          "Authorization": `Bearer ${accessToken}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
-
-    const verified = await verifyResponse.json();
-
-    if (!verifyResponse.ok || !verified.success) {
-      throw new Error(
-        verified.error ||
-        "Verifikasi akun Pi gagal"
-      );
-    }
-
-    console.log(
-      "Pi user terverifikasi:",
-      verified.user
-    );
-
-    // Simpan USER YANG SUDAH DIVERIFIKASI
-    piLoginUser = verified.user;
-
-    window.currentUser = verified.user;
-
-    localStorage.setItem(
-      "currentUser",
-      JSON.stringify(verified.user)
-    );
-
-    // Jangan simpan accessToken di localStorage
-    sessionStorage.setItem(
-      "piAuthenticated",
-      "true"
-    );
-
-    status.textContent =
-      `Login berhasil sebagai @${verified.user.username}`;
-
-    // Masuk ke aplikasi
-    showChukApp();
-
-  } catch (error) {
-
-    console.error(
-      "❌ Pi login error:",
-      error
-    );
-
-    status.textContent =
-      error.message ||
-      "Login Pi gagal. Coba lagi.";
-
-    button.disabled = false;
-  }
 }
 
 /* =========================================================
