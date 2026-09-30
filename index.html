@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
     <meta name="theme-color" content="#ffffff">
 
@@ -14,74 +20,27 @@
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
     <style>
-        /* ================================
-           PI LOGIN GATE
-        ================================= */
 
-        #piLoginGate {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
+        /* =====================================
+           PI LOGIN HEADER
+        ====================================== */
 
+        .pi-login-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-
-            padding: 24px;
-
-            background:
-                radial-gradient(circle at top,
-                    rgba(111,214,214,.30),
-                    transparent 45%),
-                #ffffff;
-        }
-
-        .pi-login-card {
-            width: min(380px, 100%);
-            text-align: center;
-            padding: 32px 24px;
-
-            border-radius: 24px;
-
-            background: rgba(255,255,255,.92);
-            border: 1px solid rgba(0,0,0,.08);
-
-            box-shadow:
-                0 20px 60px rgba(0,0,0,.12);
-        }
-
-        .pi-login-logo {
-            width: 92px;
-            height: 92px;
-            object-fit: contain;
-            margin-bottom: 14px;
-        }
-
-        .pi-login-title {
-            margin: 0;
-            font-size: 25px;
-            font-weight: 700;
-        }
-
-        .pi-login-subtitle {
-            margin: 8px 0 24px;
-            color: #777;
-            font-size: 14px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         #piLoginButton {
-            width: 100%;
-            min-height: 50px;
-
+            min-height: 40px;
+            padding: 8px 14px;
             border: 0;
-            border-radius: 14px;
-
+            border-radius: 12px;
             background: #6b2cff;
-            color: white;
-
-            font-size: 16px;
+            color: #ffffff;
+            font-size: 13px;
             font-weight: 700;
-
             cursor: pointer;
         }
 
@@ -91,21 +50,15 @@
         }
 
         #piLoginStatus {
-            min-height: 20px;
-            margin-top: 14px;
-
-            font-size: 13px;
-            color: #777;
-        }
-
-        /* App disembunyikan sampai login */
-        #chukApp {
             display: none;
+            font-size: 11px;
+            color: #777;
+            width: 100%;
         }
 
-        /* ================================
+        /* =====================================
            USER LOGIN INFO
-        ================================= */
+        ====================================== */
 
         .logged-user {
             display: none;
@@ -124,50 +77,21 @@
             cursor: pointer;
             font-size: 18px;
         }
+
+        /* =====================================
+           APP SELALU TERLIHAT
+        ====================================== */
+
+        #chukApp {
+            display: block;
+        }
+
     </style>
+
 </head>
 
+
 <body>
-
-<!-- =====================================
-     PI LOGIN GATE
-===================================== -->
-
-<section id="piLoginGate">
-
-    <div class="pi-login-card">
-
-        <img
-            src="assets/logo.png"
-            class="pi-login-logo"
-            alt="CHUK AN CHUKK"
-        >
-
-        <h1 class="pi-login-title">
-            CHUK AN CHUKK
-        </h1>
-
-        <p class="pi-login-subtitle">
-            Live Social App for Pi Community
-        </p>
-
-        <button
-            id="piLoginButton"
-            type="button"
-        >
-            Login with Pi
-        </button>
-
-        <div
-            id="piLoginStatus"
-            aria-live="polite"
-        >
-            Siap untuk login dengan Pi
-        </div>
-
-    </div>
-
-</section>
 
 
 <!-- =====================================
@@ -179,7 +103,13 @@
     class="app"
 >
 
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
     <header class="header">
+
 
         <div class="logo-title">
 
@@ -195,7 +125,34 @@
 
         </div>
 
+
         <div class="header-icons">
+
+
+            <!-- LOGIN PI -->
+
+            <div class="pi-login-header">
+
+                <button
+                    id="piLoginButton"
+                    type="button"
+                    aria-label="Login dengan Pi"
+                    title="Login dengan Pi"
+                >
+                    Login with Pi
+                </button>
+
+                <div
+                    id="piLoginStatus"
+                    aria-live="polite"
+                >
+                    Siap untuk login dengan Pi
+                </div>
+
+            </div>
+
+
+            <!-- LIVE -->
 
             <button
                 type="button"
@@ -207,33 +164,45 @@
                 🔴 LIVE
             </button>
 
+
+            <!-- SEARCH -->
+
             <button
                 type="button"
                 onclick="searchPost()"
                 aria-label="Cari postingan"
+                title="Cari"
             >
                 🔍
             </button>
+
+
+            <!-- NOTIFICATION -->
 
             <button
                 type="button"
                 onclick="showNotifications()"
                 aria-label="Notifikasi"
+                title="Notifikasi"
             >
                 🔔
             </button>
+
 
         </div>
 
     </header>
 
 
-    <!-- USER INFO -->
+    <!-- =====================================
+         USER INFO
+    ====================================== -->
 
     <div
         id="loggedUser"
         class="logged-user"
     >
+
         <span id="loggedUsername"></span>
 
         <button
@@ -245,10 +214,13 @@
         >
             ⎋
         </button>
+
     </div>
 
 
-    <!-- FEED -->
+    <!-- =====================================
+         FEED
+    ====================================== -->
 
     <main
         id="feed"
@@ -262,7 +234,9 @@
     </main>
 
 
-    <!-- CREATE POST -->
+    <!-- =====================================
+         CREATE POST
+    ====================================== -->
 
     <button
         type="button"
@@ -275,41 +249,69 @@
     </button>
 
 
-    <!-- BOTTOM NAV -->
+    <!-- =====================================
+         BOTTOM NAVIGATION
+    ====================================== -->
 
     <nav
         class="bottom-nav"
         aria-label="Navigasi utama"
     >
 
+
+        <!-- HOME -->
+
         <button
             type="button"
             onclick="goHome()"
             aria-label="Home"
         >
+
             <span>🏠</span>
-            <small>Home</small>
+
+            <small>
+                Home
+            </small>
+
         </button>
+
+
+        <!-- CHAT -->
 
         <button
             type="button"
             onclick="goChat()"
             aria-label="Chat"
         >
+
             <span>💬</span>
-            <small>Chat</small>
+
+            <small>
+                Chat
+            </small>
+
         </button>
+
+
+        <!-- PROFILE -->
 
         <button
             type="button"
             onclick="goProfile()"
             aria-label="Profile"
         >
+
             <span>👤</span>
-            <small>Profile</small>
+
+            <small>
+                Profile
+            </small>
+
         </button>
 
+
     </nav>
+
 
 </div>
 
@@ -322,10 +324,13 @@
 
 <script src="supabase.js"></script>
 
+
 <script>
+
     if (window.chukSupabase) {
 
-        window.supabase = window.chukSupabase;
+        window.supabase =
+            window.chukSupabase;
 
         console.log(
             "✅ CHUK Supabase Client aktif"
@@ -338,6 +343,7 @@
         );
 
     }
+
 </script>
 
 
@@ -347,5 +353,7 @@
 
 <script src="script.js"></script>
 
+
 </body>
+
 </html>
