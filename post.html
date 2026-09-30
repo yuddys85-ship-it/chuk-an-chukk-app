@@ -3,63 +3,62 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Buat Postingan - Chuk an Chukk</title>
+    <title>Buat Postingan - Chuk an Chukk</title>
 
-<link rel="stylesheet" href="post.css">
+    <!-- PI SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
-<!-- PI SDK -->
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="post.css">
 
-<style>
+    <style>
 
-    .pi-login-box {
-        margin: 10px 0 15px;
-        padding: 12px;
-        border-radius: 14px;
-        background: #f5f5f5;
-        text-align: center;
-    }
+        .pi-login-box {
+            margin: 14px 0;
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+        }
 
-    #piLoginButton {
-        min-height: 42px;
-        padding: 10px 18px;
-        border: 0;
-        border-radius: 12px;
-        background: #6b2cff;
-        color: white;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-    }
+        #piLoginButton {
+            width: 100%;
+            min-height: 48px;
+            border: none;
+            border-radius: 12px;
+            background: #6b2cff;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
 
-    #piLoginButton:disabled {
-        opacity: .6;
-        cursor: wait;
-    }
+        #piLoginButton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
-    #piLoginStatus {
-        margin-top: 7px;
-        font-size: 12px;
-        color: #666;
-    }
+        #piLoginStatus {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #aaa;
+        }
 
-</style>
+    </style>
 
 </head>
 
-
 <body>
 
-
 <div class="upload-page">
-
 
     <!-- HEADER -->
 
@@ -73,11 +72,7 @@
             ←
         </button>
 
-
-        <h2>
-            Buat Postingan
-        </h2>
-
+        <h2>Buat Postingan</h2>
 
         <button
             class="publish-btn"
@@ -90,19 +85,17 @@
     </header>
 
 
-    <!-- =====================================
-         LOGIN PI
-    ====================================== -->
+    <!-- LOGIN PI -->
 
     <div class="pi-login-box">
 
         <button
             id="piLoginButton"
             type="button"
+            onclick="loginWithPi()"
         >
-            Login with Pi
+            🟣 Login with Pi
         </button>
-
 
         <div
             id="piLoginStatus"
@@ -127,7 +120,7 @@
     </div>
 
 
-    <!-- PILIH FILE -->
+    <!-- FILE -->
 
     <input
         type="file"
@@ -137,6 +130,8 @@
         hidden
     >
 
+
+    <!-- PILIH MEDIA -->
 
     <button
         class="choose-btn"
@@ -155,7 +150,7 @@
     ></textarea>
 
 
-    <!-- LOKASI -->
+    <!-- LOCATION -->
 
     <input
         type="text"
@@ -165,7 +160,7 @@
     >
 
 
-    <!-- HASHTAG -->
+    <!-- HASHTAGS -->
 
     <input
         type="text"
@@ -207,30 +202,23 @@
         🚀 Upload Postingan
     </button>
 
-
 </div>
 
 
-<!-- =====================================
-     SUPABASE
-====================================== -->
+<!-- SUPABASE -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
 
-<!-- =====================================
-     POST JS
-====================================== -->
+<!-- POST SYSTEM -->
 
 <script src="post.js"></script>
 
 
-<!-- =====================================
-     CHUK MAIN SCRIPT
-     LOGIN PI YANG SAMA DENGAN INDEX
-====================================== -->
+<!-- PI LOGIN SYSTEM -->
+<!-- HARUS TERAKHIR -->
 
 <script src="script.js"></script>
 
