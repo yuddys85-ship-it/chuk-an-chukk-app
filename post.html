@@ -12,47 +12,10 @@
 
     <title>Buat Postingan - Chuk an Chukk</title>
 
-    <!-- PI SDK -->
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
-    <!-- CSS -->
     <link rel="stylesheet" href="post.css">
 
-    <style>
-
-        .pi-login-box {
-            margin: 14px 0;
-            padding: 14px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            text-align: center;
-        }
-
-        #piLoginButton {
-            width: 100%;
-            min-height: 48px;
-            border: none;
-            border-radius: 12px;
-            background: #6b2cff;
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        #piLoginButton:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        #piLoginStatus {
-            margin-top: 8px;
-            font-size: 13px;
-            color: #aaa;
-        }
-
-    </style>
+    <!-- PI SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
 </head>
 
@@ -92,7 +55,6 @@
         <button
             id="piLoginButton"
             type="button"
-            onclick="loginWithPi()"
         >
             🟣 Login with Pi
         </button>
@@ -101,7 +63,7 @@
             id="piLoginStatus"
             aria-live="polite"
         >
-            Silakan login dengan Pi
+            Menghubungkan ke Pi...
         </div>
 
     </div>
@@ -131,8 +93,6 @@
     >
 
 
-    <!-- PILIH MEDIA -->
-
     <button
         class="choose-btn"
         type="button"
@@ -142,15 +102,11 @@
     </button>
 
 
-    <!-- CAPTION -->
-
     <textarea
         id="caption"
         placeholder="Tulis caption postingan..."
     ></textarea>
 
-
-    <!-- LOCATION -->
 
     <input
         type="text"
@@ -160,8 +116,6 @@
     >
 
 
-    <!-- HASHTAGS -->
-
     <input
         type="text"
         id="hashtags"
@@ -169,8 +123,6 @@
         placeholder="#hashtag"
     >
 
-
-    <!-- PRIVACY -->
 
     <select
         id="privacy"
@@ -192,8 +144,6 @@
     </select>
 
 
-    <!-- UPLOAD -->
-
     <button
         class="upload-btn"
         type="button"
@@ -212,16 +162,213 @@
 <script src="supabase.js"></script>
 
 
-<!-- POST SYSTEM -->
+<!-- POST -->
 
 <script src="post.js"></script>
 
 
-<!-- PI LOGIN SYSTEM -->
-<!-- HARUS TERAKHIR -->
+<!-- PI LOGIN -->
+<script>
 
-<script src="script.js"></script>
+(function () {
 
+    const status =
+        document.getElementById("piLoginStatus");
+
+    const button =
+        document.getElementById("piLoginButton");
+
+
+    function setStatus(message) {
+
+        if (status) {
+            status.textContent = message;
+        }
+
+    }
+
+
+    function initPiPost() {
+
+        console.log("🔵 POST: cek Pi SDK");
+
+        if (typeof window.Pi === "undefined") {
+
+            console.error(
+                "❌ POST: Pi SDK tidak tersedia"
+            );
+
+            setStatus(
+                "❌ Pi SDK tidak tersedia. Buka halaman ini melalui Pi Browser."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            window.Pi.init({
+                version: "2.0",
+                sandbox: false
+            });
+
+            console.log(
+                "🟢 POST: Pi SDK berhasil di-init"
+            );
+
+            setStatus(
+                "🟢 Pi siap. Silakan login."
+            );
+
+        } catch (error) {
+
+            console.error(
+                "❌ POST: Pi init error",
+                error
+            );
+
+            setStatus(
+                "❌ Pi gagal diinisialisasi."
+            );
+
+        }
+
+    }
+
+
+    async function loginPostPi() {
+
+        console.log(
+            "🔵 POST: Login with Pi ditekan"
+        );
+
+
+        if (typeof window.Pi === "undefined") {
+
+            setStatus(
+                "❌ Pi SDK tidak tersedia."
+            );
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        setStatus(
+            "🔄 Menghubungkan ke Pi..."
+        );
+
+
+        try {
+
+            const auth =
+                await window.Pi.authenticate(
+                    ["username"]
+                );
+
+
+            console.log(
+                "🟢 POST: Login Pi berhasil",
+                auth
+            );
+
+
+            if (
+                !auth ||
+                !auth.user
+            ) {
+
+                throw new Error(
+                    "Data pengguna Pi tidak ditemukan."
+                );
+
+            }
+
+
+            window.currentUser =
+                auth.user;
+
+
+            window.piLoginUser =
+                auth.user;
+
+
+            localStorage.setItem(
+                "currentUser",
+                JSON.stringify(
+                    auth.user
+                )
+            );
+
+
+            setStatus(
+                "✅ Login berhasil sebagai @" +
+                auth.user.username
+            );
+
+
+            button.textContent =
+                "✅ @" +
+                auth.user.username;
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ POST LOGIN ERROR:",
+                error
+            );
+
+
+            setStatus(
+                "❌ " +
+                (
+                    error.message ||
+                    "Login Pi gagal."
+                )
+            );
+
+
+            button.disabled = false;
+
+        }
+
+    }
+
+
+    if (button) {
+
+        button.addEventListener(
+            "click",
+            loginPostPi
+        );
+
+    }
+
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initPiPost
+        );
+
+    } else {
+
+        initPiPost();
+
+    }
+
+})();
+
+</script>
 
 </body>
 
