@@ -2169,7 +2169,6 @@ console.log(
     auth
 );
 
-    console.log("Pi authentication berhasil");
 
     // accessToken dari Pi
     const accessToken = auth.accessToken;
