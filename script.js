@@ -2129,15 +2129,45 @@ async function loginWithPi() {
     }
 
     // Login melalui Pi
-    const auth = await Pi.authenticate(
-      ["username"],
-      function (incompletePayment) {
+    console.log("🟡 PI AUTHENTICATE: mulai...");
+
+const authPromise = Pi.authenticate(
+    ["username"],
+    function (incompletePayment) {
+
         console.log(
-          "Incomplete payment:",
-          incompletePayment
+            "⚠️ INCOMPLETE PAYMENT:",
+            incompletePayment
         );
-      }
-    );
+
+    }
+);
+
+console.log("🟡 PI AUTHENTICATE: menunggu respons Pi...");
+
+const authTimeout = new Promise((_, reject) => {
+
+    setTimeout(() => {
+
+        reject(
+            new Error(
+                "⏱️ Timeout: Pi.authenticate() tidak memberikan respons dalam 30 detik."
+            )
+        );
+
+    }, 30000);
+
+});
+
+const auth = await Promise.race([
+    authPromise,
+    authTimeout
+]);
+
+console.log(
+    "🟢 PI AUTHENTICATE: berhasil!",
+    auth
+);
 
     console.log("Pi authentication berhasil");
 
