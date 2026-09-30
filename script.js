@@ -2445,14 +2445,21 @@ console.log(
 
 function initChukPi() {
 
-    if (typeof Pi === "undefined") {
+    console.log("🔵 PI SDK CHECK MULAI");
+
+    console.log(
+        "window.Pi:",
+        window.Pi
+    );
+
+    if (typeof window.Pi === "undefined") {
 
         console.error(
-            "❌ Pi SDK tidak ditemukan"
+            "❌ PI SDK TIDAK TERSEDIA"
         );
 
         setPiLoginStatus(
-            "Login Pi hanya dapat digunakan di Pi Browser."
+            "❌ Pi SDK tidak tersedia."
         );
 
         return false;
@@ -2460,13 +2467,26 @@ function initChukPi() {
 
     try {
 
-        Pi.init({
+        console.log(
+            "🟡 Menjalankan Pi.init()..."
+        );
+
+        window.Pi.init({
             version: "2.0",
             sandbox: true
         });
 
         console.log(
-            "✅ Pi SDK Ready"
+            "🟢 PI SDK INIT BERHASIL"
+        );
+
+        console.log(
+            "Pi object:",
+            window.Pi
+        );
+
+        setPiLoginStatus(
+            "Pi SDK siap. Silakan login."
         );
 
         return true;
@@ -2474,14 +2494,18 @@ function initChukPi() {
     } catch (error) {
 
         console.error(
-            "❌ Pi SDK Init Error:",
+            "❌ PI SDK INIT ERROR:",
             error
+        );
+
+        setPiLoginStatus(
+            "❌ Pi SDK error: " +
+            (error.message || error)
         );
 
         return false;
     }
 }
-
 
 /* -----------------------------------------------------
    STATUS LOGIN
