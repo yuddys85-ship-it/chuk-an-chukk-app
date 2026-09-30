@@ -20,28 +20,31 @@
 <style>
 
     .pi-login-box {
-        padding: 12px 16px;
-        margin: 10px 0 14px;
+        margin: 10px 0 15px;
+        padding: 12px;
         border-radius: 14px;
         background: #f5f5f5;
         text-align: center;
     }
 
-    #postPiLoginButton {
+    #piLoginButton {
+        min-height: 42px;
+        padding: 10px 18px;
         border: 0;
         border-radius: 12px;
-        padding: 10px 18px;
         background: #6b2cff;
         color: white;
+        font-size: 14px;
         font-weight: 700;
         cursor: pointer;
     }
 
-    #postPiLoginButton:disabled {
+    #piLoginButton:disabled {
         opacity: .6;
+        cursor: wait;
     }
 
-    #postPiStatus {
+    #piLoginStatus {
         margin-top: 7px;
         font-size: 12px;
         color: #666;
@@ -87,22 +90,25 @@
     </header>
 
 
-    <!-- PI LOGIN -->
+    <!-- =====================================
+         LOGIN PI
+    ====================================== -->
 
     <div class="pi-login-box">
 
         <button
-            id="postPiLoginButton"
+            id="piLoginButton"
             type="button"
         >
-            🟣 Login with Pi
+            Login with Pi
         </button>
 
+
         <div
-            id="postPiStatus"
+            id="piLoginStatus"
             aria-live="polite"
         >
-            Belum login
+            Silakan login dengan Pi
         </div>
 
     </div>
@@ -205,269 +211,28 @@
 </div>
 
 
-<!-- SUPABASE -->
+<!-- =====================================
+     SUPABASE
+====================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
 
-<!-- POST JS -->
+<!-- =====================================
+     POST JS
+====================================== -->
 
 <script src="post.js"></script>
 
 
-<script>
-
-let postPiUser = null;
-
-
-/* =====================================
-   PI INIT
-===================================== */
-
-try {
-
-    if (window.Pi) {
-
-        window.Pi.init({
-            version: "2.0",
-            sandbox: false
-        });
-
-        console.log(
-            "✅ Pi SDK POST siap"
-        );
-
-    } else {
-
-        console.error(
-            "❌ Pi SDK tidak ditemukan"
-        );
-
-    }
-
-} catch (error) {
-
-    console.error(
-        "❌ Pi INIT ERROR:",
-        error
-    );
-
-}
-
-
-/* =====================================
-   LOGIN PI UNTUK POST
-===================================== */
-
-async function loginPostWithPi() {
-
-    const button =
-        document.getElementById(
-            "postPiLoginButton"
-        );
-
-    const status =
-        document.getElementById(
-            "postPiStatus"
-        );
-
-    try {
-
-        button.disabled = true;
-
-        status.textContent =
-            "Menghubungkan ke Pi...";
-
-
-        if (!window.Pi) {
-
-            throw new Error(
-                "Pi SDK tidak tersedia."
-            );
-
-        }
-
-
-        console.log(
-            "🟣 POST PI LOGIN..."
-        );
-
-
-        const auth =
-            await window.Pi.authenticate(
-                ["username"]
-            );
-
-
-        if (!auth || !auth.user) {
-
-            throw new Error(
-                "Data user Pi tidak ditemukan."
-            );
-
-        }
-
-
-        postPiUser =
-            auth.user;
-
-
-        window.currentUser =
-            auth.user;
-
-
-        localStorage.setItem(
-            "currentUser",
-            JSON.stringify(
-                auth.user
-            )
-        );
-
-
-        status.textContent =
-            "✅ Login sebagai @" +
-            auth.user.username;
-
-
-        button.textContent =
-            "✅ @" +
-            auth.user.username;
-
-
-        console.log(
-            "👤 POST PI USER:",
-            auth.user
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "❌ POST PI LOGIN ERROR:",
-            error
-        );
-
-
-        status.textContent =
-            error.message ||
-            "Login Pi gagal.";
-
-
-        button.disabled = false;
-
-    }
-
-}
-
-
-/* =====================================
-   CEK SESSION PI
-===================================== */
-
-function restorePostPiUser() {
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                "currentUser"
-            );
-
-
-        if (!saved) return;
-
-
-        const user =
-            JSON.parse(saved);
-
-
-        if (
-            user &&
-            user.username
-        ) {
-
-            postPiUser =
-                user;
-
-            window.currentUser =
-                user;
-
-
-            const status =
-                document.getElementById(
-                    "postPiStatus"
-                );
-
-
-            const button =
-                document.getElementById(
-                    "postPiLoginButton"
-                );
-
-
-            if (status) {
-
-                status.textContent =
-                    "✅ Login sebagai @" +
-                    user.username;
-
-            }
-
-
-            if (button) {
-
-                button.textContent =
-                    "✅ @" +
-                    user.username;
-
-            }
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "❌ RESTORE PI ERROR:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =====================================
-   START
-===================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        const button =
-            document.getElementById(
-                "postPiLoginButton"
-            );
-
-
-        if (button) {
-
-            button.addEventListener(
-                "click",
-                loginPostWithPi
-            );
-
-        }
-
-
-        restorePostPiUser();
-
-    }
-);
-
-</script>
+<!-- =====================================
+     CHUK MAIN SCRIPT
+     LOGIN PI YANG SAMA DENGAN INDEX
+====================================== -->
+
+<script src="script.js"></script>
 
 
 </body>
