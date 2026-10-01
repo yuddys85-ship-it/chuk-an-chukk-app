@@ -1,18 +1,186 @@
-┌────────────────────────────┐
-│ CHUK AN CHUKK        🔍 🔔 │
-├────────────────────────────┤
-│                            │
-│                            │
-│     VIDEO / FOTO POST      │
-│                            │
-│                     ❤️      │
-│                     💬      │
-│                     ↗️      │
-│                     🔖      │
-│                            │
-│ @username                  │
-│ Deskripsi postingan         │
-├────────────────────────────┤
-│🏠     ➕     💬     👤      │
-│Home   Post   Chat  Profile │
-└────────────────────────────┘
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Home — Chuk an Chukk</title>
+
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+    <header class="header">
+
+        <div class="logo-title">
+            CHUK AN CHUKK
+        </div>
+
+        <div class="header-icons">
+
+            <button
+                type="button"
+                aria-label="Cari"
+                class="header-button"
+            >
+                🔍
+            </button>
+
+            <button
+                type="button"
+                aria-label="Notifikasi"
+                class="header-button"
+            >
+                🔔
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         FEED
+    ========================== -->
+    <main class="feed" id="homeFeed">
+
+        <!-- POST CONTAINER -->
+        <section class="post">
+
+            <!-- MEDIA -->
+            <div class="post-media-container">
+
+                <div class="post-media-placeholder">
+                    <span>VIDEO / FOTO POST</span>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="post-actions-side">
+
+                    <button
+                        type="button"
+                        aria-label="Suka"
+                    >
+                        ❤️
+                    </button>
+
+                    <button
+                        type="button"
+                        aria-label="Komentar"
+                    >
+                        💬
+                    </button>
+
+                    <button
+                        type="button"
+                        aria-label="Bagikan"
+                    >
+                        ↗️
+                    </button>
+
+                    <button
+                        type="button"
+                        aria-label="Simpan"
+                    >
+                        🔖
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- POST INFORMATION -->
+            <div class="post-info">
+
+                <div class="post-user">
+                    @username
+                </div>
+
+                <div class="post-caption">
+                    Deskripsi postingan
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- EMPTY / LOADING AREA -->
+        <div
+            id="homeLoading"
+            class="loading"
+            style="display:none;"
+        >
+            Memuat postingan...
+        </div>
+
+        <div
+            id="homeEmpty"
+            class="no-post"
+            style="display:none;"
+        >
+            Belum ada postingan.
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         BOTTOM NAVIGATION
+    ========================== -->
+    <nav class="bottom-nav">
+
+        <a
+            href="home.html"
+            class="bottom-nav-item active"
+            aria-label="Home"
+        >
+            <span>🏠</span>
+            <small>Home</small>
+        </a>
+
+        <a
+            href="post.html"
+            class="bottom-nav-item"
+            aria-label="Post"
+        >
+            <span>➕</span>
+            <small>Post</small>
+        </a>
+
+        <button
+            type="button"
+            class="bottom-nav-item"
+            aria-label="Chat"
+        >
+            <span>💬</span>
+            <small>Chat</small>
+        </button>
+
+        <a
+            href="profile.html"
+            class="bottom-nav-item"
+            aria-label="Profile"
+        >
+            <span>👤</span>
+            <small>Profile</small>
+        </a>
+
+    </nav>
+
+</div>
+
+</body>
+</html>
