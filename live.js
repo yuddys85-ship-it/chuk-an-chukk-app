@@ -352,25 +352,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* =====================================================
-       MIRROR
-       ===================================================== */
+   /* =====================================================
+   MIRROR — ARAH KAMERA NORMAL
+   ===================================================== */
 
-    function updateMirror() {
-
-        if (
-            facingMode === "user"
-        ) {
-
-            video.style.transform =
-                "scaleX(-1)";
-
-        } else {
-
-            video.style.transform =
-                "scaleX(1)";
-        }
-    }
+function updateMirror() {
+    video.style.transform = "none";
+}
 
 
     /* =====================================================
