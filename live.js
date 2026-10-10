@@ -351,16 +351,18 @@ document.addEventListener("DOMContentLoaded", () => {
         ""
     );
 
-
-   /* =====================================================
-   MIRROR — ARAH KAMERA NORMAL
+/* =====================================================
+   MIRROR — KAMERA DEPAN NORMAL, BELAKANG TETAP
    ===================================================== */
 
 function updateMirror() {
-    video.style.transform = "none";
+    if (facingMode === "user") {
+        video.style.transform = "scaleX(1)";
+    } else {
+        video.style.transform = "none";
+    }
 }
-
-
+   
     /* =====================================================
        STOP CAMERA
        ===================================================== */
